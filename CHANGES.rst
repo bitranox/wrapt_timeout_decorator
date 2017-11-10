@@ -4,4 +4,4 @@ Changelog
 1.0.0
 -----
 
-- Initial public release
+2017-11-10: Initial public release
