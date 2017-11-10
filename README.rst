@@ -99,7 +99,7 @@ case - by using multiprocessing. To use it, just pass
 Override with kwargs
 --------------------
 
-decorator parameters starting with dec_ can be overriden by kwargs with the same name : 
+decorator parameters starting with dec_ can be overridden by kwargs with the same name : 
 
 ::
 
