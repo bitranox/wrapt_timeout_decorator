@@ -128,6 +128,7 @@ using the decorator without actually decorating the function
     if __name__ == '__main__':
         timeout(dec_timeout=5)(mytest)('starting')
 
+
 ::
 
 using allow_eval
@@ -140,11 +141,16 @@ be evaluated if its type is string.
 
 You can access :
     wrapped (the function object)
+    
     instance    Example: 'instance.x' - an attribute of the instace of the class instance
+    
     args        Example: 'args[0]' - the timeout is the first argument in args
+    
     kwargs      Example: 'kwargs["max_time"] * 2'
 
 ::
+
+
     def class Foo(object):
         def __init__(self,x):
             self.x=x
@@ -163,22 +169,22 @@ You can access :
             print('knight')
 
 
-    # or override via kwarg :
-    my_foo = Foo(3)
-    my_foo.foo2(dec_timeout='instance.x * 2.5 +1')
-    my_foo.foo3(dec_timeout='instance.x * 2.5 +1', dec_allow_eval=True)
-    my_foo.foo4(1,more_time=3)  # this will time out in 4 seconds
-    
+    if __name__ == '__main__':
+        # or override via kwarg :
+        my_foo = Foo(3)
+        my_foo.foo2(dec_timeout='instance.x * 2.5 +1')
+        my_foo.foo3(dec_timeout='instance.x * 2.5 +1', dec_allow_eval=True)
+        my_foo.foo4(1,more_time=3)  # this will time out in 4 seconds
+
+
 ::
-
-
-
 
 
 Acknowledgement
 ---------------
 
 Derived from
+
 https://github.com/pnpnpn/timeout-decorator
 
 http://www.saltycrane.com/blog/2010/04/using-python-timeout-decorator-uploading-s3/
