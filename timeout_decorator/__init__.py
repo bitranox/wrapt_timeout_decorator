@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .timeout_decorator import timeout
+from .wrapt_timeout_decorator import timeout
 
-__title__ = 'timeout_decorator'
-__version__ = '0.4.0'
+__title__ = 'wrapt_timeout_decorator'
+__version__ = '1.0.0'
