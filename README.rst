@@ -1,4 +1,4 @@
-Timeout decorator
+wrapt_timeout_decorator
 =================
 
 |Build Status| |Pypi Status| |Coveralls Status|
@@ -16,7 +16,7 @@ From pypi:
 
 ::
 
-    pip install timeout-decorator
+    pip install https://github.com/bitranox/wrapt_timeout_decorator/archive/branch.zip
 
 Usage
 -----
@@ -24,9 +24,9 @@ Usage
 ::
 
     import time
-    import timeout_decorator
+    import wrapt_timeout_decorator
 
-    @timeout_decorator.timeout(5)
+    @wrapt_timeout_decorator.timeout(5)
     def mytest():
         print("Start")
         for i in range(1,10):
@@ -88,7 +88,7 @@ Acknowledgement
 
 Derived from
 http://www.saltycrane.com/blog/2010/04/using-python-timeout-decorator-uploading-s3/
-and https://code.google.com/p/verse-quiz/source/browse/trunk/timeout.py
+https://github.com/pnpnpn/timeout-decorator
 
 Contribute
 ----------
