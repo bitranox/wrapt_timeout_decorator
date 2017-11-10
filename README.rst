@@ -85,8 +85,13 @@ case - by using multiprocessing. To use it, just pass
 .. warning::
     Make sure that in case of multiprocessing strategy for timeout, your function does not return objects which cannot
     be pickled, otherwise it will fail at marshalling it between master and child processes.
+    
+    Since Signals will not work in Windows, it is disabled by default, whatever You set. 
+    
+    The granularity of the timeout is 0.1 seconds when using use_signals=False (or Windows)
+    
 
-override with kwargs
+Override with kwargs
 --------------------
 
 decorator parameters starting with dec_ can be overriden by kwargs with the same name : 
@@ -110,7 +115,7 @@ decorator parameters starting with dec_ can be overriden by kwargs with the same
 
 ::
 
-using the decorator without actually decorating the function
+Using the decorator without actually decorating the function
 ------------------------------------------------------------
 
 ::
@@ -131,15 +136,17 @@ using the decorator without actually decorating the function
 
 ::
 
-using allow_eval
+Using allow_eval
 ----------------
-This is very powerful, but is also very dangerous if you accept strings to evaluate from UNTRUSTED input.
+This is very powerful, but can be also very dangerous if you accept strings to evaluate from UNTRUSTED input.
+
 read: https://nedbatchelder.com/blog/201206/eval_really_is_dangerous.html
 
 If enabled, the parameter of the function dec_timeout, or the parameter passed by kwarg dec_timeout will 
 be evaluated if its type is string. 
 
 You can access :
+
     wrapped (the function object)
     
     instance    Example: 'instance.x' - an attribute of the instace of the class instance
@@ -147,6 +154,13 @@ You can access :
     args        Example: 'args[0]' - the timeout is the first argument in args
     
     kwargs      Example: 'kwargs["max_time"] * 2'
+    
+    and of course all attributes You can think of - that makes it powerful but dangerouse.
+    
+    by default allow_eval is disabled - but You can enable it in order to cover some edge cases without
+    
+    modifying the timeout decorator.
+
 
 ::
 
@@ -195,6 +209,15 @@ Contribute
 
 I would love for you to fork and send me pull request for this project.
 Please contribute.
+
+
+TODO: 
+-----
+
+conserving correct Traceback information when use_signals=False, possibly by using tblib
+
+(see https://pypi.python.org/pypi/tblib)
+
 
 License
 -------
