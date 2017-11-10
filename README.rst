@@ -22,8 +22,8 @@ From pypi:
 
     pip install https://github.com/bitranox/wrapt-timeout-decorator/archive/master.zip
 
-Usage
------
+Basic Usage
+-----------
 
 ::
 
@@ -31,14 +31,14 @@ Usage
     from wrapt_timeout_decorator import *
 
     @timeout(5)
-    def mytest():
-        print("Start")
+    def mytest(message):
+        print(message)
         for i in range(1,10):
             time.sleep(1)
-            print("{} seconds have passed".format(i))
+            print('{} seconds have passed'.format(i))
 
     if __name__ == '__main__':
-        mytest()
+        mytest('starting')
 
 Specify an alternate exception to raise on timeout:
 
@@ -48,14 +48,14 @@ Specify an alternate exception to raise on timeout:
     from wrapt_timeout_decorator import *
 
     @timeout(5, timeout_exception=StopIteration)
-    def mytest():
-        print("Start")
+    def mytest(message):
+        print(message)
         for i in range(1,10):
             time.sleep(1)
-            print("{} seconds have passed".format(i))
+            print('{} seconds have passed'.format(i))
 
     if __name__ == '__main__':
-        mytest()
+        mytest('starting')
 
 Multithreading
 --------------
@@ -73,18 +73,106 @@ case - by using multiprocessing. To use it, just pass
     from wrapt_timeout_decorator import *
 
     @timeout(5, use_signals=False)
-    def mytest():
-        print "Start"
+    def mytest(message):
+        print(message)
         for i in range(1,10):
             time.sleep(1)
-            print("{} seconds have passed".format(i))
+            print('{} seconds have passed'.format(i))
 
     if __name__ == '__main__':
-        mytest()
+        mytest('starting')
 
 .. warning::
     Make sure that in case of multiprocessing strategy for timeout, your function does not return objects which cannot
     be pickled, otherwise it will fail at marshalling it between master and child processes.
+
+override with kwargs
+--------------------
+
+decorator parameters starting with dec_ can be overriden by kwargs with the same name : 
+
+::
+
+
+    import time
+    from wrapt_timeout_decorator import *
+
+    @timeout(dec_timeout=5, use_signals=False)
+    def mytest(message):
+        print(message)
+        for i in range(1,10):
+            time.sleep(1)
+            print('{} seconds have passed'.format(i))
+
+    if __name__ == '__main__':
+        mytest('starting',dec_timeout=12)   # override the decorators setting. The kwarg dec_timeout will be not 
+                                            # passed to the decorated function.  
+
+::
+
+using the decorator without actually decorating the function
+------------------------------------------------------------
+
+::
+
+
+    import time
+    from wrapt_timeout_decorator import *
+
+    def mytest(message):
+        print(message)
+        for i in range(1,10):
+            time.sleep(1)
+            print('{} seconds have passed'.format(i))
+
+    if __name__ == '__main__':
+        timeout(dec_timeout=5)(mytest)('starting')
+
+::
+
+using allow_eval
+----------------
+This is very powerful, but is also very dangerous if you accept strings to evaluate from UNTRUSTED input.
+read: https://nedbatchelder.com/blog/201206/eval_really_is_dangerous.html
+
+If enabled, the parameter of the function dec_timeout, or the parameter passed by kwarg dec_timeout will 
+be evaluated if its type is string. 
+
+You can access :
+    wrapped (the function object)
+    instance    Example: 'instance.x' - an attribute of the instace of the class instance
+    args        Example: 'args[0]' - the timeout is the first argument in args
+    kwargs      Example: 'kwargs["max_time"] * 2'
+
+::
+    def class Foo(object):
+        def __init__(self,x):
+            self.x=x
+
+        @timeout('instance.x', dec_allow_eval=True)
+        def foo2(self):
+            print('swallow')
+
+        @timeout(1)
+        def foo3(self):
+            print('parrot')
+
+        @timeout(dec_timeout='args[0] + kwargs.pop("more_time",0)', dec_allow_eval=True)
+        def foo4(self,base_delay):
+            time.sleep(base_delay)
+            print('knight')
+
+
+    # or override via kwarg :
+    my_foo = Foo(3)
+    my_foo.foo2(dec_timeout='instance.x * 2.5 +1')
+    my_foo.foo3(dec_timeout='instance.x * 2.5 +1', dec_allow_eval=True)
+    my_foo.foo4(1,more_time=3)  # this will time out in 4 seconds
+    
+::
+
+
+
 
 
 Acknowledgement
