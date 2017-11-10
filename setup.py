@@ -26,13 +26,13 @@ long_description = (
 )
 
 setup(
-    name='timeout-decorator',
-    version='0.4.0',
+    name='wrapt-timeout-decorator',
+    version='1.0.0',
     description='Timeout decorator',
     long_description=long_description,
-    author='Patrick Ng',
-    author_email='pn.appdev@gmail.com',
-    url='https://github.com/bitranox/timeout-decorator',
-    packages=['timeout_decorator'],
+    author='Robert Nowotny',
+    author_email='rnowotny1966@gmail.com',
+    url='https://github.com/bitranox/wrapt-timeout-decorator',
+    packages=['wrapt_timeout_decorator'],
     install_requires=['wrapt'],
     classifiers=CLASSIFIERS)
