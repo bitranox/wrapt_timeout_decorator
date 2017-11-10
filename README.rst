@@ -224,6 +224,9 @@ conserving correct Traceback information when use_signals=False, possibly by usi
 (see https://pypi.python.org/pypi/tblib)
 
 
+register on Pypi
+
+
 License
 -------
 
