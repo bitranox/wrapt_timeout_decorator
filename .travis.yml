@@ -1,0 +1,27 @@
+language: python
+sudo: false
+python:
+- '2.6'
+- '2.7'
+- '3.2'
+- '3.3'
+- '3.4'
+- '3.5'
+- '3.6'
+- 'pypy'
+- 'pypy3'
+install:
+- if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
+- pip install python-coveralls tox tox-travis wrapt
+script: tox --recreate
+after_success:
+- pip install -e .
+- py.test --cov=wrapt_timeout_decorator --cov-report=term-missing tests
+- coveralls
+deploy:
+  provider: pypi
+  user: png
+  password:
+    secure: ZXoq3kgfu+IICjhhmQZr0s0xE6bvWzH04GjdE/VL4BxdDdGI4fHEwudGEjzLXJbt2d09vNOO67Nqam+MwPWtq+WZEP69g/Fhyy4kbkuUl/CMeqashQzU/N+3lwv97Y2qvzTUwDnSoz4zyBFu67SSrovKruFsYaiH00bwvWcvLa0=
+  on:
+    python: 2.7
