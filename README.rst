@@ -1,4 +1,4 @@
-wrapt_timeout_decorator
+wrapt-timeout-decorator
 =================
 
 |Build Status| |Pypi Status| |Coveralls Status|
@@ -20,7 +20,7 @@ From pypi:
 
 ::
 
-    pip install https://github.com/bitranox/wrapt_timeout_decorator/archive/branch.zip
+    pip install https://github.com/bitranox/wrapt-timeout-decorator/archive/master.zip
 
 Usage
 -----
@@ -70,9 +70,9 @@ case - by using multiprocessing. To use it, just pass
 ::
 
     import time
-    import timeout_decorator
+    from wrapt_timeout_decorator import *
 
-    @timeout_decorator.timeout(5, use_signals=False)
+    @timeout(5, use_signals=False)
     def mytest():
         print "Start"
         for i in range(1,10):
@@ -107,11 +107,11 @@ License
 
 This software is licensed under the `MIT license <http://en.wikipedia.org/wiki/MIT_License>`_
 
-See `License file <https://github.com/bitranox/wrapt_timeout_decorator/blob/master/LICENSE.txt>`_
+See `License file <https://github.com/bitranox/wrapt-timeout-decorator/blob/master/LICENSE.txt>`_
 
-.. |Build Status| image:: https://travis-ci.org/bitranox/wrapt_timeout_decorator.svg?branch=master
-   :target: https://travis-ci.org/bitranox/wrapt_timeout_decorator
-.. |Pypi Status| image:: https://badge.fury.io/py/wrapt_timeout_decorator.svg
-   :target: https://badge.fury.io/py/wrapt_timeout_decorator
-.. |Coveralls Status| image:: https://coveralls.io/repos/bitranox/wrapt_timeout_decorator/badge.png?branch=master
-   :target: https://coveralls.io/r/bitranox/wrapt_timeout_decorator
+.. |Build Status| image:: https://travis-ci.org/bitranox/wrapt-timeout-decorator.svg?branch=master
+   :target: https://travis-ci.org/bitranox/wrapt-timeout-decorator
+.. |Pypi Status| image:: https://badge.fury.io/py/wrapt-timeout-decorator.svg
+   :target: https://badge.fury.io/py/wrapt-timeout-decorator
+.. |Coveralls Status| image:: https://coveralls.io/repos/bitranox/wrapt-timeout-decorator/badge.png?branch=master
+   :target: https://coveralls.io/r/bitranox/wrapt-timeout-decorator
