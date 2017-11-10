@@ -3,6 +3,8 @@ wrapt_timeout_decorator
 
 |Build Status| |Pypi Status| |Coveralls Status|
 
+there are many timeout decorators out there - that one focuses on correctness if using with Classes, methods, class methods, static methods and so on, preserving also the traceback information for Pycharm debugging.
+
 Installation
 ------------
 
@@ -24,9 +26,9 @@ Usage
 ::
 
     import time
-    import wrapt_timeout_decorator
+    from wrapt_timeout_decorator import *
 
-    @wrapt_timeout_decorator.timeout(5)
+    @timeout(5)
     def mytest():
         print("Start")
         for i in range(1,10):
@@ -41,9 +43,9 @@ Specify an alternate exception to raise on timeout:
 ::
 
     import time
-    import timeout_decorator
+    from wrapt_timeout_decorator import *
 
-    @timeout_decorator.timeout(5, timeout_exception=StopIteration)
+    @timeout(5, timeout_exception=StopIteration)
     def mytest():
         print("Start")
         for i in range(1,10):
@@ -87,8 +89,9 @@ Acknowledgement
 ---------------
 
 Derived from
-http://www.saltycrane.com/blog/2010/04/using-python-timeout-decorator-uploading-s3/
 https://github.com/pnpnpn/timeout-decorator
+http://www.saltycrane.com/blog/2010/04/using-python-timeout-decorator-uploading-s3/
+
 
 Contribute
 ----------
@@ -101,11 +104,11 @@ License
 
 This software is licensed under the `MIT license <http://en.wikipedia.org/wiki/MIT_License>`_
 
-See `License file <https://github.com/pnpnpn/timeout-decorator/blob/master/LICENSE.txt>`_
+See `License file <https://github.com/bitranox/wrapt_timeout_decorator/blob/master/LICENSE.txt>`_
 
-.. |Build Status| image:: https://travis-ci.org/pnpnpn/timeout-decorator.svg?branch=master
-   :target: https://travis-ci.org/pnpnpn/timeout-decorator
-.. |Pypi Status| image:: https://badge.fury.io/py/timeout-decorator.svg
-    :target: https://badge.fury.io/py/timeout-decorator
-.. |Coveralls Status| image:: https://coveralls.io/repos/pnpnpn/timeout-decorator/badge.png?branch=master
-    :target: https://coveralls.io/r/pnpnpn/timeout-decorator
+.. |Build Status| image:: https://travis-ci.org/bitranox/wrapt_timeout_decorator.svg?branch=master
+   :target: https://travis-ci.org/bitranox/wrapt_timeout_decorator
+.. |Pypi Status| image:: https://badge.fury.io/py/wrapt_timeout_decorator.svg
+   :target: https://badge.fury.io/py/wrapt_timeout_decorator
+.. |Coveralls Status| image:: https://coveralls.io/repos/bitranox/wrapt_timeout_decorator/badge.png?branch=master
+   :target: https://coveralls.io/r/bitranox/wrapt_timeout_decorator
