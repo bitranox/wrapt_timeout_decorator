@@ -1,6 +1,6 @@
 """
 Timeout decorator.
-    :copyright: (c) 2012-2013 by PN.
+    :copyright: (c) 2017 by Robert Nowotny
     :license: MIT, see LICENSE for more details.
 """
 
@@ -19,7 +19,7 @@ import wrapt
 
 # http://www.saltycrane.com/blog/2010/04/using-python-timeout-decorator-uploading-s3/
 # Used work of Stephen "Zero" Chappell <Noctis.Skytower@gmail.com>
-
+# Used work of https://github.com/pnpnpn/timeout-decorator
 
 if sys.version_info < (3, 3):
     TimeoutError = AssertionError  # there is no TimeoutError below Python 3.3
