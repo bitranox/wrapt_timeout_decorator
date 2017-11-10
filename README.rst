@@ -3,9 +3,14 @@ wrapt-timeout-decorator
 
 |Build Status| |Pypi Status| |Coveralls Status|
 
-there are many timeout decorators out there - that one focuses on correctness if using with Classes, methods, class methods, static methods and so on, preserving also the traceback information for Pycharm debugging.
+there are many timeout decorators out there - that one focuses on correctness if using with Classes, methods, class methods, 
+
+static methods and so on, preserving also the traceback information for Pycharm debugging.
+
 There is also a powerful eval function, it allows to read the desired timeout value even from Class attributes.
-It is very flexible and van be used with python2.6, python 3.x, pypy, pypy3 and probably more.
+
+It is very flexible and can be used from python 2.6 to python 3.x, pypy, pypy3 and probably other dialects
+
 
 Installation
 ------------
