@@ -1,5 +1,7 @@
 language: python
+
 sudo: false
+
 python:
 - '2.6'
 - '2.7'
@@ -10,14 +12,22 @@ python:
 - '3.6'
 - 'pypy'
 - 'pypy3'
+
 install:
 - if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
-- pip install python-coveralls tox tox-travis wrapt
-script: tox --recreate
+- pip install python-coveralls tox tox-travis wrapt codecov
+# - pip install python-coveralls  # for coverall
+
+script:
+- tox --recreate
+- coverage run test_timeout_decorator.py
+
 after_success:
 - pip install -e .
 - py.test --cov=wrapt_timeout_decorator --cov-report=term-missing tests
-- coveralls
+# - coveralls
+- codecov
+
 deploy:
   provider: pypi
   user: png
