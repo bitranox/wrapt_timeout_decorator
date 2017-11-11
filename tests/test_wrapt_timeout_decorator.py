@@ -75,6 +75,7 @@ def test_function_name(use_signals):
     def func_name():
         pass
 
+    func_name()
     assert func_name.__name__ == 'func_name'
 
 
