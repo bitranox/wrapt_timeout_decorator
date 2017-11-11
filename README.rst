@@ -12,6 +12,20 @@ There is also a powerful eval function, it allows to read the desired timeout va
 It is very flexible and can be used from python 2.6 to python 3.x, pypy, pypy3 and probably other dialects
 
 
+-----
+
+
+`Report Issues <https://github.com/bitranox/wrapt-timeout-decorator/blob/master/ISSUE_TEMPLATE.md>`_
+
+`Contribute <https://github.com/bitranox/wrapt-timeout-decorator/blob/master/CONTRIBUTING.md>`_
+
+`Pull Request <https://github.com/bitranox/wrapt-timeout-decorator/blob/master/PULL_REQUEST_TEMPLATE.md>`_
+
+`Code of Conduct <https://github.com/bitranox/wrapt-timeout-decorator/blob/master/CODE_OF_CONDUCT.md>`_
+
+
+-----
+
 Installation
 ------------
 
