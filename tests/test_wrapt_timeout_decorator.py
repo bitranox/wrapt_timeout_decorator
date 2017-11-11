@@ -106,3 +106,23 @@ def test_timeout_default_exception_message():
         time.sleep(2)
     with pytest.raises(TimeoutError, match="Function f timed out after 1 seconds"):
         f()
+
+
+def test_timeout_eval(use_signals):
+    """ Test Eval """
+    @timeout(dec_timeout='args[0] * 2',use_signals=use_signals,dec_allow_eval=True)
+    def f(x):
+        time.sleep(0.4)
+    f(0.3)
+    with pytest.raises(TimeoutError):
+        f(0.1)
+
+
+def test_exception(use_signals):
+    """ Test Exception """
+    @timeout(0.4,use_signals=use_signals)
+    def f():
+        raise AssertionError
+
+    with pytest.raises(AssertionError):
+        f()
