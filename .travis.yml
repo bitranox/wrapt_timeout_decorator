@@ -20,7 +20,7 @@ install:
 
 script:
 - tox --recreate
-- coverage run
+# - coverage run
 
 after_success:
 - pip install -e .
