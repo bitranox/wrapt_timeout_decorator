@@ -1,7 +1,7 @@
 wrapt-timeout-decorator
 =================
 
-|Build Status| |Pypi Status| |Coveralls Status|
+|Build Status| |Pypi Status| |Codecov Status|
 
 there are many timeout decorators out there - that one focuses on correctness if using with Classes, methods, class methods, 
 
@@ -238,5 +238,5 @@ See `License file <https://github.com/bitranox/wrapt-timeout-decorator/blob/mast
    :target: https://travis-ci.org/bitranox/wrapt-timeout-decorator
 .. |Pypi Status| image:: https://badge.fury.io/py/wrapt-timeout-decorator.svg
    :target: https://badge.fury.io/py/wrapt-timeout-decorator
-.. |codecov Status| image:: https://codecov.io/gh/bitranox/wrapt-timeout-decorator/branch/master/graph/badge.svg
+.. |Codecov Status| image:: https://codecov.io/gh/bitranox/wrapt-timeout-decorator/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/bitranox/wrapt-timeout-decorator
