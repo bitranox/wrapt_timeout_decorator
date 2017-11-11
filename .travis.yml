@@ -20,7 +20,7 @@ install:
 
 script:
 - tox --recreate
-- coverage run ./tests/test_wrapt_timeout_decorator.py
+- coverage run tests/test_wrapt_timeout_decorator.py
 
 after_success:
 - pip install -e .
