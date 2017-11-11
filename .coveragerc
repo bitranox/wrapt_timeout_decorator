@@ -1,2 +1,3 @@
 [run]
 source = wrapt_timeout_decorator
+include = */tests/test_*
