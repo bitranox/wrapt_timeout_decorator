@@ -213,6 +213,16 @@ You can access :
 ::
 
 
+Requirements
+---------------
+
+following Packets will be installed / needed : 
+
+WRAPT, see : https://github.com/GrahamDumpleton/wrapt
+
+
+
+
 Acknowledgement
 ---------------
 
