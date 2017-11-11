@@ -238,5 +238,5 @@ See `License file <https://github.com/bitranox/wrapt-timeout-decorator/blob/mast
    :target: https://travis-ci.org/bitranox/wrapt-timeout-decorator
 .. |Pypi Status| image:: https://badge.fury.io/py/wrapt-timeout-decorator.svg
    :target: https://badge.fury.io/py/wrapt-timeout-decorator
-.. |Coveralls Status| image:: https://coveralls.io/repos/bitranox/wrapt-timeout-decorator/badge.png?branch=master
-   :target: https://coveralls.io/r/bitranox/wrapt-timeout-decorator
+.. |codecov Status| image:: https://codecov.io/gh/bitranox/wrapt-timeout-decorator/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/bitranox/wrapt-timeout-decorator
