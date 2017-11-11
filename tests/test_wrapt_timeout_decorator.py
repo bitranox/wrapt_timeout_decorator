@@ -110,7 +110,7 @@ def test_timeout_default_exception_message():
 
 def test_timeout_eval(use_signals):
     """ Test Eval """
-    @timeout(dec_timeout='args[0] * 2',use_signals=use_signals,dec_allow_eval=True)
+    @timeout(dec_timeout='args[0] * 2', use_signals=use_signals, dec_allow_eval=True)
     def f(x):
         time.sleep(0.4)
     f(0.3)
@@ -120,7 +120,7 @@ def test_timeout_eval(use_signals):
 
 def test_exception(use_signals):
     """ Test Exception """
-    @timeout(0.4,use_signals=use_signals)
+    @timeout(0.4, use_signals=use_signals)
     def f():
         raise AssertionError
 
