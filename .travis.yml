@@ -15,7 +15,7 @@ python:
 
 install:
 - if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
-- pip install python-coveralls tox tox-travis wrapt codecov
+- pip install tox tox-travis wrapt codecov pytest-cov
 # - pip install python-coveralls  # for coverall
 
 script:
@@ -24,8 +24,9 @@ script:
 
 after_success:
 - pip install -e .
-- py.test --cov=wrapt_timeout_decorator --cov-report=term-missing tests
+# - py.test --cov=wrapt_timeout_decorator --cov-report=term-missing tests
 # - coveralls
+- py.test --cov=./
 - codecov
 
 deploy:
