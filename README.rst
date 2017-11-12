@@ -266,6 +266,9 @@ See `License file <https://github.com/bitranox/wrapt-timeout-decorator/blob/mast
    :target: https://codecov.io/gh/bitranox/wrapt-timeout-decorator
 .. |Better Code| image:: https://bettercodehub.com/edge/badge/bitranox/wrapt-timeout-decorator?branch=master
    :target: https://bettercodehub.com/results/bitranox/wrapt-timeout-decorator
+.. double, because sometimes the badge does not show up
+.. |snyk security| image:: https://snyk.io/test/github/bitranox/wrapt-timeout-decorator/badge.svg
+   :target: https://snyk.io/test/github/bitranox/wrapt-timeout-decorator
 .. |snyk security| image:: https://snyk.io/test/github/bitranox/wrapt-timeout-decorator/badge.svg
    :target: https://snyk.io/test/github/bitranox/wrapt-timeout-decorator
 .. |gemnasium| image:: https://gemnasium.com/badges/github.com/bitranox/wrapt-timeout-decorator.svg
