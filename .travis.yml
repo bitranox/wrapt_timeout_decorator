@@ -14,8 +14,8 @@ python:
 - 'pypy3'
 
 install:
-# - if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
-- if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install 'pyopenssl==0.15'; fi
+- if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
+- if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install 'pyopenssl==0.17'; fi
 - pip install tox tox-travis wrapt pytest-cov coverage codecov
 
 script:
