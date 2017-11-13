@@ -15,8 +15,8 @@ python:
 
 install:
 # - if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
-- if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install coverage==3.7.1 codecov; fi
-- if [[ $TRAVIS_PYTHON_VERSION != 3.2 ]]; then pip install codecov; fi
+- if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install 'coverage<4.0.0'; fi
+- if [[ $TRAVIS_PYTHON_VERSION != 3.2 ]]; then pip install coverage; fi
 - pip install tox tox-travis wrapt pytest-cov
 
 script:
