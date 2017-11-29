@@ -5,8 +5,7 @@ Timeout decorator.
 """
 
 
-import multiprocessing
-import multiprocessing.pool
+import multiprocessing_on_dill as multiprocessing  # dill is much more tolerant then pickle !
 import platform
 import signal
 import sys
