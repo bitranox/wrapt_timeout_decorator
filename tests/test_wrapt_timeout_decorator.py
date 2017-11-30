@@ -81,6 +81,7 @@ def test_function_name(use_signals):
 
 def test_timeout_pickle_error():
     """Test that when a pickle error occurs a timeout error is raised."""
+    # codecov start ignore
     @timeout(dec_timeout=1, use_signals=False)
     def f():
         time.sleep(0.1)
@@ -88,6 +89,7 @@ def test_timeout_pickle_error():
         class Test(object):
             pass
         return Test()
+    # codecov end ignore
     with pytest.raises(TimeoutError):
         f()
 
