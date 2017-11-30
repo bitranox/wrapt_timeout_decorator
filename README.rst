@@ -3,13 +3,17 @@ wrapt-timeout-decorator
 
 |Build Status| |Pypi Status| |Codecov Status| |Better Code| |snyk security| |gemnasium|
 
-there are many timeout decorators out there - that one focuses on correctness if using with Classes, methods, class methods, 
+there are many timeout decorators out there - that one focuses on correctness if using with Classes, methods,
 
-static methods and so on, preserving also the traceback information for Pycharm debugging.
+class methods, static methods and so on, preserving also the traceback information for Pycharm debugging.
 
 There is also a powerful eval function, it allows to read the desired timeout value even from Class attributes.
 
-It is very flexible and can be used from python 2.6 to python 3.x, pypy, pypy3 and probably other dialects
+It is very flexible and can be used from python 2.6 to python 3.x, pypy, pypy3 and probably other dialects.
+
+Since it is using multiprocess and dill, this decorator can be used on more sophisticated objects 
+
+when not using signals (under Windows for instance)
 
 
 -----
@@ -217,6 +221,10 @@ Requirements
 ---------------
 
 following Packets will be installed / needed : 
+
+DILL, see  : https://github.com/uqfoundation/dill
+
+MULTIPROCESS, see: https://github.com/uqfoundation/multiprocess
 
 WRAPT, see : https://github.com/GrahamDumpleton/wrapt
 
