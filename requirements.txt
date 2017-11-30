@@ -1,2 +1,3 @@
+dill
+multiprocess
 wrapt
-multiprocessing_on_dill
