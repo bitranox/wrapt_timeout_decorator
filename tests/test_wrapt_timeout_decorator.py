@@ -80,7 +80,7 @@ def test_function_name(use_signals):
 
 
 def test_timeout_pickle_error():
-    """Test that when a pickle error occurs a timeout error is raised."""
+    """Test that when a pickle error occurs a timeout error is raised"""
     # codecov start ignore
     @timeout(dec_timeout=1, use_signals=False)
     def f():
