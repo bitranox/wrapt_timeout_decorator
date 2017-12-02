@@ -90,7 +90,7 @@ def test_timeout_pickle_error():
             pass
         return Test()
     # codecov end ignore
-    with pytest.raises(TimeoutError):
+    with pytest.raises(RuntimeError):
         f()
 
 
