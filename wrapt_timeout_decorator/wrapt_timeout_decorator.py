@@ -5,7 +5,7 @@ Timeout decorator.
 """
 
 
-import dill          # dill is much more tolerant then pickle, so lets use 
+import dill          # dill is much more tolerant then pickle, so lets use
 import multiprocess  # multiprocess instead of multiprocessing
 import platform
 import signal
@@ -163,7 +163,7 @@ def can_use_timeout_signals():
         return False
     if sys.version_info < (3, 4):
         # on old python use this method - we can only use Signals in the Main Thread
-        return  isinstance(threading.current_thread(), threading._MainThread)
+        return isinstance(threading.current_thread(), threading._MainThread)
     else:
         # much nicer after python 3.4 - we can only use Signals in the Main Thread
         return threading.current_thread() == threading.main_thread()
