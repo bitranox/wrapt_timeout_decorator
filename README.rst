@@ -87,8 +87,11 @@ By default, timeout-decorator uses signals to limit the execution time
 of the given function. This appoach does not work if your function is
 executed not in a main thread (for example if it's a worker thread of
 the web application). There is alternative timeout strategy for this
-case - by using multiprocessing. To use it, just pass
-``use_signals=False`` to the timeout decorator function:
+case - by using multiprocessing. This is done automatically, so 
+in case the decorator does not run in the main thread, signals are
+disabled automatically. You can force not to use signals on Linux 
+by passing the parameter ``use_signals=False`` to the timeout 
+decorator function (mostly for testing) :
 
 ::
 
@@ -107,11 +110,13 @@ case - by using multiprocessing. To use it, just pass
 
 .. warning::
     Make sure that in case of multiprocessing strategy for timeout, your function does not return objects which cannot
-    be pickled, otherwise it will fail at marshalling it between master and child processes.
+    be pickled, otherwise it will fail at marshalling it between master and child processes. To cover more cases,
+    we use multiprocess and dill instead of multiprocessing and pickle.
     
-    Since Signals will not work in Windows, it is disabled by default, whatever You set. 
+    Since Signals will not work on Windows, it is disabled by default, whatever You set. 
     
-    The granularity of the timeout is 0.1 seconds when using use_signals=False (or Windows)
+    The granularity of the timeout is 0.1 seconds when using use_signals=False (on Windows
+    or in a sub-thread)
     
 
 Override with kwargs
