@@ -5,11 +5,12 @@ Timeout decorator.
 """
 
 
-import dill
-import multiprocess as multiprocessing  # dill is much more tolerant then pickle !
+import dill          # dill is much more tolerant then pickle, so lets use 
+import multiprocess  # multiprocess instead of multiprocessing
 import platform
 import signal
 import sys
+import threading
 import time
 import wrapt
 
@@ -119,6 +120,10 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
 
     @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
+        # raise RuntimeError when signals and can not pickle, inform what cant be pickled
+        if not b_signals and not dill.pickles(wrapped):
+            s_err = 'can not pickle {wn}\nbad types {bt}'.format(wn=wrapped.__name__, bt=dill.detect.badtypes(wrapped))
+            raise RuntimeError(s_err)
         exc_msg = exception_message                             # make mutable
         decm_allow_eval = kwargs.pop('dec_allow_eval', dec_allow_eval)  # make mutable and get possibly kwarg
         decm_timeout = kwargs.pop('dec_timeout', dec_timeout)   # make mutable and get possibly kwarg
@@ -143,11 +148,25 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
                 timeout_wrapper = _Timeout(wrapped, timeout_exception, exc_msg, decm_timeout)
                 return timeout_wrapper(*args, **kwargs)
 
-    # never use signals with windows - it wont work anyway
-    b_signals = False
-    if use_signals and not platform.system().lower().startswith('win'):
-        b_signals = True
+    # automatically disable signals when they cant be used
+    if can_use_timeout_signals():
+        b_signals = use_signals
+    else:
+        b_signals = False
+
     return wrapper
+
+
+def can_use_timeout_signals():
+    """ gives True when we can use timeout signals, otherwise False"""
+    if platform.system().lower().startswith('win'):  # on Windows we cant use Signals
+        return False
+    if sys.version_info < (3, 4):
+        # on old python use this method - we can only use Signals in the Main Thread
+        return  isinstance(threading.current_thread(), threading._MainThread)
+    else:
+        # much nicer after python 3.4 - we can only use Signals in the Main Thread
+        return threading.current_thread() == threading.main_thread()
 
 
 def _target(queue, function, *args, **kwargs):
@@ -180,8 +199,8 @@ class _Timeout(object):
         self.__name__ = function.__name__
         self.__doc__ = function.__doc__
         self.__timeout = time.time()
-        self.__process = multiprocessing.Process()
-        self.__queue = multiprocessing.Queue()
+        self.__process = multiprocess.Process()
+        self.__queue = multiprocess.Queue()
 
     def __call__(self, *args, **kwargs):
         """Execute the embedded function object asynchronously.
@@ -189,11 +208,11 @@ class _Timeout(object):
         requires that "ready" be intermittently polled. If and when it is
         True, the "value" property may then be checked for returned data.
         """
-        self.__queue = multiprocessing.Queue(1)
+        self.__queue = multiprocess.Queue(1)
         args = (self.__queue, self.__function) + args
-        self.__process = multiprocessing.Process(target=_target,
-                                                 args=args,
-                                                 kwargs=kwargs)
+        self.__process = multiprocess.Process(target=_target,
+                                              args=args,
+                                              kwargs=kwargs)
         self.__process.daemon = True
         self.__process.start()
         self.__timeout = self.__limit + time.time()
