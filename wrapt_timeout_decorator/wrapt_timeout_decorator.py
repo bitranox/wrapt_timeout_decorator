@@ -122,7 +122,7 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
     def wrapper(wrapped, instance, args, kwargs):
         # raise RuntimeError when signals and can not pickle, inform what cant be pickled
         if not b_signals and not dill.pickles(wrapped):
-            s_err = 'can not pickle {wn}\nbad types {bt}'.format(wn=wrapped.__name__, bt=dill.detect.badtypes(wrapped))
+            s_err = 'can not pickle {wn}, bad types {bt}'.format(wn=wrapped.__name__, bt=dill.detect.badtypes(wrapped))
             raise RuntimeError(s_err)
         exc_msg = exception_message                             # make mutable
         decm_allow_eval = kwargs.pop('dec_allow_eval', dec_allow_eval)  # make mutable and get possibly kwarg
