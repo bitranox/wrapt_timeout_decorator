@@ -30,6 +30,11 @@ when not using signals (under Windows for instance)
 
 -----
 
+Try it in Jupyter Notebook
+------------
+
+You might try it right away in Junyper Notebook by using the "launch binder" badge, or click `here <https://mybinder.org/v2/gh/bitranox/wrapt-timeout-decorator/master?filepath=jupyter_test_wrapt_timeout_decorator.ipynb>`_
+
 Installation
 ------------
 
