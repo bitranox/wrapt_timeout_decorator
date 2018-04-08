@@ -287,4 +287,4 @@ See `License file <https://github.com/bitranox/wrapt-timeout-decorator/blob/mast
 .. |gemnasium| image:: https://gemnasium.com/badges/github.com/bitranox/wrapt-timeout-decorator.svg
    :target: https://gemnasium.com/github.com/bitranox/wrapt-timeout-decorator 
 .. |junyper| image:: https://mybinder.org/badge.svg 
-:target: https://mybinder.org/v2/gh/bitranox/wrapt-timeout-decorator/master?urlpath=https%3A%2F%2Fgithub.com%2Fbitranox%2Fwrapt-timeout-decorator%2Fblob%2Fmaster%2Fjupyter_test_wrapt_timeout_decorator.ipynb
+   :target: https://mybinder.org/v2/gh/bitranox/wrapt-timeout-decorator/master?urlpath=https%3A%2F%2Fgithub.com%2Fbitranox%2Fwrapt-timeout-decorator%2Fblob%2Fmaster%2Fjupyter_test_wrapt_timeout_decorator.ipynb
