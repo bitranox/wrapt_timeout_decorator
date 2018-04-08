@@ -1,7 +1,7 @@
 wrapt-timeout-decorator
 =================
 
-|Build Status| |junyper| |Pypi Status| |Codecov Status| |Better Code| |snyk security| |gemnasium|
+|Build Status| |jupyter| |Pypi Status| |Codecov Status| |Better Code| |snyk security| |gemnasium|
 
 there are many timeout decorators out there - that one focuses on correctness if using with Classes, methods,
 
@@ -33,7 +33,7 @@ when not using signals (under Windows for instance)
 Try it in Jupyter Notebook
 ------------
 
-You might try it right away in Junyper Notebook by using the "launch binder" badge, or click `here <https://mybinder.org/v2/gh/bitranox/wrapt-timeout-decorator/master?filepath=jupyter_test_wrapt_timeout_decorator.ipynb>`_
+You might try it right away in Jupyter Notebook by using the "launch binder" badge, or click `here <https://mybinder.org/v2/gh/bitranox/wrapt-timeout-decorator/master?filepath=jupyter_test_wrapt_timeout_decorator.ipynb>`_
 
 Installation
 ------------
@@ -291,5 +291,5 @@ See `License file <https://github.com/bitranox/wrapt-timeout-decorator/blob/mast
    :target: https://snyk.io/test/github/bitranox/wrapt-timeout-decorator
 .. |gemnasium| image:: https://gemnasium.com/badges/github.com/bitranox/wrapt-timeout-decorator.svg
    :target: https://gemnasium.com/github.com/bitranox/wrapt-timeout-decorator 
-.. |junyper| image:: https://mybinder.org/badge.svg 
+.. |jupyter| image:: https://mybinder.org/badge.svg 
    :target: https://mybinder.org/v2/gh/bitranox/wrapt-timeout-decorator/master?filepath=jupyter_test_wrapt_timeout_decorator.ipynb
