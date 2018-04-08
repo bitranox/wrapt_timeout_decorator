@@ -1,7 +1,7 @@
 wrapt-timeout-decorator
 =================
 
-|Build Status| |Pypi Status| |Codecov Status| |Better Code| |snyk security| |gemnasium|
+|Build Status| |junyper| |Pypi Status| |Codecov Status| |Better Code| |snyk security| |gemnasium|
 
 there are many timeout decorators out there - that one focuses on correctness if using with Classes, methods,
 
@@ -286,3 +286,5 @@ See `License file <https://github.com/bitranox/wrapt-timeout-decorator/blob/mast
    :target: https://snyk.io/test/github/bitranox/wrapt-timeout-decorator
 .. |gemnasium| image:: https://gemnasium.com/badges/github.com/bitranox/wrapt-timeout-decorator.svg
    :target: https://gemnasium.com/github.com/bitranox/wrapt-timeout-decorator 
+.. |junyper| image:: https://mybinder.org/badge.svg
+   :target: https://mybinder.org/v2/gh/bitranox/wrapt-timeout-decorator/master
