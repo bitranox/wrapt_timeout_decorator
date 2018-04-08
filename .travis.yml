@@ -14,7 +14,7 @@ python:
 - 'pypy3'
 
 install:
-# - if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
+- if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
 - pip install tox tox-travis dill multiprocess wrapt pytest-cov coverage codecov
 
 script:
