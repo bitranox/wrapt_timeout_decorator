@@ -206,10 +206,10 @@ class _Timeout(object):
         requires that "ready" be intermittently polled. If and when it is
         True, the "value" property may then be checked for returned data.
         """
-        self.__parent_conn, self.__child_conn = multiprocessing.Pipe(duplex=False)
+        self.__parent_conn, self.__child_conn = multiprocess.Pipe(duplex=False)
 
         args = (self.__child_conn, self.__function) + args
-        self.__process = multiprocessing.Process(target=_target, args=args, kwargs=kwargs)
+        self.__process = multiprocess.Process(target=_target, args=args, kwargs=kwargs)
         self.__process.daemon = True
         self.__process.start()
         if self.__parent_conn.poll(self.__limit):
