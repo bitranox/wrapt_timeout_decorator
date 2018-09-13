@@ -200,7 +200,6 @@ class _Timeout(object):
         self.__parent_conn = None
         self.__child_conn = None
 
-
     def __call__(self, *args, **kwargs):
         """Execute the embedded function object asynchronously.
         The function given to the constructor is transparently called and
@@ -218,7 +217,6 @@ class _Timeout(object):
         else:
             self.cancel()
 
-
     def cancel(self):
         """Terminate any possible execution of the embedded function."""
         self.__parent_conn.close()
@@ -227,13 +225,14 @@ class _Timeout(object):
 
         _raise_exception(self.__timeout_exception, self.__exception_message)
 
-
     @property
     def value(self):
         flag, load = self.__parent_conn.recv()
         self.__parent_conn.close()
-        self.__process.join(1)   # when self.__queue.get() exits, maybe __process is still alive,
-                                 # then it might zombie the process. so join it explicitly
+        # when self.__queue.get() exits, maybe __process is still alive,
+        # then it might zombie the process. so join it explicitly
+        self.__process.join(1)
+
         if flag:
             return load
         raise load
