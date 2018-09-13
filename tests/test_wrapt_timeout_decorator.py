@@ -3,6 +3,7 @@ from wrapt_timeout_decorator import timeout
 import pytest
 import sys
 import time
+from dill import PicklingError
 
 
 if sys.version_info < (3, 3):             # there is no TimeoutError < Python 3.3
@@ -23,12 +24,21 @@ def test_timeout_decorator_arg(use_signals):
         f()
 
 
-def test_timeout_class_method(use_signals):
+def test_timeout_class_method_use_signals():
     class c():
-        @timeout(1, use_signals=use_signals)
+        @timeout(1, use_signals=True)
         def f(self):
             time.sleep(2)
     with pytest.raises(TimeoutError):
+        c().f()
+
+
+def test_timeout_class_method_dont_use_signals():
+    class c():
+        @timeout(1, use_signals=False)
+        def f(self):
+            time.sleep(2)
+    with pytest.raises(RuntimeError):
         c().f()
 
 
