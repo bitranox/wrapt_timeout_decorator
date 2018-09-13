@@ -235,6 +235,9 @@ class _Timeout(object):
         """Read-only property containing data returned from function."""
         if self.ready is True:
             flag, load = self.__queue.get()
+            # when self.__queue.get() exits, maybe __process is still alive,
+            # then it might zombie the process. so join it explicitly
+            self.__process.join(1)
             if flag:
                 return load
             raise load
