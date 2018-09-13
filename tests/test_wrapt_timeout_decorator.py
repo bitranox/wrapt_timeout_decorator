@@ -38,7 +38,7 @@ def test_timeout_class_method_dont_use_signals():
         @timeout(1, use_signals=False)
         def f(self):
             time.sleep(2)
-    with pytest.raises(RuntimeError):
+    with pytest.raises(PicklingError):
         c().f()
 
 
@@ -100,7 +100,7 @@ def test_timeout_pickle_error():
             pass
         return Test()
     # codecov end ignore
-    with pytest.raises(TimeoutError):
+    with pytest.raises(PicklingError):
         f()
 
 
