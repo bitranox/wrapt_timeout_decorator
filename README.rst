@@ -13,7 +13,9 @@ It is very flexible and can be used from python 2.6 to python 3.x, pypy, pypy3 a
 
 Since it is using multiprocess and dill, this decorator can be used on more sophisticated objects 
 
-when not using signals (under Windows for instance)
+when not using signals (under Windows for instance). In that case multiprocess and multiprocess.pipe is used 
+
+to communicate with the child process (instead of multiprocessing.queue) which is faster and might work on Amazon AWS.
 
 
 -----
