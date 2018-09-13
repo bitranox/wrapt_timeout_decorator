@@ -1,6 +1,12 @@
 Changelog
 =========
 
+1.0.4
+-----
+
+2017-12-02: automatic detection if we are in the mainthread. Signals can only be used in the main thread. If the decorator is running in a subthread, we automatically disable signals.
+
+
 1.0.3
 -----
 
