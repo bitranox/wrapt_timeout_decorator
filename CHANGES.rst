@@ -1,6 +1,16 @@
 Changelog
 =========
 
+1.0.5
+-----
+2018-09-13: use multiprocessing.pipe instead of queue
+If we are not able to use signals, we need to spawn a new process.
+This was done in the past by pickling the target function and put it on a queue -
+now this is done with a half-duplex pipe.
+
+- it is faster
+- it probably can work on Amazon AWS, since there You must not use queues
+
 1.0.4
 -----
 
