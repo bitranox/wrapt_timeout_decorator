@@ -120,6 +120,11 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
 
     @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
+        if (not b_signals) and (not dill.pickles(wrapped)):
+            s_err = 'can not pickle {wn}, bad types {bt}'.format(wn=wrapped.__name__, bt=dill.detect.badtypes(wrapped))
+            logger.error(s_err)
+            raise dill.PicklingError(s_err)
+
         exc_msg = exception_message                             # make mutable
         decm_allow_eval = kwargs.pop('dec_allow_eval', dec_allow_eval)  # make mutable and get possibly kwarg
         decm_timeout = kwargs.pop('dec_timeout', dec_timeout)   # make mutable and get possibly kwarg
