@@ -122,7 +122,6 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
     def wrapper(wrapped, instance, args, kwargs):
         if (not b_signals) and (not dill.pickles(wrapped)):
             s_err = 'can not pickle {wn}, bad types {bt}'.format(wn=wrapped.__name__, bt=dill.detect.badtypes(wrapped))
-            logger.error(s_err)
             raise dill.PicklingError(s_err)
 
         exc_msg = exception_message                             # make mutable
