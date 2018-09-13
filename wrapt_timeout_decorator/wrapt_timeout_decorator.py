@@ -10,7 +10,6 @@ import multiprocess  # multiprocess instead of multiprocessing
 import platform
 import signal
 import sys
-import threading
 import time
 import wrapt
 
