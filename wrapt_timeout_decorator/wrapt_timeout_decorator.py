@@ -233,7 +233,7 @@ class _Timeout(object):
     def value(self):
         flag, load = self.__parent_conn.recv()
         self.__parent_conn.close()
-        # when self.__queue.get() exits, maybe __process is still alive,
+        # when self.__parent_conn.recv() exits, maybe __process is still alive,
         # then it might zombie the process. so join it explicitly
         self.__process.join(1)
 
