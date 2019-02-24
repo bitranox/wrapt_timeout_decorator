@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.0.6
+-----
+2019-02-24: fix pickle detection when use_signals = False, drop Python2.6 support since wrapt dropped it.
+
 1.0.5
 -----
 2018-09-13: use multiprocessing.pipe instead of queue
@@ -14,7 +18,7 @@ now this is done with a half-duplex pipe.
 1.0.4
 -----
 
-2017-12-02: automatic detection if we are in the mainthread. Signals can only be used in the main thread. If the decorator is running in a subthread, we automatically disable signals.
+2017-12-02: automatic detection if we are in the main thread. Signals can only be used in the main thread. If the decorator is running in a subthread, we automatically disable signals.
 
 
 1.0.3
