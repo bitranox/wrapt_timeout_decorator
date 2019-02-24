@@ -23,8 +23,7 @@ script:
 
 after_success:
 - pip install -e .
-# - py.test --cov=./
-- py.test --cov=codecov
+- py.test --cov=./
 - codecov
 
 #deploy:
