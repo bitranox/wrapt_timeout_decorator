@@ -35,6 +35,7 @@ def _raise_exception(exception, exception_message):
         exception = TimeoutError
     raise exception(exception_message)
 
+
 def _get_bad_pickling_types(object_to_pickle):
     bad_types = list()
     try:
@@ -43,6 +44,7 @@ def _get_bad_pickling_types(object_to_pickle):
         pass
     finally:
         return bad_types
+
 
 def _raise_if_can_not_be_pickled(object_to_pickle):
     bad_types = _get_bad_pickling_types(object_to_pickle)
@@ -53,6 +55,7 @@ def _raise_if_can_not_be_pickled(object_to_pickle):
             object_name = 'object'
         s_err = 'can not pickle {on}, bad types {bt}'.format(on=object_name, bt=bad_types)
         raise dill.PicklingError(s_err)
+
 
 def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False):
     """Add a timeout parameter to a function and return it.
