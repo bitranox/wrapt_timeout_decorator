@@ -24,7 +24,7 @@ script:
 
 after_success:
 - coverage combine
-- codecov
+# - codecov
 - pip install -e .
 
 #deploy:
