@@ -23,10 +23,9 @@ script:
 - tox
 
 after_success:
-- pip install -e .
-#- py.test --cov=./
 - coverage combine
 - codecov
+- pip install -e .
 
 #deploy:
 #  provider: pypi
