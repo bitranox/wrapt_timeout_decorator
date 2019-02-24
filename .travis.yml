@@ -23,7 +23,7 @@ script:
 - tox
 
 after_success:
-- coverage combine
+# - coverage combine
 # - codecov
 - pip install -e .
 
