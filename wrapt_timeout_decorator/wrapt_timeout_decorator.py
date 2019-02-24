@@ -35,6 +35,24 @@ def _raise_exception(exception, exception_message):
         exception = TimeoutError
     raise exception(exception_message)
 
+def _get_bad_pickling_types(object_to_pickle):
+    bad_types = list()
+    try:
+        bad_types = dill.detect.badtypes(object_to_pickle)
+    except NotImplementedError:
+        pass
+    finally:
+        return bad_types
+
+def _raise_if_can_not_be_pickled(object_to_pickle):
+    bad_types = _get_bad_pickling_types(object_to_pickle)
+    if bad_types:
+        if hasattr(object_to_pickle, '__name__'):
+            object_name = object_to_pickle.__name__
+        else:
+            object_name = 'object'
+        s_err = 'can not pickle {on}, bad types {bt}'.format(on=object_name, bt=bad_types)
+        raise dill.PicklingError(s_err)
 
 def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False):
     """Add a timeout parameter to a function and return it.
@@ -120,9 +138,8 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
 
     @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
-        if (not b_signals) and (not dill.pickles(wrapped)):
-            s_err = 'can not pickle {wn}, bad types {bt}'.format(wn=wrapped.__name__, bt=dill.detect.badtypes(wrapped))
-            raise dill.PicklingError(s_err)
+        if not b_signals:
+            _raise_if_can_not_be_pickled(object_to_pickle=wrapped)
 
         exc_msg = exception_message                             # make mutable
         decm_allow_eval = kwargs.pop('dec_allow_eval', dec_allow_eval)  # make mutable and get possibly kwarg
