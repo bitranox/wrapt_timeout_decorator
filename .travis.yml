@@ -9,7 +9,7 @@ python:
 - '3.5'
 - '3.6'
 # - '3.7'     # 2018-09-10 Python 3.7 not installed on travis
-- '3.7-dev'   # 2018-09-10 old Version, but thats all we have got for now
+- '3.7-dev'   # 2018-09-10 old Version, but that is all we have got for now
 # - '3.8-dev' # 2018-09-10 does not exist now
 - 'pypy'
 - 'pypy3'
@@ -24,11 +24,14 @@ script:
 # - coverage run test_wrapt_timeout_decorator.py
 
 after_success:
+##### TEST
 # - coverage run #nothing to do
 # - coverage run test_wrapt_timeout_decorator.py  # file not found
-- coverage run ./tests/test_wrapt_timeout_decorator.py
 # - py.test --cov=wrapt_timeout_decorator
 # - py.test --cov=wrapt_timeout_decorator --cov-append
+##### /TEST
+
+# - coverage run ./tests/test_wrapt_timeout_decorator.py  #  wrapt-timeout-decorator was never installed - probably just pip install it !
 - coverage combine
 - codecov
 - pip install -e .
