@@ -25,21 +25,27 @@ def test_timeout_decorator_arg(use_signals):
 
 
 def test_timeout_class_method_use_signals():
-    class c():
-        @timeout(1, use_signals=True)
+    class TestClass(object):
+        def __init__(self):
+            self.x = 3
+
+        @timeout('instance.x/3', use_signals=True, dec_allow_eval=True)
         def f(self):
             time.sleep(2)
     with pytest.raises(TimeoutError):
-        c().f()
+        TestClass().f()
 
 
 def test_timeout_class_method_dont_use_signals():
-    class c():
-        @timeout(1, use_signals=False)
+    class TestClass(object):
+        def __init__(self):
+            self.x = 3
+
+        @timeout('instance.x/3', use_signals=False, dec_allow_eval=True)
         def f(self):
             time.sleep(2)
     with pytest.raises(PicklingError):
-        c().f()
+        TestClass().f()
 
 
 def test_timeout_kwargs(use_signals):
