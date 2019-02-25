@@ -1,5 +1,5 @@
 wrapt-timeout-decorator
-=================
+=======================
 
 |Build Status| |jupyter| |Pypi Status| |Codecov Status| |Better Code| |snyk security|
 
@@ -33,7 +33,7 @@ to communicate with the child process (instead of multiprocessing.queue) which i
 -----
 
 Try it in Jupyter Notebook
-------------
+--------------------------
 
 You might try it right away in Jupyter Notebook by using the "launch binder" badge, or click `here <https://mybinder.org/v2/gh/bitranox/wrapt-timeout-decorator/master?filepath=jupyter_test_wrapt_timeout_decorator.ipynb>`_
 
@@ -124,12 +124,12 @@ decorator function (mostly for testing) :
     
     The granularity of the timeout is 0.1 seconds when using use_signals=False (on Windows
     or in a sub-thread)
-    
+
 
 Override with kwargs
 --------------------
 
-decorator parameters starting with dec_ can be overridden by kwargs with the same name : 
+decorator parameters starting with \dec_* can be overridden by kwargs with the same name :
 
 ::
 
@@ -148,10 +148,10 @@ decorator parameters starting with dec_ can be overridden by kwargs with the sam
         mytest('starting',dec_timeout=12)   # override the decorators setting. The kwarg dec_timeout will be not 
                                             # passed to the decorated function.  
 
-::
 
 Using the decorator without actually decorating the function
 ------------------------------------------------------------
+
 
 ::
 
@@ -169,8 +169,6 @@ Using the decorator without actually decorating the function
         timeout(dec_timeout=5)(mytest)('starting')
 
 
-::
-
 Using allow_eval
 ----------------
 This is very powerful, but can be also very dangerous if you accept strings to evaluate from UNTRUSTED input.
@@ -184,13 +182,13 @@ You can access :
 
     wrapped (the function object)
     
-    instance    Example: 'instance.x' - an attribute of the instace of the class instance
+    instance    Example: 'instance.x' - an attribute of the instance of the class instance
     
     args        Example: 'args[0]' - the timeout is the first argument in args
     
     kwargs      Example: 'kwargs["max_time"] * 2'
     
-    and of course all attributes You can think of - that makes it powerful but dangerouse.
+    and of course all attributes You can think of - that makes it powerful but dangerous.
     
     by default allow_eval is disabled - but You can enable it in order to cover some edge cases without
     
@@ -226,13 +224,10 @@ You can access :
         my_foo.foo4(1,more_time=3)  # this will time out in 4 seconds
 
 
-::
-
-
 Requirements
----------------
+------------
 
-following Packets will be installed / needed : 
+following Packets will be installed / needed :
 
 DILL, see  : https://github.com/uqfoundation/dill
 
@@ -286,10 +281,7 @@ See `License file <https://github.com/bitranox/wrapt-timeout-decorator/blob/mast
    :target: https://codecov.io/gh/bitranox/wrapt-timeout-decorator
 .. |Better Code| image:: https://bettercodehub.com/edge/badge/bitranox/wrapt-timeout-decorator?branch=master
    :target: https://bettercodehub.com/results/bitranox/wrapt-timeout-decorator
-.. double, because sometimes the badge does not show up
 .. |snyk security| image:: https://snyk.io/test/github/bitranox/wrapt-timeout-decorator/badge.svg
    :target: https://snyk.io/test/github/bitranox/wrapt-timeout-decorator
-.. |snyk security| image:: https://snyk.io/test/github/bitranox/wrapt-timeout-decorator/badge.svg
-   :target: https://snyk.io/test/github/bitranox/wrapt-timeout-decorator
-.. |jupyter| image:: https://mybinder.org/badge.svg 
+.. |jupyter| image:: https://mybinder.org/badge.svg
    :target: https://mybinder.org/v2/gh/bitranox/wrapt-timeout-decorator/master?filepath=jupyter_test_wrapt_timeout_decorator.ipynb
