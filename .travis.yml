@@ -20,7 +20,7 @@ install:
 
 script:
 - tox --recreate
-pytest --cov=./
+- pytest --cov=./
 
 after_success:
 # - coverage combine
