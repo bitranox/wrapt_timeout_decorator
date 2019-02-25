@@ -45,7 +45,7 @@ def _get_bad_pickling_types(object_to_pickle):
         return bad_types
 
 
-def _detect_unpickable_objects_and_reraise(object_to_pickle):
+def detect_unpickable_objects_and_reraise(object_to_pickle):
     bad_types = _get_bad_pickling_types(object_to_pickle)
     if hasattr(object_to_pickle, '__name__'):
         object_name = object_to_pickle.__name__
@@ -163,7 +163,7 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
                     # sometimes the detection detects unpickable objects but actually
                     # they can be pickled - so we just try to start the thread and report
                     # the unpickable objects if that fails
-                    _detect_unpickable_objects_and_reraise(wrapped)
+                    detect_unpickable_objects_and_reraise(wrapped)
 
     # automatically disable signals when they cant be used
     if can_use_timeout_signals():
