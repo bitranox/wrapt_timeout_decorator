@@ -227,14 +227,14 @@ class _Timeout(object):
 
         try:
             self.__process = multiprocess.Process(target=_target, args=args, kwargs=kwargs)
+            self.__process.daemon = True
+            self.__process.start()
         except dill.PicklingError:
             # sometimes the detection detects unpickable objects but actually
             # they can be pickled - so we just try to start the thread and report
             # the unpickable objects if that fails
             _detect_unpickable_objects_and_reraise(self.__function)
 
-        self.__process.daemon = True
-        self.__process.start()
         if self.__parent_conn.poll(self.__limit):
             return self.value
         else:
