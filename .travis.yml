@@ -26,9 +26,9 @@ before_install:
   - chmod +x ./before_install_jython.sh
   - if [ -n "$jython" ]; then ./before_install_jython.sh; source $HOME/myvirtualenv/bin/activate ;fi
   # - if [ -n "$jython" ]; then pip install jip==0.7; fi
-  - if [ -n "$jython" ]; then pip install jip==0.9.13; fi
-  # - if [ -n "$jython" ]; then pip install jip; fi
-  - if [ -n "$jython" ]; then jip install joda-time:joda-time:2.3; fi
+  # - if [ -n "$jython" ]; then pip install jip==0.9.13; fi
+  - if [ -n "$jython" ]; then pip install jip; fi
+  - if [ -n "$jython" ]; then jip install joda-time; fi
   # - if [ -n "$jython" ]; then jip install joda-time:joda-time; fi
   - if [ -n "$jython" ]; then export CLASSPATH=$VIRTUAL_ENV/javalib/*; fi
   - pip install unittest2
