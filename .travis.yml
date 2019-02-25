@@ -20,12 +20,12 @@ install:
 
 script:
 - tox --recreate
-# - tox
+pytest --cov=./
 
 after_success:
-# - coverage combine
-# - codecov
-- pip install -e .
+- coverage combine
+- codecov
+# - pip install -e .
 
 #deploy:
 #  provider: pypi
