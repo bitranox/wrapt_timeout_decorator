@@ -21,7 +21,6 @@ jip install $JYTHON
 NON_GROUP_ID=${JYTHON#*:}
 _JYTHON_BASENAME=${NON_GROUP_ID/:/-}
 OLD_VIRTUAL_ENV=$VIRTUAL_ENV
-echo "step4"
 java -jar $OLD_VIRTUAL_ENV/javalib/${_JYTHON_BASENAME}.jar -s -d $HOME/jython
 
 BEFORE_PY_26=$($HOME/jython/bin/jython -c "import sys; print sys.version_info < (2, 6)")

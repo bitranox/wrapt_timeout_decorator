@@ -27,8 +27,7 @@ before_install:
   - if [ -n "$JYTHON" ]; then ./before_install_jython.sh; source $HOME/myvirtualenv/bin/activate ;fi
   # - if [ -n "$JYTHON" ]; then pip install jip; fi  # hangs on Collecting chardet<3.1.0,>=3.0.2 (from requests->jip)
   - if [ -n "$JYTHON" ]; then pip install jip==0.7; fi
-  - if [ -n "$JYTHON" ]; then jip install joda-time; fi
-  # - if [ -n "$JYTHON" ]; then jip install joda-time:joda-time; fi
+  - if [ -n "$JYTHON" ]; then jip install joda-time:joda-time; fi
   - if [ -n "$JYTHON" ]; then export CLASSPATH=$VIRTUAL_ENV/javalib/*; fi
   - pip install unittest2
 
