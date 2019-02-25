@@ -146,15 +146,11 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
             return wrapped(*args, **kwargs)
         else:
             if b_signals:
-                def handler(signum, frame):
-                    _raise_exception(timeout_exception, exc_msg)
-                old = signal.signal(signal.SIGALRM, handler)
-                signal.setitimer(signal.ITIMER_REAL, decm_timeout)
+                old_alarm_handler = _return_old_and_set_new_alarm_handler(timeout_exception, exc_msg, decm_timeout)
                 try:
                     return wrapped(*args, **kwargs)
                 finally:
-                    signal.setitimer(signal.ITIMER_REAL, 0)
-                    signal.signal(signal.SIGALRM, old)
+                    _reset_and_restore_old_alarm_handler(old_alarm_handler)
             else:
                 try:
                     timeout_wrapper = _Timeout(wrapped, timeout_exception, exc_msg, decm_timeout)
@@ -199,6 +195,19 @@ def _target(child_conn, function, *args, **kwargs):
         child_conn.send((False, sys.exc_info()[1]))
     finally:
         child_conn.close()
+
+
+def _return_old_and_set_new_alarm_handler(timeout_exception, exc_msg, decm_timeout):
+    def new_alarm_handler(signum, frame):
+        _raise_exception(timeout_exception, exc_msg)
+    old_alarm_handler = signal.signal(signal.SIGALRM, new_alarm_handler)
+    signal.setitimer(signal.ITIMER_REAL, decm_timeout)
+    return old_alarm_handler
+
+
+def _reset_and_restore_old_alarm_handler(old_alarm_handler):
+    signal.setitimer(signal.ITIMER_REAL, 0)
+    signal.signal(signal.SIGALRM, old_alarm_handler)
 
 
 class _Timeout(object):
