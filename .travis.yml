@@ -32,8 +32,8 @@ after_success:
 ##### /TEST
 
 # - coverage run ./tests/test_wrapt_timeout_decorator.py  #  wrapt-timeout-decorator was never installed - probably just pip install it !
-- coverage combine
-- codecov
+# - coverage combine
+# + - codecov
 - pip install -e .
 
 #deploy:
