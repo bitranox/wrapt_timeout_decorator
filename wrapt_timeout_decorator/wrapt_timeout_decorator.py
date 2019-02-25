@@ -101,7 +101,6 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
     my_foo.foo2(dec_timeout='instance.x * 2.5 +1')
     my_foo.foo3(dec_timeout='instance.x * 2.5 +1', dec_allow_eval=True)
 
-
     :param dec_timeout: *       optional time limit in seconds or fractions of a second. If None is passed,
                                 no seconds is applied. This adds some flexibility to the usage: you can disable timing
                                 out depending on the settings. dec_timeout will always be overridden by a
@@ -129,14 +128,11 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
     :type timeout_exception:    Exception
     :type exception_message:    str
 
-
     :raises:                    TimeoutError if time limit is reached
-
     :returns:                   the Result of the wrapped function
 
     It is illegal to pass anything other than a function as the first parameter.
     The function is wrapped and returned to the caller.
-
     """
 
     @wrapt.decorator
