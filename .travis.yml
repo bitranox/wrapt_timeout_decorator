@@ -21,6 +21,7 @@ install:
 script:
 - tox --recreate
 # - pytest --cov=./
+- coverage run test_wrapt_timeout_decorator.py
 
 after_success:
 - coverage combine
