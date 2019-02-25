@@ -156,8 +156,14 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
                     signal.setitimer(signal.ITIMER_REAL, 0)
                     signal.signal(signal.SIGALRM, old)
             else:
-                timeout_wrapper = _Timeout(wrapped, timeout_exception, exc_msg, decm_timeout)
-                return timeout_wrapper(*args, **kwargs)
+                try:
+                    timeout_wrapper = _Timeout(wrapped, timeout_exception, exc_msg, decm_timeout)
+                    return timeout_wrapper(*args, **kwargs)
+                except dill.PicklingError:
+                    # sometimes the detection detects unpickable objects but actually
+                    # they can be pickled - so we just try to start the thread and report
+                    # the unpickable objects if that fails
+                    _detect_unpickable_objects_and_reraise(wrapped)
 
     # automatically disable signals when they cant be used
     if can_use_timeout_signals():
@@ -222,18 +228,10 @@ class _Timeout(object):
         True, the "value" property may then be checked for returned data.
         """
         self.__parent_conn, self.__child_conn = multiprocess.Pipe(duplex=False)
-
         args = (self.__child_conn, self.__function) + args
-
-        try:
-            self.__process = multiprocess.Process(target=_target, args=args, kwargs=kwargs)
-            self.__process.daemon = True
-            self.__process.start()
-        except dill.PicklingError:
-            # sometimes the detection detects unpickable objects but actually
-            # they can be pickled - so we just try to start the thread and report
-            # the unpickable objects if that fails
-            _detect_unpickable_objects_and_reraise(self.__function)
+        self.__process = multiprocess.Process(target=_target, args=args, kwargs=kwargs)
+        self.__process.daemon = True
+        self.__process.start()
 
         if self.__parent_conn.poll(self.__limit):
             return self.value

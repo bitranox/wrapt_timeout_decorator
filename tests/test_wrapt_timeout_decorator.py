@@ -38,7 +38,10 @@ def test_timeout_class_method_use_signals():
 
 
 def test_timeout_class_method_dont_use_signals_can_pickle1():
-
+    """
+    >>> test_timeout_class_method_dont_use_signals_can_pickle1()
+    :return:
+    """
     class TestClass(object):
         def __init__(self):
             self.x = 3
