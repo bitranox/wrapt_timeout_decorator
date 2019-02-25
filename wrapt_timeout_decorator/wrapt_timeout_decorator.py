@@ -39,7 +39,7 @@ def _raise_exception(exception, exception_message):
 def _get_bad_pickling_types(object_to_pickle):
     bad_types = list()
     try:
-        bad_types = dill.detect.badtypes(object_to_pickle, exact=True)
+        bad_types = dill.detect.badtypes(object_to_pickle)
     except NotImplementedError:
         pass
     finally:
