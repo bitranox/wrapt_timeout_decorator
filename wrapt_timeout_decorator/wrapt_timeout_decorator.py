@@ -74,20 +74,20 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
 
     Usage without decorating a function :
 
-    def foo2(a,b,c):
+    def test_method(a,b,c):
         pass
 
-    timeout(3)(foo2)(1,2,c=3)
+    timeout(3)(test_method)(1,2,c=3)
 
     Usage with eval (beware, security hazard, no user input values here):
         read : https://nedbatchelder.com/blog/201206/eval_really_is_dangerous.html before usage !
 
-    def class Foo(object):
+    def class TestClass3(object):
         def __init__(self,x):
             self.x=x
 
         @timeout('instance.x', dec_allow_eval=True)
-        def foo2(self):
+        def test_method(self):
             print('swallow')
 
         @timeout(1)
@@ -95,8 +95,8 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
             print('parrot')
 
     # or override via kwarg :
-    my_foo = Foo(3)
-    my_foo.foo2(dec_timeout='instance.x * 2.5 +1')
+    my_foo = TestClass3(3)
+    my_foo.test_method(dec_timeout='instance.x * 2.5 +1')
     my_foo.foo3(dec_timeout='instance.x * 2.5 +1', dec_allow_eval=True)
 
     :param dec_timeout: *       optional time limit in seconds or fractions of a second. If None is passed,

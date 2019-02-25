@@ -200,12 +200,12 @@ You can access :
 ::
 
 
-    def class Foo(object):
+    def class TestClass3(object):
         def __init__(self,x):
             self.x=x
 
         @timeout('instance.x', dec_allow_eval=True)
-        def foo2(self):
+        def test_method(self):
             print('swallow')
 
         @timeout(1)
@@ -220,8 +220,8 @@ You can access :
 
     if __name__ == '__main__':
         # or override via kwarg :
-        my_foo = Foo(3)
-        my_foo.foo2(dec_timeout='instance.x * 2.5 +1')
+        my_foo = TestClass3(3)
+        my_foo.test_method(dec_timeout='instance.x * 2.5 +1')
         my_foo.foo3(dec_timeout='instance.x * 2.5 +1', dec_allow_eval=True)
         my_foo.foo4(1,more_time=3)  # this will time out in 4 seconds
 
