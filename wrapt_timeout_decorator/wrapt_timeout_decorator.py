@@ -39,24 +39,15 @@ def _raise_exception(exception, exception_message):
 def _get_bad_pickling_types(object_to_pickle):
     bad_types = list()
     try:
-        bad_types = dill.detect.badtypes(object_to_pickle)
+        bad_types = dill.detect.badtypes(object_to_pickle, exact=True, safe=True)
     except NotImplementedError:
         pass
     finally:
         return bad_types
 
-
-def _is_pickable(object_to_pickle):
-    try:
-        dill.dumps(object_to_pickle)
-        return True
-    except dill.PicklingError:
-        return False
-
-
 def _raise_if_can_not_be_pickled(object_to_pickle):
-    if not _is_pickable(object_to_pickle):
-        bad_types = _get_bad_pickling_types(object_to_pickle)
+    bad_types = _get_bad_pickling_types(object_to_pickle)
+    if bad_types:
         if hasattr(object_to_pickle, '__name__'):
             object_name = object_to_pickle.__name__
         else:
@@ -146,8 +137,7 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
     @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
         if not b_signals:
-            # _raise_if_can_not_be_pickled(object_to_pickle=wrapped)
-            pass
+            _raise_if_can_not_be_pickled(object_to_pickle=wrapped)
 
         exc_msg = exception_message                             # make mutable
         decm_allow_eval = kwargs.pop('dec_allow_eval', dec_allow_eval)  # make mutable and get possibly kwarg
