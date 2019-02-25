@@ -24,7 +24,8 @@ install:
 # - pip install tox tox-travis dill multiprocess wrapt pytest pytest-cov codecov
 
 script:
-- tox --recreate
+# - tox --recreate
+- tox
 
 after_success:
 - pip install -e .
