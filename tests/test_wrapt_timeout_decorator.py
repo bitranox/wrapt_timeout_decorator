@@ -89,6 +89,7 @@ def test_timeout_class_method_dont_use_signals_can_pickle3():
     my_object = ClassTest4(3)
     assert my_object.test_method() == 'done'
 
+
 def test_xxx():
     my_object = ClassTest4(3)
     with pytest.raises(PicklingError):
