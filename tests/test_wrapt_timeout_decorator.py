@@ -157,6 +157,25 @@ def test_timeout_eval(use_signals):
         f(0.1)
 
 
+class Foo(object):
+    def __init__(self,x):
+        self.x = x
+
+    @timeout('instance.x', use_signals=False, dec_allow_eval=True)
+    def foo2(self):
+        print('swallow')
+        time.sleep(2)
+        return 'done'
+
+
+def test_3(use_signals):
+    my_foo = Foo(1)
+    with pytest.raises(TimeoutError):
+        my_foo.foo2()
+    my_foo = Foo(3)
+    assert my_foo.foo2() == 'done'
+
+
 def test_exception(use_signals):
     """ Test Exception """
     @timeout(0.4, use_signals=use_signals)
