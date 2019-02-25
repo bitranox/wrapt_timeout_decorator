@@ -146,7 +146,8 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
     @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
         if not b_signals:
-            _raise_if_can_not_be_pickled(object_to_pickle=wrapped)
+            # _raise_if_can_not_be_pickled(object_to_pickle=wrapped)
+            pass
 
         exc_msg = exception_message                             # make mutable
         decm_allow_eval = kwargs.pop('dec_allow_eval', dec_allow_eval)  # make mutable and get possibly kwarg
