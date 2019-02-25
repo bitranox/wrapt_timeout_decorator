@@ -87,6 +87,7 @@ def timeout2(dec_timeout=None, use_signals=True, timeout_exception=None, excepti
 
     return wrapper
 
+
 class WrapHelper(object):
     def __init__(self, dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False):
         self.dec_timeout = dec_timeout
@@ -120,9 +121,6 @@ class WrapHelper(object):
     def restore_old_alarm_handler(self):
         signal.setitimer(signal.ITIMER_REAL, 0)
         signal.signal(signal.SIGALRM, self.old_alarm_handler)
-
-
-
 
 
 def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False):
