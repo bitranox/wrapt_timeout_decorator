@@ -158,7 +158,7 @@ def test_timeout_eval(use_signals):
 
 
 class Foo(object):
-    def __init__(self,x):
+    def __init__(self, x):
         self.x = x
 
     @timeout('instance.x', use_signals=False, dec_allow_eval=True)
