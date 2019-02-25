@@ -54,8 +54,40 @@ def detect_unpickable_objects_and_reraise(object_to_pickle):
     s_err = 'can not pickle {on}, bad types {bt}'.format(on=object_name, bt=bad_types)
     raise dill.PicklingError(s_err)
 
+def timeout2(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False):
+    @wrapt.decorator
+    def wrapper(wrapped, instance, args, kwargs):
+        wrap_helper = WrapHelper(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval)
+        wrap_helper.get_and_eval_kwargs(kwargs)
+        wrap_helper.format_exception_message(wrapped)
+        if not wrap_helper.dec_timeout:
+            return wrapped(*args, **kwargs)
+        else:
+            if b_signals:
+                try:
+                    wrap_helper.save_old_and_set_new_alarm_handler()
+                    return wrapped(*args, **kwargs)
+                finally:
+                    wrap_helper.restore_old_alarm_handler()
+            else:
+                try:
+                    timeout_wrapper = _Timeout(wrapped, wrap_helper.timeout_exception, wrap_helper.exception_message, wrap_helper.dec_timeout)
+                    return timeout_wrapper(*args, **kwargs)
+                except dill.PicklingError:
+                    # sometimes the detection detects unpickable objects but actually
+                    # they can be pickled - so we just try to start the thread and report
+                    # the unpickable objects if that fails
+                    detect_unpickable_objects_and_reraise(wrapped)
 
-class timeout2(object):
+    # automatically disable signals when they cant be used
+    if can_use_timeout_signals():
+        b_signals = use_signals
+    else:
+        b_signals = False
+
+    return wrapper
+
+class WrapHelper(object):
     def __init__(self, dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False):
         self.dec_timeout = dec_timeout
         self.use_signals = use_signals
@@ -64,93 +96,33 @@ class timeout2(object):
         self.dec_allow_eval = dec_allow_eval
         self.old_alarm_handler = None
 
-    def __call__(self, dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False):
-        self.dec_timeout = dec_timeout
-        self.use_signals = use_signals
-        self.timeout_exception = timeout_exception
-        self.exception_message = exception_message
-        self.dec_allow_eval = dec_allow_eval
-        self.check_if_signals_can_be_used()
-
-        @wrapt.decorator
-        def wrapper(wrapped, instance, args, kwargs):
-            self.get_and_evaluate_keyword_arguments(kwargs)
-            self.format_exception_message(wrapped)
-            if not self.dec_timeout:
-                return wrapped(*args, **kwargs)
-            else:
-                if self.use_signals:
-                    try:
-                        self.save_old_and_set_new_alarm_handler()
-                        return wrapped(*args, **kwargs)
-                    finally:
-                        self.reset_and_restore_old_alarm_handler()
-                else:
-                    try:
-                        timeout_wrapper = _Timeout(wrapped, timeout_exception, self.exception_message, self.dec_timeout)
-                        return timeout_wrapper(*args, **kwargs)
-                    except dill.PicklingError:
-                        self.detect_unpickable_objects_and_reraise(wrapped)
-        return wrapper
-
-    def get_and_evaluate_keyword_arguments(self, kwargs):
+    def get_and_eval_kwargs(self, kwargs):
         self.dec_allow_eval = kwargs.pop('dec_allow_eval', self.dec_allow_eval)  # make mutable and get possibly kwarg
-        self.dec_timeout = kwargs.pop('dec_timeout', self.dec_timeout)  # make mutable and get possibly kwarg
+        decm_timeout = kwargs.pop('dec_timeout', self.dec_timeout)   # make mutable and get possibly kwarg
         if self.dec_allow_eval and isinstance(self.dec_timeout, str):
-            self.dec_timeout = eval(self.dec_timeout)  # if allowed evaluate timeout
+            self.dec_timeout = eval(self.dec_timeout)                   # if allowed evaluate timeout
 
     def format_exception_message(self, wrapped):
+        if hasattr(wrapped, '__name__'):
+            function_name = wrapped.__name__
+        else:
+            function_name = '(unknown name)'
         if not self.exception_message:
-            if hasattr(wrapped, '__name__'):
-                function_name = wrapped.__name__
-            else:
-                function_name = '(no name found)'
             self.exception_message = 'Function {f} timed out after {s} seconds'.format(f=function_name, s=self.dec_timeout)
 
-    def check_if_signals_can_be_used(self):
-        """ gives True when we can use timeout signals, otherwise False"""
-        if platform.system().lower().startswith('win'):  # on Windows we cant use Signals
-            self.use_signals = False
-        if sys.version_info < (3, 4):
-            # on old python use this method - we can only use Signals in the Main Thread
-            if not isinstance(threading.current_thread(), threading._MainThread):
-                self.use_signals = False
-        else:
-            # much nicer after python 3.4 - we can only use Signals in the Main Thread
-            if not threading.current_thread() == threading.main_thread():
-                self.use_signals = False
+    def new_alarm_handler(self,signum, frame):
+        _raise_exception(self.timeout_exception, self.exception_message)
 
     def save_old_and_set_new_alarm_handler(self):
-        def new_alarm_handler(signum, frame):
-            _raise_exception(self.timeout_exception, self.exception_message)
-        self.old_alarm_handler = signal.signal(signal.SIGALRM, new_alarm_handler)
+        self.old_alarm_handler = signal.signal(signal.SIGALRM, self.new_alarm_handler)
         signal.setitimer(signal.ITIMER_REAL, self.dec_timeout)
 
-    def reset_and_restore_old_alarm_handler(self):
+    def restore_old_alarm_handler(self):
         signal.setitimer(signal.ITIMER_REAL, 0)
         signal.signal(signal.SIGALRM, self.old_alarm_handler)
 
-    def detect_unpickable_objects_and_reraise(self, object_to_pickle):
-        # sometimes the detection detects unpickable objects but actually
-        # they can be pickled - so we just try to start the thread and report
-        # the unpickable objects if that fails
-        bad_types = self.get_bad_pickling_types(object_to_pickle)
-        if hasattr(object_to_pickle, '__name__'):
-            object_name = object_to_pickle.__name__
-        else:
-            object_name = 'object'
-        s_err = 'can not pickle {on}, bad types {bt}'.format(on=object_name, bt=bad_types)
-        raise dill.PicklingError(s_err)
 
-    @staticmethod
-    def get_bad_pickling_types(object_to_pickle):
-        bad_types = list()
-        try:
-            bad_types = dill.detect.badtypes(object_to_pickle)
-        except NotImplementedError:
-            pass
-        finally:
-            return bad_types
+
 
 
 def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False):

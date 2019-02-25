@@ -196,6 +196,11 @@ def test_exception(use_signals):
 ################################
 
 def test_timeout_decorator_arg_c(use_signals):
+    """
+    >>> test_timeout_decorator_arg_c(False)
+
+
+    """
     @timeout2(1, use_signals=use_signals)
     def f():
         time.sleep(2)
@@ -354,7 +359,9 @@ def test_timeout_default_exception_message_c():
 
 
 def test_timeout_eval_c(use_signals):
-    """ Test Eval """
+    """
+    >>> test_timeout_eval_c(use_signals=False)
+    """
     @timeout2(dec_timeout='args[0] * 2', use_signals=use_signals, dec_allow_eval=True)
     def f(x):
         time.sleep(0.4)
