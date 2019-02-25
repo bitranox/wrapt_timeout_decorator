@@ -16,11 +16,10 @@ python:
 # - '3.8-dev' # 2018-09-10 does not exist now
 - 'pypy'
 - 'pypy3'
-- 'jython'
 
 matrix:
   include:
-    - python: 'jython'
+    - python: '2.7'
       env: jython=org.python:jython-installer:2.7.1
 
 before_install:
