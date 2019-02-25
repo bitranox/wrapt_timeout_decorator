@@ -20,7 +20,9 @@ python:
 matrix:
   include:
     - python: '2.7'
-      env: JYTHON=org.python:jython-installer:2.7.1
+      env: JYTHON=org.python:jython-installer:2.5.3
+      ### ??? hangs with TypeError: can't concat memoryview to bytearray on collecting dill :
+      ## env: JYTHON=org.python:jython-installer:2.7.1
 
 before_install:
   - chmod +x ./before_install_jython.sh
