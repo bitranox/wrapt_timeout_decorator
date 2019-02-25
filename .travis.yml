@@ -31,7 +31,7 @@ after_success:
 - pip install -e .
 - coverage combine
 - coverage report
-- coveralls
+- coverall
 
 #deploy:
 #  provider: pypi
