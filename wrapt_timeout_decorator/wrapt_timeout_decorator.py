@@ -45,6 +45,7 @@ def _get_bad_pickling_types(object_to_pickle):
     finally:
         return bad_types
 
+
 def _raise_if_can_not_be_pickled(object_to_pickle):
     bad_types = _get_bad_pickling_types(object_to_pickle)
     if bad_types:
@@ -137,8 +138,8 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
     @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
         if not b_signals:
-            _raise_if_can_not_be_pickled(object_to_pickle=wrapped)
-
+            # _raise_if_can_not_be_pickled(object_to_pickle=wrapped)
+            pass
         exc_msg = exception_message                             # make mutable
         decm_allow_eval = kwargs.pop('dec_allow_eval', dec_allow_eval)  # make mutable and get possibly kwarg
         decm_timeout = kwargs.pop('dec_timeout', dec_timeout)   # make mutable and get possibly kwarg
@@ -227,10 +228,13 @@ class _Timeout(object):
         """
         self.__parent_conn, self.__child_conn = multiprocess.Pipe(duplex=False)
 
-        args = (self.__child_conn, self.__function) + args
-        self.__process = multiprocess.Process(target=_target, args=args, kwargs=kwargs)
-        self.__process.daemon = True
-        self.__process.start()
+        try:
+            args = (self.__child_conn, self.__function) + args
+            self.__process = multiprocess.Process(target=_target, args=args, kwargs=kwargs)
+            self.__process.daemon = True
+            self.__process.start()
+        except dill.PicklingError:
+            _raise_if_can_not_be_pickled(self.__function)
         if self.__parent_conn.poll(self.__limit):
             return self.value
         else:
