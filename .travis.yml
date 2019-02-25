@@ -23,8 +23,8 @@ script:
 pytest --cov=./
 
 after_success:
-- coverage combine
-- codecov
+# - coverage combine
+# - codecov
 # - pip install -e .
 
 #deploy:
