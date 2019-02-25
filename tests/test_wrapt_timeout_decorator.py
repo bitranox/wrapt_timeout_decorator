@@ -58,9 +58,11 @@ class TestClass3(object):
     def f(self):
         time.sleep(2)
 
+
 def test_timeout_class_method_dont_use_signals_can_pickle():
     with pytest.raises(TimeoutError):
         TestClass3().f()
+
 
 def test_timeout_kwargs(use_signals):
     @timeout(3, use_signals=use_signals)
@@ -110,7 +112,7 @@ def test_function_name(use_signals):
 
 
 def test_timeout_pickle_error():
-    """Test that when a pickle error occurs a timeout error is raised"""
+    """Test that when a pickle error occurs a pickling error is raised"""
     # codecov start ignore
     @timeout(dec_timeout=1, use_signals=False)
     def f():
