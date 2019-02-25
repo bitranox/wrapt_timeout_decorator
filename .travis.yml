@@ -1,6 +1,8 @@
 language: python
 
-sudo: true
+# Error : ./before_install_jython.sh access denied
+# sudo: false
+sudo: required
 
 python:
 # - '2.6'    # 2019-02-24 dropped Python 2.6 Support, since wrapt dropped it
