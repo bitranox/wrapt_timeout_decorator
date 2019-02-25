@@ -60,8 +60,13 @@ class TestClass3(object):
 
 
 def test_timeout_class_method_dont_use_signals_can_pickle():
-    with pytest.raises(TimeoutError):
-        TestClass3().f()
+    is_pypy = '__pypy__' in sys.builtin_module_names
+    if is_pypy:
+        with pytest.raises(TimeoutError):
+            TestClass3().f()
+    else:
+        with pytest.raises(TimeoutError):
+            TestClass3().f()
 
 
 def test_timeout_kwargs(use_signals):
