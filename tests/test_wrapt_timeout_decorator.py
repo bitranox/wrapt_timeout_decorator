@@ -32,11 +32,12 @@ def test_timeout_class_method_use_signals():
         @timeout('instance.x/3', use_signals=True, dec_allow_eval=True)
         def f(self):
             time.sleep(2)
+
     with pytest.raises(TimeoutError):
         TestClass().f()
 
 
-def test_timeout_class_method_dont_use_signals():
+def test_timeout_class_method_dont_use_signals_pickle_error():
     class TestClass(object):
         def __init__(self):
             self.x = 3
@@ -44,9 +45,22 @@ def test_timeout_class_method_dont_use_signals():
         @timeout('instance.x/3', use_signals=False, dec_allow_eval=True)
         def f(self):
             time.sleep(2)
+
     with pytest.raises(PicklingError):
         TestClass().f()
 
+
+class TestClass3(object):
+    def __init__(self):
+        self.x = 3
+
+    @timeout('instance.x/3', use_signals=False, dec_allow_eval=True)
+    def f(self):
+        time.sleep(2)
+
+def test_timeout_class_method_dont_use_signals_can_pickle():
+    with pytest.raises(TimeoutError):
+        TestClass3().f()
 
 def test_timeout_kwargs(use_signals):
     @timeout(3, use_signals=use_signals)
