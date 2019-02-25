@@ -45,12 +45,14 @@ def _get_bad_pickling_types(object_to_pickle):
     finally:
         return bad_types
 
+
 def _is_pickable(object_to_pickle):
     try:
         dill.dumps(object_to_pickle)
         return True
     except dill.PicklingError:
         return False
+
 
 def _raise_if_can_not_be_pickled(object_to_pickle):
     if not _is_pickable(object_to_pickle):
