@@ -24,7 +24,8 @@ script:
 # - coverage run test_wrapt_timeout_decorator.py
 
 after_success:
-- coverage run test_wrapt_timeout_decorator.py
+- coverage run
+# - coverage run test_wrapt_timeout_decorator.py  # file not found
 # - py.test --cov=wrapt_timeout_decorator
 # - py.test --cov=wrapt_timeout_decorator --cov-append
 - coverage combine
