@@ -38,6 +38,10 @@ def test_timeout_class_method_use_signals():
 
 
 def test_timeout_class_method_dont_use_signals_pickle_error():
+    """
+    >>> test_timeout_class_method_dont_use_signals_pickle_error()
+
+    """
     class TestClass(object):
         def __init__(self):
             self.x = 3
