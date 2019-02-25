@@ -44,7 +44,7 @@ def test_timeout_class_method_dont_use_signals_pickle_error():
 
         @timeout('instance.x/3', use_signals=False, dec_allow_eval=True)
         def f(self):
-            time.sleep(2)
+            time.sleep(0.5)
 
     with pytest.raises(PicklingError):
         TestClass().f()
