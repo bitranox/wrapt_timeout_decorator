@@ -82,7 +82,7 @@ def test_timeout_class_method_dont_use_signals_can_pickle2():
     assert my_object.f(dec_timeout=3, dec_allow_eval=False) == 'done'
 
 
-def test_timeout_class_method_dont_use_signals_can_pickle3(use_signals):
+def test_timeout_class_method_dont_use_signals_can_pickle3():
     my_object = ClassTest4(1)
     with pytest.raises(TimeoutError):
         my_object.test_method()

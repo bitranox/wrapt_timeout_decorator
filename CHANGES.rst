@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.0.7
+-----
+2019-02-25:  fix pickle detection, added some tests, codecov now correctly combining the coverage of all tests
+
 1.0.6
 -----
 2019-02-24: fix pickle detection when use_signals = False, drop Python2.6 support since wrapt dropped it.
