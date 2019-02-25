@@ -11,7 +11,6 @@ import platform
 import signal
 import sys
 import threading
-import time
 import wrapt
 
 ############################################################
@@ -46,15 +45,14 @@ def _get_bad_pickling_types(object_to_pickle):
         return bad_types
 
 
-def _raise_if_can_not_be_pickled(object_to_pickle):
+def _detect_unpickable_objects_and_reraise(object_to_pickle):
     bad_types = _get_bad_pickling_types(object_to_pickle)
-    if bad_types:
-        if hasattr(object_to_pickle, '__name__'):
-            object_name = object_to_pickle.__name__
-        else:
-            object_name = 'object'
-        s_err = 'can not pickle {on}, bad types {bt}'.format(on=object_name, bt=bad_types)
-        raise dill.PicklingError(s_err)
+    if hasattr(object_to_pickle, '__name__'):
+        object_name = object_to_pickle.__name__
+    else:
+        object_name = 'object'
+    s_err = 'can not pickle {on}, bad types {bt}'.format(on=object_name, bt=bad_types)
+    raise dill.PicklingError(s_err)
 
 
 def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False):
@@ -137,9 +135,6 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
 
     @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
-        if not b_signals:
-            # _raise_if_can_not_be_pickled(object_to_pickle=wrapped)
-            pass
         exc_msg = exception_message                             # make mutable
         decm_allow_eval = kwargs.pop('dec_allow_eval', dec_allow_eval)  # make mutable and get possibly kwarg
         decm_timeout = kwargs.pop('dec_timeout', dec_timeout)   # make mutable and get possibly kwarg
@@ -234,7 +229,7 @@ class _Timeout(object):
             self.__process.daemon = True
             self.__process.start()
         except dill.PicklingError:
-            _raise_if_can_not_be_pickled(self.__function)
+            _detect_unpickable_objects_and_reraise(self.__function)
         if self.__parent_conn.poll(self.__limit):
             return self.value
         else:

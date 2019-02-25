@@ -37,11 +37,8 @@ def test_timeout_class_method_use_signals():
         TestClass().f()
 
 
-def test_timeout_class_method_dont_use_signals_pickle_error():
-    """
-    >>> test_timeout_class_method_dont_use_signals_pickle_error()
+def test_timeout_class_method_dont_use_signals_can_pickle1():
 
-    """
     class TestClass(object):
         def __init__(self):
             self.x = 3
@@ -63,7 +60,7 @@ class TestClass3(object):
         time.sleep(2)
 
 
-def test_timeout_class_method_dont_use_signals_can_pickle():
+def test_timeout_class_method_dont_use_signals_can_pickle2():
     is_pypy = '__pypy__' in sys.builtin_module_names
     if is_pypy:
         with pytest.raises(TimeoutError):
