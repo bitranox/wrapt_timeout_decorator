@@ -16,26 +16,14 @@ python:
 
 install:
 - if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
-- pip install tox tox-travis dill multiprocess wrapt pytest pytest-cov codecov
-# pypy and pypy3 failed :
-# - pip install tox tox-travis dill multiprocess wrapt
+- pip install tox tox-travis dill multiprocess wrapt
+# not neccessary to install pytest pytest-cov codecov here - it is installed in the tox environment
+# - pip install tox tox-travis dill multiprocess wrapt pytest pytest-cov codecov
 
 script:
 - tox --recreate
-# - pytest --cov=./
-# - coverage run test_wrapt_timeout_decorator.py
 
 after_success:
-##### TEST
-# - coverage run #nothing to do
-# - coverage run test_wrapt_timeout_decorator.py  # file not found
-# - py.test --cov=wrapt_timeout_decorator
-# - py.test --cov=wrapt_timeout_decorator --cov-append
-##### /TEST
-
-# - coverage run ./tests/test_wrapt_timeout_decorator.py  #  wrapt-timeout-decorator was never installed - probably just pip install it !
-# - coverage combine
-# + - codecov
 - pip install -e .
 
 #deploy:
