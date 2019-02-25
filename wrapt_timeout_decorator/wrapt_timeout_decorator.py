@@ -82,7 +82,7 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
     Usage with eval (beware, security hazard, no user input values here):
         read : https://nedbatchelder.com/blog/201206/eval_really_is_dangerous.html before usage !
 
-    def class TestClass3(object):
+    def class ClassTest4(object):
         def __init__(self,x):
             self.x=x
 
@@ -95,7 +95,7 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
             print('parrot')
 
     # or override via kwarg :
-    my_foo = TestClass3(3)
+    my_foo = ClassTest4(3)
     my_foo.test_method(dec_timeout='instance.x * 2.5 +1')
     my_foo.foo3(dec_timeout='instance.x * 2.5 +1', dec_allow_eval=True)
 

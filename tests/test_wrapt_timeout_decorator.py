@@ -25,7 +25,7 @@ def test_timeout_decorator_arg(use_signals):
 
 
 def test_timeout_class_method_use_signals():
-    class TestClass(object):
+    class ClassTest1(object):
         def __init__(self):
             self.x = 3
 
@@ -34,7 +34,7 @@ def test_timeout_class_method_use_signals():
             time.sleep(2)
 
     with pytest.raises(TimeoutError):
-        TestClass().f()
+        ClassTest1().f()
 
 
 def test_timeout_class_method_dont_use_signals_can_pickle1():
@@ -42,7 +42,7 @@ def test_timeout_class_method_dont_use_signals_can_pickle1():
     >>> test_timeout_class_method_dont_use_signals_can_pickle1()
     :return:
     """
-    class TestClass(object):
+    class ClassTest2(object):
         def __init__(self):
             self.x = 3
 
@@ -51,10 +51,10 @@ def test_timeout_class_method_dont_use_signals_can_pickle1():
             time.sleep(2)
 
     with pytest.raises(TimeoutError):
-        TestClass().f()
+        ClassTest2().f()
 
 
-class TestClass2(object):
+class ClassTest3(object):
     def __init__(self):
         self.x = 3
 
@@ -64,7 +64,7 @@ class TestClass2(object):
         return 'done'
 
 
-class TestClass3(object):
+class ClassTest4(object):
     def __init__(self, x):
         self.x = x
 
@@ -77,16 +77,16 @@ class TestClass3(object):
 
 def test_timeout_class_method_dont_use_signals_can_pickle2():
     with pytest.raises(TimeoutError):
-        TestClass2().f()
-    my_object = TestClass2()
+        ClassTest3().f()
+    my_object = ClassTest3()
     assert my_object.f(dec_timeout=3, dec_allow_eval=False) == 'done'
 
 
 def test_timeout_class_method_dont_use_signals_can_pickle3(use_signals):
-    my_object = TestClass3(1)
+    my_object = ClassTest4(1)
     with pytest.raises(TimeoutError):
         my_object.test_method()
-    my_object = TestClass3(3)
+    my_object = ClassTest4(3)
     assert my_object.test_method() == 'done'
 
 

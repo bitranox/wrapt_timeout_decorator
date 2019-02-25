@@ -198,7 +198,7 @@ You can access :
 ::
 
 
-    def class TestClass3(object):
+    def class ClassTest4(object):
         def __init__(self,x):
             self.x=x
 
@@ -218,7 +218,7 @@ You can access :
 
     if __name__ == '__main__':
         # or override via kwarg :
-        my_foo = TestClass3(3)
+        my_foo = ClassTest4(3)
         my_foo.test_method(dec_timeout='instance.x * 2.5 +1')
         my_foo.foo3(dec_timeout='instance.x * 2.5 +1', dec_allow_eval=True)
         my_foo.foo4(1,more_time=3)  # this will time out in 4 seconds
