@@ -192,3 +192,182 @@ def test_exception(use_signals):
 
     with pytest.raises(AssertionError):
         f()
+
+################################
+
+def test_timeout_decorator_arg_c(use_signals):
+    @timeout2(1, use_signals=use_signals)
+    def f():
+        time.sleep(2)
+    with pytest.raises(TimeoutError):
+        f()
+
+
+def test_timeout_class_method_use_signals_c():
+    class ClassTest1(object):
+        def __init__(self):
+            self.x = 3
+
+        @timeout2('instance.x/3', use_signals=True, dec_allow_eval=True)
+        def f(self):
+            time.sleep(2)
+
+    with pytest.raises(TimeoutError):
+        ClassTest1().f()
+
+
+def test_timeout_class_method_dont_use_signals_can_pickle1_c():
+    """
+    >>> test_timeout_class_method_dont_use_signals_can_pickle1()
+    :return:
+    """
+    class ClassTest2C(object):
+        def __init__(self):
+            self.x = 3
+
+        @timeout2('instance.x/3', use_signals=False, dec_allow_eval=True)
+        def f(self):
+            time.sleep(2)
+
+    with pytest.raises(TimeoutError):
+        ClassTest2C().f()
+
+
+class ClassTest3C(object):
+    def __init__(self):
+        self.x = 3
+
+    @timeout('instance.x/3', use_signals=False, dec_allow_eval=True)
+    def f(self):
+        time.sleep(2)
+        return 'done'
+
+
+class ClassTest4C(object):
+    def __init__(self, x):
+        self.x = x
+
+    @timeout('instance.x', use_signals=False, dec_allow_eval=True)
+    def test_method(self):
+        print('swallow')
+        time.sleep(2)
+        return 'done'
+
+
+def test_timeout_class_method_dont_use_signals_can_pickle2_c():
+    with pytest.raises(TimeoutError):
+        ClassTest3C().f()
+    my_object = ClassTest3C()
+    assert my_object.f(dec_timeout=3, dec_allow_eval=False) == 'done'
+
+
+def test_timeout_class_method_dont_use_signals_can_pickle3_c():
+    my_object = ClassTest4C(1)
+    with pytest.raises(TimeoutError):
+        my_object.test_method()
+    my_object = ClassTest4C(3)
+    assert my_object.test_method() == 'done'
+
+
+def test_detect_unpickable_objects_c():
+    my_object = ClassTest4C(3)
+    with pytest.raises(PicklingError):
+        detect_unpickable_objects_and_reraise(my_object)
+
+
+def test_timeout_kwargs_c(use_signals):
+    @timeout2(3, use_signals=use_signals)
+    def f():
+        time.sleep(2)
+    with pytest.raises(TimeoutError):
+        f(dec_timeout=1)
+
+
+def test_timeout_alternate_exception_c(use_signals):
+    @timeout2(3, use_signals=use_signals, timeout_exception=StopIteration)
+    def f():
+        time.sleep(2)
+    with pytest.raises(StopIteration):
+        f(dec_timeout=1)
+
+
+def test_timeout_no_seconds_c(use_signals):
+    @timeout2(use_signals=use_signals)
+    def f():
+        time.sleep(0.1)
+    f()
+
+
+def test_timeout_partial_seconds_c(use_signals):
+    @timeout2(0.2, use_signals=use_signals)
+    def f():
+        time.sleep(0.5)
+    with pytest.raises(TimeoutError):
+        f()
+
+
+def test_timeout_ok_c(use_signals):
+    @timeout2(dec_timeout=2, use_signals=use_signals)
+    def f():
+        time.sleep(1)
+    f()
+
+
+def test_function_name_c(use_signals):
+    @timeout2(dec_timeout=2, use_signals=use_signals)
+    def func_name():
+        pass
+
+    func_name()
+    assert func_name.__name__ == 'func_name'
+
+
+def test_timeout_pickle_errorc():
+    """Test that when a pickle error occurs a pickling error is raised"""
+    # codecov start ignore
+    @timeout2(dec_timeout=1, use_signals=False)
+    def f():
+        time.sleep(0.1)
+
+        class Test(object):
+            pass
+        return Test()
+    # codecov end ignore
+    with pytest.raises(PicklingError):
+        f()
+
+
+def test_timeout_custom_exception_message_c():
+    @timeout2(dec_timeout=1, exception_message="Custom fail message")
+    def f():
+        time.sleep(2)
+    with pytest.raises(TimeoutError, match="Custom fail message"):
+        f()
+
+
+def test_timeout_default_exception_message_c():
+    @timeout2(dec_timeout=1)
+    def f():
+        time.sleep(2)
+    with pytest.raises(TimeoutError, match="Function f timed out after 1 seconds"):
+        f()
+
+
+def test_timeout_eval_c(use_signals):
+    """ Test Eval """
+    @timeout2(dec_timeout='args[0] * 2', use_signals=use_signals, dec_allow_eval=True)
+    def f(x):
+        time.sleep(0.4)
+    f(0.3)
+    with pytest.raises(TimeoutError):
+        f(0.1)
+
+
+def test_exception_c(use_signals):
+    """ Test Exception """
+    @timeout2(0.4, use_signals=use_signals)
+    def f():
+        raise AssertionError
+
+    with pytest.raises(AssertionError):
+        f()
