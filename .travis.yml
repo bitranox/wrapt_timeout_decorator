@@ -3,7 +3,7 @@ language: python
 
 # sudo: false  # Error : ./before_install_jython.sh access denied
 # sudo: true  # Error : ./before_install_jython.sh access denied
-sudo: required
+sudo: false
 
 python:
 # - '2.6'    # 2019-02-24 dropped Python 2.6 Support, since wrapt dropped it
@@ -20,17 +20,17 @@ python:
 matrix:
   include:
     - python: '2.7'
-      env: jython=org.python:jython-installer:2.7.1
+      env: JYTHON=org.python:jython-installer:2.7.1
 
 before_install:
   - chmod +x ./before_install_jython.sh
-  - if [ -n "$jython" ]; then ./before_install_jython.sh; source $HOME/myvirtualenv/bin/activate ;fi
-  # - if [ -n "$jython" ]; then pip install jip==0.7; fi
-  # - if [ -n "$jython" ]; then pip install jip==0.9.13; fi
-  - if [ -n "$jython" ]; then pip install jip; fi
-  - if [ -n "$jython" ]; then jip install joda-time; fi
-  # - if [ -n "$jython" ]; then jip install joda-time:joda-time; fi
-  - if [ -n "$jython" ]; then export CLASSPATH=$VIRTUAL_ENV/javalib/*; fi
+  - if [ -n "$JYTHON" ]; then ./before_install_jython.sh; source $HOME/myvirtualenv/bin/activate ;fi
+  # - if [ -n "$JYTHON" ]; then pip install jip==0.7; fi
+  # - if [ -n "$JYTHON" ]; then pip install jip==0.9.13; fi
+  - if [ -n "$JYTHON" ]; then pip install jip; fi
+  - if [ -n "$JYTHON" ]; then jip install joda-time; fi
+  # - if [ -n "$JYTHON" ]; then jip install joda-time:joda-time; fi
+  - if [ -n "$JYTHON" ]; then export CLASSPATH=$VIRTUAL_ENV/javalib/*; fi
   - pip install unittest2
 
 install:
