@@ -29,6 +29,8 @@ script:
 
 after_success:
 - pip install -e .
+- coverage combine
+- coverage report
 
 #deploy:
 #  provider: pypi
