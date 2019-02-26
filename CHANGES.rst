@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.0.8
+-----
+2019-02-26: complete refractoring, code cleaning
+
 1.0.7
 -----
 2019-02-25:  fix pickle detection, added some tests, codecov now correctly combining the coverage of all tests
