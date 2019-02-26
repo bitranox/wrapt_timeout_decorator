@@ -71,7 +71,8 @@ def timeout2(dec_timeout=None, use_signals=True, timeout_exception=None, excepti
                     wrap_helper.restore_old_alarm_handler()
             else:
                 try:
-                    timeout_wrapper = _Timeout(wrapped, wrap_helper.timeout_exception, wrap_helper.exception_message, wrap_helper.dec_timeout)
+                    timeout_wrapper = _Timeout(wrapped, wrap_helper.timeout_exception,
+                                               wrap_helper.exception_message, wrap_helper.dec_timeout)
                     return timeout_wrapper(*args, **kwargs)
                 except dill.PicklingError:
                     # sometimes the detection detects unpickable objects but actually
@@ -89,7 +90,8 @@ def timeout2(dec_timeout=None, use_signals=True, timeout_exception=None, excepti
 
 
 class WrapHelper(object):
-    def __init__(self, dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False):
+    def __init__(self, dec_timeout=None, use_signals=True, timeout_exception=None,
+                 exception_message=None, dec_allow_eval=False):
         self.dec_timeout = dec_timeout
         self.use_signals = use_signals
         self.timeout_exception = timeout_exception

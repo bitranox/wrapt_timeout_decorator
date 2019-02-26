@@ -195,6 +195,7 @@ def test_exception(use_signals):
 
 ################################
 
+
 def test_timeout_decorator_arg_c(use_signals):
     """
     >>> test_timeout_decorator_arg_c(False)
