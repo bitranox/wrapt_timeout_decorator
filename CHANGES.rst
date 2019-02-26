@@ -3,7 +3,7 @@ Changelog
 
 1.0.8
 -----
-2019-02-26: complete refractoring, code cleaning
+2019-02-26: complete refractoring and code cleaning
 
 1.0.7
 -----
