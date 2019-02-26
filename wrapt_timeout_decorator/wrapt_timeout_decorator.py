@@ -58,12 +58,13 @@ def timeout2(dec_timeout=None, use_signals=True, timeout_exception=None, excepti
     @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
         wrap_helper = WrapHelper(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval)
+        wrap_helper.set_signals_to_false_if_not_possible()
         wrap_helper.get_and_eval_kwargs(kwargs)
         wrap_helper.format_exception_message(wrapped)
         if not wrap_helper.dec_timeout:
             return wrapped(*args, **kwargs)
         else:
-            if b_signals:
+            if wrap_helper.use_signals:
                 try:
                     wrap_helper.save_old_and_set_new_alarm_handler()
                     return wrapped(*args, **kwargs)
@@ -79,13 +80,6 @@ def timeout2(dec_timeout=None, use_signals=True, timeout_exception=None, excepti
                     # they can be pickled - so we just try to start the thread and report
                     # the unpickable objects if that fails
                     detect_unpickable_objects_and_reraise(wrapped)
-
-    # automatically disable signals when they cant be used
-    if can_use_timeout_signals():
-        b_signals = use_signals
-    else:
-        b_signals = False
-
     return wrapper
 
 
@@ -101,7 +95,7 @@ class WrapHelper(object):
 
     def get_and_eval_kwargs(self, kwargs):
         self.dec_allow_eval = kwargs.pop('dec_allow_eval', self.dec_allow_eval)  # make mutable and get possibly kwarg
-        decm_timeout = kwargs.pop('dec_timeout', self.dec_timeout)   # make mutable and get possibly kwarg
+        self.dec_timeout = kwargs.pop('dec_timeout', self.dec_timeout)   # make mutable and get possibly kwarg
         if self.dec_allow_eval and isinstance(self.dec_timeout, str):
             self.dec_timeout = eval(self.dec_timeout)                   # if allowed evaluate timeout
 
@@ -113,7 +107,7 @@ class WrapHelper(object):
         if not self.exception_message:
             self.exception_message = 'Function {f} timed out after {s} seconds'.format(f=function_name, s=self.dec_timeout)
 
-    def new_alarm_handler(self,signum, frame):
+    def new_alarm_handler(self, signum, frame):
         _raise_exception(self.timeout_exception, self.exception_message)
 
     def save_old_and_set_new_alarm_handler(self):
@@ -123,6 +117,19 @@ class WrapHelper(object):
     def restore_old_alarm_handler(self):
         signal.setitimer(signal.ITIMER_REAL, 0)
         signal.signal(signal.SIGALRM, self.old_alarm_handler)
+
+    def set_signals_to_false_if_not_possible(self):
+        """ gives True when we can use timeout signals, otherwise False"""
+        if platform.system().lower().startswith('win'):  # on Windows we cant use Signals
+            self.use_signals = False
+        if sys.version_info < (3, 4):
+            # on old python use this method - we can only use Signals in the Main Thread
+            if not isinstance(threading.current_thread(), threading._MainThread):
+                self.use_signals = False
+        else:
+            # much nicer after python 3.4 - we can only use Signals in the Main Thread
+            if not threading.current_thread() == threading.main_thread():
+                self.use_signals = False
 
 
 def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False):
