@@ -54,6 +54,7 @@ def detect_unpickable_objects_and_reraise(object_to_pickle):
     s_err = 'can not pickle {on}, bad types {bt}'.format(on=object_name, bt=bad_types)
     raise dill.PicklingError(s_err)
 
+
 def timeout2(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False):
     @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
@@ -61,7 +62,7 @@ def timeout2(dec_timeout=None, use_signals=True, timeout_exception=None, excepti
         wrap_helper.set_signals_to_false_if_not_possible()
         wrap_helper.get_kwargs(kwargs)
         if wrap_helper.should_eval:
-            wrap_helper.dec_timeout = eval(wrap_helper.dec_timeout)
+            wrap_helper.dec_timeout = eval(str(wrap_helper.dec_timeout))
         wrap_helper.format_exception_message(wrapped)
         if not wrap_helper.dec_timeout:
             return wrapped(*args, **kwargs)
