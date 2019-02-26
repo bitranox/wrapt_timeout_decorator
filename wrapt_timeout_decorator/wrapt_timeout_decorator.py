@@ -59,7 +59,9 @@ def timeout2(dec_timeout=None, use_signals=True, timeout_exception=None, excepti
     def wrapper(wrapped, instance, args, kwargs):
         wrap_helper = WrapHelper(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval)
         wrap_helper.set_signals_to_false_if_not_possible()
-        wrap_helper.get_and_eval_kwargs(kwargs)
+        wrap_helper.get_kwargs(kwargs)
+        if wrap_helper.should_eval:
+            wrap_helper.dec_timeout = eval(wrap_helper.dec_timeout)
         wrap_helper.format_exception_message(wrapped)
         if not wrap_helper.dec_timeout:
             return wrapped(*args, **kwargs)
@@ -90,11 +92,15 @@ class WrapHelper(object):
         self.dec_allow_eval = dec_allow_eval
         self.old_alarm_handler = None
 
-    def get_and_eval_kwargs(self, kwargs):
+    def get_kwargs(self, kwargs):
         self.dec_allow_eval = kwargs.pop('dec_allow_eval', self.dec_allow_eval)  # make mutable and get possibly kwarg
         self.dec_timeout = kwargs.pop('dec_timeout', self.dec_timeout)   # make mutable and get possibly kwarg
+
+    def should_eval(self):
         if self.dec_allow_eval and isinstance(self.dec_timeout, str):
-            self.dec_timeout = eval(self.dec_timeout)                   # if allowed evaluate timeout
+            return True
+        else:
+            return False
 
     def format_exception_message(self, wrapped):
         if hasattr(wrapped, '__name__'):
