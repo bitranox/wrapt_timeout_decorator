@@ -76,10 +76,7 @@ def timeout2(dec_timeout=None, use_signals=True, timeout_exception=None, excepti
                                                wrap_helper.exception_message, wrap_helper.dec_timeout)
                     return timeout_wrapper(*args, **kwargs)
                 except dill.PicklingError:
-                    # sometimes the detection detects unpickable objects but actually
-                    # they can be pickled - so we just try to start the thread and report
-                    # the unpickable objects if that fails
-                    detect_unpickable_objects_and_reraise(wrapped)
+                    wrap_helper.detect_unpickable_objects_and_reraise(wrapped)
     return wrapper
 
 
@@ -108,7 +105,7 @@ class WrapHelper(object):
             self.exception_message = 'Function {f} timed out after {s} seconds'.format(f=function_name, s=self.dec_timeout)
 
     def new_alarm_handler(self, signum, frame):
-        _raise_exception(self.timeout_exception, self.exception_message)
+        self.raise_exception()
 
     def save_old_and_set_new_alarm_handler(self):
         self.old_alarm_handler = signal.signal(signal.SIGALRM, self.new_alarm_handler)
@@ -130,6 +127,37 @@ class WrapHelper(object):
             # much nicer after python 3.4 - we can only use Signals in the Main Thread
             if not threading.current_thread() == threading.main_thread():
                 self.use_signals = False
+
+    def detect_unpickable_objects_and_reraise(self, object_to_pickle):
+        # sometimes the detection detects unpickable objects but actually
+        # they can be pickled - so we just try to start the thread and report
+        # the unpickable objects if that fails
+        bad_types = self.get_bad_pickling_types(object_to_pickle)
+        if hasattr(object_to_pickle, '__name__'):
+            object_name = object_to_pickle.__name__
+        else:
+            object_name = 'object'
+        s_err = 'can not pickle {on}, bad types {bt}'.format(on=object_name, bt=bad_types)
+        raise dill.PicklingError(s_err)
+
+    @staticmethod
+    def get_bad_pickling_types(object_to_pickle):
+        bad_types = list()
+        try:
+            bad_types = dill.detect.badtypes(object_to_pickle)
+        except NotImplementedError:
+            pass
+        finally:
+            return bad_types
+
+    def raise_exception(self):
+        """ This function checks if a exception message is given.
+        If there is no exception message, the default behaviour is maintained.
+        If there is an exception message, the message is passed to the exception.
+        """
+        if not self.timeout_exception:
+            self.timeout_exception = TimeoutError
+        raise self.timeout_exception(self.exception_message)
 
 
 def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False):
