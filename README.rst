@@ -223,6 +223,17 @@ You can access :
         my_foo.foo3(dec_timeout='instance.x * 2.5 +1', dec_allow_eval=True)
         my_foo.foo4(1,more_time=3)  # this will time out in 4 seconds
 
+Logging
+-------
+
+when signals=False (on Windows), logging in the wrapped function can be tricky. Since a new process is
+created, we can not use the logger object of the main process. Further development would be needed to
+connect to the main process logger via a socket.
+
+When the wrapped function is using logger=logging.getLogger(), a new Logger Object is created.
+Setting up that Logger can be tricky (File Logging from two Processes is not supported ...)
+I think I will use a socket to implement that (SocketHandler and some Receiver Thread)
+
 
 Requirements
 ------------
@@ -262,6 +273,8 @@ conserving correct Traceback information when use_signals=False, possibly by usi
 
 (see https://pypi.python.org/pypi/tblib)
 
+better logging for signals=false. Since a new process is created, we can not log to the logger of the main process.
+logger=logging.getLogger() will crate a new Logger in the wrapped function.
 
 register on Pypi
 
