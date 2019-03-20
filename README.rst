@@ -37,8 +37,8 @@ Try it in Jupyter Notebook
 
 You might try it right away in Jupyter Notebook by using the "launch binder" badge, or click `here <https://mybinder.org/v2/gh/bitranox/wrapt-timeout-decorator/master?filepath=jupyter_test_wrapt_timeout_decorator.ipynb>`_
 
-Installation
-------------
+Installation and Upgrade
+------------------------
 
 From source code:
 
@@ -46,11 +46,28 @@ From source code:
 
     python setup.py install
 
-From pypi:
+via pip (preferred):
 
 ::
 
-    pip install https://github.com/bitranox/wrapt-timeout-decorator/archive/master.zip
+    pip install --upgrade https://github.com/bitranox/wrapt-timeout-decorator/archive/master.zip
+
+via requirements.txt:
+
+::
+
+    Insert following line in Your requirements.txt:
+    https://github.com/bitranox/wrapt-timeout-decorator/archive/master.zip
+
+    to install and upgrade all modules mentioned in requirements.txt:
+    pip install --upgrade -r /<path>/requirements.txt
+
+via python:
+
+::
+
+    python -m pip install --upgrade https://github.com/bitranox/wrapt-timeout-decorator/archive/master.zip
+
 
 Basic Usage
 -----------
@@ -92,13 +109,14 @@ Multithreading
 
 By default, timeout-decorator uses signals to limit the execution time
 of the given function. This approach does not work if your function is
-executed not in a main thread (for example if it's a worker thread of
-the web application). There is alternative timeout strategy for this
-case - by using multiprocessing. This is done automatically, so 
-in case the decorator does not run in the main thread, signals are
-disabled automatically. You can force not to use signals on Linux 
-by passing the parameter ``use_signals=False`` to the timeout 
-decorator function (mostly for testing) :
+executed not in the main thread (for example if it's a worker thread of
+the web application) or when the operating system does not support signals (aka Windows).
+There is an alternative timeout strategy for this case - by using multiprocessing.
+This is done automatically, so you dont need to set ``use_signals=False``.
+You can force not to use signals on Linux by passing the parameter ``use_signals=False`` to the timeout
+decorator function for testing. If Your program should (also) run on Windows, I recommend to test under
+Windows, since Windows does not support forking (read more under Section ``use with Windows``).
+The following Code will run on Linux but NOT on Windows :
 
 ::
 
@@ -227,12 +245,16 @@ Logging
 -------
 
 when signals=False (on Windows), logging in the wrapped function can be tricky. Since a new process is
-created, we can not use the logger object of the main process. Further development would be needed to
-connect to the main process logger via a socket.
+created, we can not use the logger object of the main process. Further development is needed to
+connect to the main process logger via a socket or queue.
 
 When the wrapped function is using logger=logging.getLogger(), a new Logger Object is created.
 Setting up that Logger can be tricky (File Logging from two Processes is not supported ...)
 I think I will use a socket to implement that (SocketHandler and some Receiver Thread)
+
+Until then, You need to set up Your own new logger in the decorated function, if logging is needed.
+Again - keep in mind that You can not write to the same logfile from different processes !
+(although there are logging modules which can do that)
 
 
 use with Windows
@@ -281,7 +303,7 @@ here an example that will work on Linux but wont work on Windows (the variable "
         mytest()
 
 
-here the same example, what will work on Windows:
+here the same example, which will work on Windows:
 
 
 ::
