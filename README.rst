@@ -235,6 +235,102 @@ Setting up that Logger can be tricky (File Logging from two Processes is not sup
 I think I will use a socket to implement that (SocketHandler and some Receiver Thread)
 
 
+use with Windows
+----------------
+
+On Windows the main module is imported again (but with name != 'main') because Windows is trying to simulate
+a forking-like behavior on a system that doesn't have forking. multiprocessing has no way to know that you didn't do
+anything important in you main module, so the import is done "just in case" to create an environment similar
+to the one in your main process. So all variables and all functions You defined in the "main" module are new objects
+but the decorator refers to the "old" objects of the main process, so they cant be found.
+
+It is more a problem of Windows, because the Windows Operating System does neither support "fork", nor "signals"
+
+here You can find more information on that :
+
+https://stackoverflow.com/questions/45110287/workaround-for-using-name-main-in-python-multiprocessing
+
+https://docs.python.org/2/library/multiprocessing.html#windows
+
+In general (especially for windows) , the main() program should not have anything but the main function, the real thing should happen in the libraries.
+I am also used to put all settings or configurations in a different file - so all processes or threads can access them (and also to keep them in one place together, not to forget typing hints and name completion in Your favorite editor)
+
+here an example that will work on Linux but wont work on Windows (the variable "name" and the function "sleep" wont be found in the spawned process :
+
+
+::
+
+    main.py:
+
+    from time import sleep
+    from wrapt_timeout_decorator import *
+
+    name="my_var_name"
+
+
+    @timeout(5, use_signals=False)
+    def mytest():
+        print("Start ", name)
+        for i in range(1,10):
+            sleep(1)
+            print("{} seconds have passed".format(i))
+        return i
+
+
+    if __name__ == '__main__':
+        mytest()
+
+
+here the same example, what will work on Windows:
+
+
+::
+
+
+    my_program_main.py:
+
+    from multiprocessing import freeze_support
+    import lib_test
+
+    def main():
+        lib_test.mytest()
+
+
+    if __name__ == '__main__':
+        freeze_support()
+        main()
+
+
+::
+
+
+        conf_my_program.py:
+
+        class ConfMyProgram(object):
+            def __init__(self):
+                self.name:str = 'my_var_name'
+
+        conf_my_program = ConfMyProgram()
+
+
+::
+
+
+    lib_test.py:
+
+    from wrapt_timeout_decorator import *
+    from time import sleep
+    from conf_my_program import conf_my_program
+
+    @timeout(5, use_signals=False)
+    def mytest():
+        print("Start ", conf_my_program.name)
+        for i in range(1,10):
+            sleep(1)
+            print("{} seconds have passed".format(i))
+        return i
+
+
 Requirements
 ------------
 
