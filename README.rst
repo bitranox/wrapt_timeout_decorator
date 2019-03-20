@@ -9,7 +9,7 @@ class methods, static methods and so on, preserving also the traceback informati
 
 There is also a powerful eval function, it allows to read the desired timeout value even from Class attributes.
 
-It is very flexible and can be used from python 2.6 to python 3.x, pypy, pypy3 and probably other dialects.
+It is very flexible and can be used from python 2.7 to python 3.x, pypy, pypy3 and probably other dialects.
 
 Since it is using multiprocess and dill, this decorator can be used on more sophisticated objects 
 
@@ -91,7 +91,7 @@ Multithreading
 --------------
 
 By default, timeout-decorator uses signals to limit the execution time
-of the given function. This appoach does not work if your function is
+of the given function. This approach does not work if your function is
 executed not in a main thread (for example if it's a worker thread of
 the web application). There is alternative timeout strategy for this
 case - by using multiprocessing. This is done automatically, so 
