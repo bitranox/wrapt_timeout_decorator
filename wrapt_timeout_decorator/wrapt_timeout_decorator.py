@@ -5,18 +5,7 @@ Timeout decorator.
 """
 
 import wrapt
-from . import *
-
-############################################################
-# Timeout
-############################################################
-
-# http://www.saltycrane.com/blog/2010/04/using-python-timeout-decorator-uploading-s3/
-# Used work of Stephen "Zero" Chappell <Noctis.Skytower@gmail.com>
-# Used work of https://github.com/pnpnpn/timeout-decorator
-
-if sys.version_info < (3, 3):
-    TimeoutError = AssertionError  # there is no TimeoutError below Python 3.3
+from .wrap_helper import WrapHelper
 
 
 def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False):

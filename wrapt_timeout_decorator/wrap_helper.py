@@ -4,6 +4,8 @@ import signal
 import sys
 import threading
 
+if sys.version_info < (3, 3):
+    TimeoutError = AssertionError  # there is no TimeoutError below Python 3.3
 
 class WrapHelper(object):
     def __init__(self, dec_timeout=None, use_signals=True, timeout_exception=None,

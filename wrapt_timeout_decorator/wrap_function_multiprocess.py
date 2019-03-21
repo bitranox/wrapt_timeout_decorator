@@ -1,6 +1,6 @@
 import multiprocess
 import sys
-from . import raise_exception
+from .wrap_helper import raise_exception
 
 
 class Timeout(object):
