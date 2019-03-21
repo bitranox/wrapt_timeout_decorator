@@ -4,8 +4,10 @@ Timeout decorator.
     :license: MIT, see LICENSE for more details.
 """
 
+from dill import PicklingError
 import wrapt
 from .wrap_helper import WrapHelper
+from.wrap_function_multiprocess import Timeout
 
 
 def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False):
@@ -110,6 +112,6 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
                     timeout_wrapper = Timeout(wrapped, wrap_helper.timeout_exception,
                                               wrap_helper.exception_message, wrap_helper.dec_timeout)
                     return timeout_wrapper(*args, **kwargs)
-                except dill.PicklingError:
+                except PicklingError:
                     wrap_helper.detect_unpickable_objects_and_reraise(wrapped)
     return wrapper
