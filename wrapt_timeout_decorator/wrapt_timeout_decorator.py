@@ -5,8 +5,7 @@ Timeout decorator.
 """
 
 import wrapt
-from wrap_helper import *
-from wrap_function_multiprocess import Timeout
+from . import *
 
 ############################################################
 # Timeout
