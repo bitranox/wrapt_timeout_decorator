@@ -28,9 +28,11 @@ if sys.version_info < (3, 3):
 def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False):
     """Add a timeout parameter to a function and return it.
 
-    ToDo :   Traceback information when using no_signals
-                integrate tblib in order to get complete Traceback when use_signals=False
-                (see https://pypi.python.org/pypi/tblib)
+    ToDo :   Traceback information when use_signals=False (see https://pypi.python.org/pypi/tblib)
+             connect the Logger of the Subprocess to the main logger when use_signals=False
+             makes life easier on Windows
+
+    Windows remark : dont use the decorator in the main.py because of Windows multiprocessing limitations - read the README
 
     Usage:
 
@@ -171,17 +173,37 @@ class WrapHelper(object):
         signal.signal(signal.SIGALRM, self.old_alarm_handler)
 
     def set_signals_to_false_if_not_possible(self):
-        """ gives True when we can use timeout signals, otherwise False"""
-        if platform.system().lower().startswith('win'):  # on Windows we cant use Signals
+        if self.is_system_windows() or not self.is_in_main_thread():
             self.use_signals = False
-        if sys.version_info < (3, 4):
-            # on old python use this method - we can only use Signals in the Main Thread
-            if not isinstance(threading.current_thread(), threading._MainThread):
-                self.use_signals = False
+
+    @staticmethod
+    def is_system_windows():
+        if platform.system().lower().startswith('win'):
+            return True
         else:
-            # much nicer after python 3.4 - we can only use Signals in the Main Thread
-            if not threading.current_thread() == threading.main_thread():
-                self.use_signals = False
+            return False
+
+    def is_in_main_thread(self):
+        if sys.version_info < (3, 4):
+            return self.is_in_main_thread_pre_python_3_4()
+        else:
+            return self.is_in_main_thread_from_python_3_4_up()
+
+    @staticmethod
+    def is_in_main_thread_pre_python_3_4():
+        # old python versions below 3.4
+        if isinstance(threading.current_thread(), threading._MainThread):
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def is_in_main_thread_from_python_3_4_up():
+        # python versions from 3.4 up
+        if threading.current_thread() == threading.main_thread():
+            return True
+        else:
+            return False
 
     def detect_unpickable_objects_and_reraise(self, object_to_pickle):
         # sometimes the detection detects unpickable objects but actually
