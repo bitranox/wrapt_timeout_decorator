@@ -28,6 +28,8 @@ matrix:
 
   - os: windows
     language: sh
+    python:
+    '3.6'
     before_install:
     - choco install python3
     - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
@@ -35,8 +37,8 @@ matrix:
     - pip install dill multiprocess wrapt codecov pytest-pep8 pytest-cov
 
 install:
-- if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
 - pip install --upgrade pip
+- if [[ $TRAVIS_PYTHON_VERSION == pypy3.5 ]]; then pip install "pytest-cov==2.5.0"; fi
 - pip install dill multiprocess wrapt codecov pytest>=3.6 pytest-pep8 pytest-cov
 # - pip install tox tox-travis dill multiprocess wrapt codecov pytest>=3.6 pytest-pep8 pytest-cov
 
