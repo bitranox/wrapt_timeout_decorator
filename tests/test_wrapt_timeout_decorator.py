@@ -1,5 +1,5 @@
 """Timeout decorator tests."""
-from wrapt_timeout_decorator.wrapt_timeout_decorator import *
+from wrapt_timeout_decorator import *
 import pytest
 import sys
 import time
