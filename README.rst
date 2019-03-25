@@ -45,6 +45,7 @@ From source code:
 ::
 
     python setup.py install
+    python setup.py test
 
 via pip (preferred):
 
