@@ -22,23 +22,27 @@ matrix:
   - os: linux
     language: python
     install:
+    - pip install --upgrade pip
     - if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
     - pip install tox tox-travis dill multiprocess wrapt codecov
 
   - os: osx
     language: sh
-    install: pip3 install -e dill multiprocess wrapt codecov
+    install:
+    - pip3 install --upgrade pip
+    - pip3 install dill multiprocess wrapt codecov
 
   - os: windows
     language: sh
     before_install:
     - choco install python3
     - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+    - pip install --upgrade pip
     - pip install tox tox-travis dill multiprocess wrapt codecov
 
-install:
-- if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
-- pip install tox tox-travis dill multiprocess wrapt codecov
+# install:
+# - if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
+# - pip install tox tox-travis dill multiprocess wrapt codecov
 
 script:
   - tox
