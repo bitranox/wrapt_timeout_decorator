@@ -1,4 +1,4 @@
-component_depth: 3
+component_depth: 2
 
-include:
-  - .*/wrapt_timeout_decorator/.*\.py
+languages:
+- python
