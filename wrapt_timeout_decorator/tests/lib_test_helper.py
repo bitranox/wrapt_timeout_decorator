@@ -1,6 +1,7 @@
 from wrapt_timeout_decorator import *
 import time
 
+
 class ClassTest1(object):
     def __init__(self):
         self.x = 3
