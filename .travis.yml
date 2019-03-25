@@ -48,7 +48,7 @@ install:
 
 script:
   # - tox
-  - py.test --pep8 --cov wrapt_timeout_decorator tests
+  - py.test --pep8 --cov tests
 
 after_success:
 - pip install -e .
