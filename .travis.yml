@@ -11,10 +11,11 @@ python:
 - '3.5'
 - '3.6'
 # - '3.7'     # 2018-09-10 Python 3.7 not installed on travis
-- '3.7-dev'   # 2018-09-10 old Version, but that is all we have got for now
+- '3.7.1'     # 2019-03-25 latest Version
+- '3.7-dev'   # 2018-03-25 development Version
 # - '3.8-dev' # 2018-09-10 does not exist now
-- 'pypy'
-- 'pypy3'
+- 'pypy2.7'
+- 'pypy3.5'
 
 matrix:
   include:
@@ -30,7 +31,7 @@ matrix:
     language: sh
     install:
     - pip3 install --upgrade pip
-    - pip3 install dill multiprocess wrapt codecov
+    - pip3 install tox tox-travis dill multiprocess wrapt codecov
 
   - os: windows
     language: sh
