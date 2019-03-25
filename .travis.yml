@@ -19,12 +19,12 @@ python:
 matrix:
   include:
 
-  - os: linux
-    language: python
-    install:
-    - pip install --upgrade pip
-    - if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
-    - pip install tox tox-travis dill multiprocess wrapt codecov
+#  - os: linux
+#    language: python
+#    install:
+#    - pip install --upgrade pip
+#    - if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
+#    - pip install tox tox-travis dill multiprocess wrapt codecov
 
   - os: osx
     language: sh
@@ -40,9 +40,10 @@ matrix:
     - pip install --upgrade pip
     - pip install tox tox-travis dill multiprocess wrapt codecov
 
-# install:
-# - if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
-# - pip install tox tox-travis dill multiprocess wrapt codecov
+install:
+- if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
+- pip install --upgrade pip
+- pip install tox tox-travis dill multiprocess wrapt codecov
 
 script:
   - tox
