@@ -1,7 +1,4 @@
-os:
-  - windows
-  - linux
-  - osx
+os: linux
 
 language: python
 
