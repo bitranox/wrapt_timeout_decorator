@@ -37,7 +37,7 @@ matrix:
 
 install:
 - pip install --upgrade pip
-- if [[ $TRAVIS_PYTHON_VERSION == pypy3.5 ]]; then pip install "pytest-cov==2.5.0"; fi
+- if [[ $TRAVIS_PYTHON_VERSION == pypy3.5 ]]; then pip install "pytest-cov==2.6.0"; fi
 - pip install dill multiprocess wrapt codecov pytest>=3.6 pytest-pep8 pytest-cov
 # - pip install tox tox-travis dill multiprocess wrapt codecov pytest>=3.6 pytest-pep8 pytest-cov
 
