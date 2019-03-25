@@ -18,9 +18,11 @@ python:
 
 matrix:
   include:
+    - os: linux
+        language: python
     - os: osx
         language: sh
-        install: pip3 install -e tox tox-travis dill multiprocess wrapt codecov
+        install: pip3 install -e dill multiprocess wrapt codecov
     - os: windows
         language: sh
         before_install:
