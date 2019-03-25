@@ -4,7 +4,7 @@ import pytest
 import sys
 import time
 from dill import PicklingError
-
+from .lib_test_helper import *
 
 if sys.version_info < (3, 3):             # there is no TimeoutError < Python 3.3
     TimeoutError = AssertionError
@@ -25,14 +25,6 @@ def test_timeout_decorator_arg(use_signals):
 
 
 def test_timeout_class_method_use_signals():
-    class ClassTest1(object):
-        def __init__(self):
-            self.x = 3
-
-        @timeout('instance.x/3', use_signals=True, dec_allow_eval=True)
-        def f(self):
-            time.sleep(2)
-
     with pytest.raises(TimeoutError):
         ClassTest1().f()
 
