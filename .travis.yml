@@ -31,7 +31,7 @@ matrix:
     language: sh
     install:
     - pip3 install --upgrade pip
-    - pip3 install tox tox-travis dill multiprocess wrapt codecov pytest-pep8
+    - pip3 install tox tox-travis dill multiprocess wrapt codecov pytest-pep8 pytest-cov
 
   - os: windows
     language: sh
@@ -39,12 +39,12 @@ matrix:
     - choco install python3
     - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
     - python -m pip install --upgrade pip
-    - pip install tox tox-travis dill multiprocess wrapt codecov pytest-pep8
+    - pip install tox tox-travis dill multiprocess wrapt codecov pytest-pep8 pytest-cov
 
 install:
 - if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
 - pip install --upgrade pip
-- pip install tox tox-travis dill multiprocess wrapt codecov pytest-pep8
+- pip install tox tox-travis dill multiprocess wrapt codecov pytest-pep8 pytest-cov
 
 script:
   # - tox
