@@ -36,6 +36,10 @@ matrix:
     - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
     - pip install tox tox-travis dill multiprocess wrapt codecov
 
+install:
+- if [[ $TRAVIS_PYTHON_VERSION == 3.2 ]]; then pip install -U "virtualenv<14.0.0"; fi
+- pip install tox tox-travis dill multiprocess wrapt codecov
+
 script:
   - tox
 
