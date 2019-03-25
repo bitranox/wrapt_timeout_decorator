@@ -47,7 +47,8 @@ install:
 - pip install tox tox-travis dill multiprocess wrapt codecov
 
 script:
-  - tox
+  # - tox
+  - py.test wrapt_timeout_decorator tests --pep8 --cov
 
 after_success:
 - pip install -e .
