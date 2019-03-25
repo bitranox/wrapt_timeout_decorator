@@ -35,4 +35,6 @@ setup(
     url='https://github.com/bitranox/wrapt-timeout-decorator',
     packages=['wrapt_timeout_decorator'],
     install_requires=['dill','multiprocess','wrapt'],
-    classifiers=CLASSIFIERS)
+    classifiers=CLASSIFIERS,
+    setup_requires=['pytest-runner'],
+    tests_require=['pytest'])
