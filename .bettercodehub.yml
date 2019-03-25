@@ -1,1 +1,6 @@
 component_depth: 3
+
+- name: python
+    include:
+      - .*/wrapt_timeout_decorator/.*\.py
+      
