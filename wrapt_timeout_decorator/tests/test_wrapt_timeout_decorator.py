@@ -97,15 +97,17 @@ def test_timeout_partial_seconds(use_signals):
     @timeout(0.2, use_signals=use_signals)
     def f():
         time.sleep(0.5)
+
     with pytest.raises(TimeoutError):
         f()
 
 
 def test_timeout_ok_timeout_as_kwarg(use_signals):
     @timeout(dec_timeout=2, use_signals=use_signals)
-    def f():
+    def f_test_timeout_ok_timeout_as_kwarg():
         time.sleep(0.5)
-    f()
+
+    f_test_timeout_ok_timeout_as_kwarg()
 
 
 def test_timeout_ok_timeout_as_arg(use_signals):
