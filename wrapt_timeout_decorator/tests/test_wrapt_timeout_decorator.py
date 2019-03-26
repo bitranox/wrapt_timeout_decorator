@@ -37,8 +37,8 @@ def test_timeout_class_method_can_pickle(use_signals):
     my_object = ClassTest2(1)
     with pytest.raises(TimeoutError):
         my_object.test_method(use_signals=use_signals)
-    my_object = ClassTest2(3)
-    assert my_object.test_method(use_signals=use_signals) == 'done'
+    my_object = ClassTest2(3)  # this will NOT work in Windows, You need to pass it as kwarg !
+    assert my_object.test_method(dec_timeout=3, use_signals=use_signals) == 'done'
 
 
 def test_timeout_kwargs(use_signals):
@@ -175,10 +175,10 @@ def test_not_main_thread(use_signals):
     # we can not check for the Exception here, it happens in the subthread
     # we would need to set up a queue to communicate.
     # but we can check if the timeout occured
-    start_time = time.time()
     test_thread = Thread(target=f)
     test_thread.name = None
     test_thread.daemon = True
+    start_time = time.time()
     test_thread.start()
     test_thread.join()
     stop_time = time.time()
