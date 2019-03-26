@@ -101,8 +101,15 @@ def test_timeout_partial_seconds(use_signals):
         f()
 
 
-def test_timeout_ok(use_signals):
+def test_timeout_ok_timeout_as_kwarg(use_signals):
     @timeout(dec_timeout=2, use_signals=use_signals)
+    def f():
+        time.sleep(0.5)
+    f()
+
+
+def test_timeout_ok_timeout_as_arg(use_signals):
+    @timeout(2, use_signals=use_signals)
     def f():
         time.sleep(0.5)
     f()
