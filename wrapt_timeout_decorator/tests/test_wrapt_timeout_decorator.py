@@ -30,18 +30,6 @@ def test_timeout_class_method_use_signals():
 
 
 def test_timeout_class_method_dont_use_signals_can_pickle1():
-    """
-    >>> test_timeout_class_method_dont_use_signals_can_pickle1()
-    :return:
-    """
-    class ClassTest2(object):
-        def __init__(self):
-            self.x = 3
-
-        @timeout('instance.x/3', use_signals=False, dec_allow_eval=True)
-        def f(self):
-            time.sleep(2)
-
     with pytest.raises(TimeoutError):
         ClassTest2().f()
 
@@ -165,7 +153,8 @@ def test_timeout_eval(use_signals):
     @timeout(dec_timeout='args[0] * 2', use_signals=use_signals, dec_allow_eval=True)
     def f(x):
         time.sleep(0.4)
-    f(0.3)
+
+    assert f(0.6) is None
     with pytest.raises(TimeoutError):
         f(0.1)
 
