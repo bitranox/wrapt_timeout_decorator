@@ -104,7 +104,7 @@ def test_timeout_partial_seconds(use_signals):
 def test_timeout_ok(use_signals):
     @timeout(dec_timeout=2, use_signals=use_signals)
     def f():
-        time.sleep(1)
+        time.sleep(0.5)
     f()
 
 
