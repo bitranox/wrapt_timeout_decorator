@@ -21,6 +21,7 @@ class WrapHelper(object):
     def get_kwargs(self, kwargs):
         self.dec_allow_eval = kwargs.pop('dec_allow_eval', self.dec_allow_eval)  # make mutable and get possibly kwarg
         self.dec_timeout = kwargs.pop('dec_timeout', self.dec_timeout)   # make mutable and get possibly kwarg
+        self.use_signals = kwargs.pop('use_signals', self.use_signals)   # make mutable and get possibly kwarg
 
     @property
     def should_eval(self):
@@ -30,9 +31,8 @@ class WrapHelper(object):
             return False
 
     def format_exception_message(self, wrapped):
-        if hasattr(wrapped, '__name__'):
-            function_name = wrapped.__name__
-        else:
+        function_name = wrapped.__name__
+        if not function_name:
             function_name = '(unknown name)'
         if not self.exception_message:
             self.exception_message = 'Function {f} timed out after {s} seconds'.format(f=function_name, s=self.dec_timeout)

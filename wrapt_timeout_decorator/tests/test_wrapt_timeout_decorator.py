@@ -1,10 +1,13 @@
 """Timeout decorator tests."""
-from wrapt_timeout_decorator import *
-import pytest
-import sys
-import time
+
 from dill import PicklingError
 from .lib_test_helper import *
+import pytest
+import sys
+from threading import Thread
+import time
+from wrapt_timeout_decorator import *
+
 
 if sys.version_info < (3, 3):             # there is no TimeoutError < Python 3.3
     TimeoutError = AssertionError
@@ -24,29 +27,18 @@ def test_timeout_decorator_arg(use_signals):
         f()
 
 
-def test_timeout_class_method_use_signals():
+def test_timeout_class_method(use_signals):
     with pytest.raises(TimeoutError):
-        ClassTest1().f()
+        ClassTest1().f(use_signals=use_signals)
+    assert ClassTest1().f(dec_timeout='instance.x', dec_allow_eval=True, use_signals=use_signals) is None
 
 
-def test_timeout_class_method_dont_use_signals_can_pickle1():
+def test_timeout_class_method_can_pickle(use_signals):
+    my_object = ClassTest2(1)
     with pytest.raises(TimeoutError):
-        ClassTest2().f()
-
-
-def test_timeout_class_method_dont_use_signals_can_pickle2():
-    with pytest.raises(TimeoutError):
-        ClassTest3().f()
-    my_object = ClassTest3()
-    assert my_object.f(dec_timeout=3, dec_allow_eval=False) == 'done'
-
-
-def test_timeout_class_method_dont_use_signals_can_pickle3():
-    my_object = ClassTest4(1)
-    with pytest.raises(TimeoutError):
-        my_object.test_method()
-    my_object = ClassTest4(3)
-    assert my_object.test_method() == 'done'
+        my_object.test_method(use_signals=use_signals)
+    my_object = ClassTest2(3)
+    assert my_object.test_method(use_signals=use_signals) == 'done'
 
 
 def test_timeout_kwargs(use_signals):
@@ -155,3 +147,39 @@ def test_exception(use_signals):
 
     with pytest.raises(AssertionError, match='test'):
         f()
+
+
+def test_no_function_name(use_signals):
+    @timeout(0.1, use_signals=use_signals)
+    def f():
+        time.sleep(1)
+
+    with pytest.raises(TimeoutError, match=r'Function \(unknown name\) timed out after 0.1 seconds'):
+        f.__name__ = ''
+        f()
+
+
+def test_custom_exception(use_signals):
+    @timeout(0.1, use_signals=use_signals, timeout_exception=ValueError, exception_message='custom exception message')
+    def f():
+        time.sleep(1)
+    with pytest.raises(ValueError, match='custom exception message'):
+        f()
+
+
+def test_not_main_thread(use_signals):
+    @timeout(0.1, use_signals=use_signals)
+    def f():
+        time.sleep(1)
+
+    # we can not check for the Exception here, it happens in the subthread
+    # we would need to set up a queue to communicate.
+    # but we can check if the timeout occured
+    start_time = time.time()
+    test_thread = Thread(target=f)
+    test_thread.name = None
+    test_thread.daemon = True
+    test_thread.start()
+    test_thread.join()
+    stop_time = time.time()
+    assert 0.0 < (stop_time - start_time) < 0.2
