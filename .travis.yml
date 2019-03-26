@@ -15,7 +15,7 @@ python:
 - '3.7-dev'   # 2018-03-25 development Version
 # - '3.8-dev' # 2018-09-10 does not exist now
 - 'pypy2.7-6.0'
-- 'pypy3.5'
+- 'pypy3.5-6.0'
 
 matrix:
   include:
@@ -38,7 +38,7 @@ matrix:
 
 install:
 - pip install --upgrade pip
-- if [[ $TRAVIS_PYTHON_VERSION == pypy3.5 ]]; then pip install "pytest-cov==2.6.0"; fi
+- if [[ $TRAVIS_PYTHON_VERSION == pypy3.5-6.0 ]]; then pip install "pytest-cov==2.6.0"; fi
 - pip install dill multiprocess wrapt codecov pytest>=3.6 pytest-pep8 pytest-cov
 # - pip install tox tox-travis dill multiprocess wrapt codecov pytest>=3.6 pytest-pep8 pytest-cov
 
@@ -47,7 +47,7 @@ script:
 
 after_success:
 - pip install -e .
-- coverage combine --append
+# - coverage combine --append
 - coverage report
 - codecov
 
