@@ -8,7 +8,7 @@ import time
 
 class ClassTest1(object):
     def __init__(self):
-        self.x = 2
+        self.x = 2.0
 
     @timeout('instance.x/8', dec_allow_eval=True)
     def f(self):
