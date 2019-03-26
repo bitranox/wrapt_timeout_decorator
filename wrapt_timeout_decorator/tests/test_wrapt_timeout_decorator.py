@@ -182,4 +182,4 @@ def test_not_main_thread(use_signals):
     test_thread.start()
     test_thread.join()
     stop_time = time.time()
-    assert 0.0 < (stop_time - start_time) < 0.2
+    assert 0.0 < (stop_time - start_time) < 0.7
