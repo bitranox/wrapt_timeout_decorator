@@ -93,7 +93,6 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
     @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
         wrap_helper = WrapHelper(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval)
-        wrap_helper.set_signals_to_false_if_not_possible()
         wrap_helper.get_kwargs(kwargs)
         wrap_helper.set_signals_to_false_if_not_possible()
         if wrap_helper.should_eval:
