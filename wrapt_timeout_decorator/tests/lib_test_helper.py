@@ -4,6 +4,7 @@ import time
 # classes must not be defined in the main module, because of windows multiprocessing
 # so we put it into another file
 
+
 class ClassTest1(object):
     def __init__(self):
         self.x = 3
