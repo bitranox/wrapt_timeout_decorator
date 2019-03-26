@@ -161,9 +161,9 @@ def test_timeout_eval(use_signals):
 
 def test_exception(use_signals):
     """ Test Exception """
-    @timeout(0.4, use_signals=use_signals)
+    @timeout(1.0, use_signals=use_signals)
     def f():
-        raise AssertionError
+        raise AssertionError('test')
 
-    with pytest.raises(AssertionError):
+    with pytest.raises(AssertionError, match='test'):
         f()
