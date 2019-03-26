@@ -10,7 +10,7 @@ class ClassTest1(object):
     def __init__(self):
         self.x = 2
 
-    @timeout('instance.x//8', dec_allow_eval=True)
+    @timeout('instance.x/8', dec_allow_eval=True)
     def f(self):
         time.sleep(1)
 
