@@ -427,13 +427,13 @@ use_signals = False (Windows) gives different total time
 when use_signals = False (this is the only method available on Windows), the timeout function is realized by starting
 another process and terminate that process after the given timeout.
 Under Linux fork() of a new process is very fast, under Windows it might take some considerable time,
-because the main context needs to be reloaded on spawn() since fork() is not available an Windows.
+because the main context needs to be reloaded on spawn() since fork() is not available on Windows.
 Spawning of a small module might take something like 0.5 seconds and more.
 
 Since it is not predictable how long the spawn() will take on windows, the timeout will start AFTER
 spawning the new process.
 
-This means that the timeout given, is the time the process is allowed to run, excluding the time to setup the process.
+This means that the timeout given, is the time the process is allowed to run, excluding the time to setup the process itself.
 This is especially important if You use small timeout periods :
 
 for Instance:
@@ -447,12 +447,13 @@ for Instance:
         time.sleep(0.2)
 
 
-the total time on linux with use_signals = False will be around 0.1 seconds, but on windows this will take
+the total time to timeout on linux with use_signals = False will be around 0.1 seconds, but on windows this will take
 about 0.6 seconds. 0.5 seconds to set up the new process, and giving the function test() 0.1 seconds to run !
 
 If You need that a decorated function should time out exactly after the given timeout, You can pass
 the parameter dec_hard_timeout=True. in this case the function will time out exactly after the given time,
-no matter how long it took to spawn the process itself.
+no matter how long it took to spawn the process itself. In that case, if You set up the time out too short,
+the process might never run and will always timeout.
 
 Requirements
 ------------
