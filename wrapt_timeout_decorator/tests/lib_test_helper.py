@@ -1,3 +1,4 @@
+import platform
 from wrapt_timeout_decorator import *
 import time
 
@@ -8,11 +9,11 @@ import time
 
 class ClassTest1(object):
     def __init__(self):
-        self.x = 2.0
+        self.x = 1.0
 
-    @timeout('instance.x/8', dec_allow_eval=True)
+    @timeout('instance.x/10', dec_allow_eval=True)
     def f(self):
-        time.sleep(1)
+        time.sleep(0.2)
 
 
 class ClassTest2(object):
@@ -22,5 +23,5 @@ class ClassTest2(object):
     @timeout('instance.x', use_signals=False, dec_allow_eval=True)
     def test_method(self):
         print('swallow')
-        time.sleep(2)
+        time.sleep(0.2)
         return 'done'

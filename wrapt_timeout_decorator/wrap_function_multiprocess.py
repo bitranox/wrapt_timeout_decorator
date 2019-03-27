@@ -1,5 +1,6 @@
 import multiprocess
 import sys
+import time
 from .wrap_helper import raise_exception
 
 
@@ -10,12 +11,13 @@ class Timeout(object):
     to be made and termination of execution after a timeout has passed.
     """
 
-    def __init__(self, function, timeout_exception, exception_message, limit):
+    def __init__(self, function, timeout_exception, exception_message, dec_timeout, dec_hard_timeout):
         """Initialize instance in preparation for being called."""
-        self.__limit = limit
-        self.__function = function
-        self.__timeout_exception = timeout_exception
-        self.__exception_message = exception_message
+        self.dec_timeout = dec_timeout
+        self.dec_hard_timeout = dec_hard_timeout
+        self.function = function
+        self.timeout_exception = timeout_exception
+        self.exception_message = exception_message
         self.__name__ = function.__name__
         self.__doc__ = function.__doc__
         self.__process = None
@@ -29,12 +31,13 @@ class Timeout(object):
         True, the "value" property may then be checked for returned data.
         """
         self.__parent_conn, self.__child_conn = multiprocess.Pipe(duplex=False)
-        args = (self.__child_conn, self.__function) + args
+        args = (self.__child_conn, self.dec_hard_timeout, self.function) + args
         self.__process = multiprocess.Process(target=_target, args=args, kwargs=kwargs)
         self.__process.daemon = True
         self.__process.start()
-
-        if self.__parent_conn.poll(self.__limit):
+        if not self.dec_hard_timeout:
+            self.wait_until_process_started()
+        if self.__parent_conn.poll(self.dec_timeout):
             return self.value
         else:
             self.cancel()
@@ -45,7 +48,10 @@ class Timeout(object):
         if self.__process.is_alive():
             self.__process.terminate()
 
-        raise_exception(self.__timeout_exception, self.__exception_message)
+        raise_exception(self.timeout_exception, self.exception_message)
+
+    def wait_until_process_started(self):
+        started = self.__parent_conn.recv()
 
     @property
     def value(self):
@@ -61,7 +67,7 @@ class Timeout(object):
             return result
 
 
-def _target(child_conn, function, *args, **kwargs):
+def _target(child_conn, dec_hard_timeout, function, *args, **kwargs):
     """Run a function with arguments and return output via a pipe.
     This is a helper function for the Process created in Timeout. It runs
     the function with positional arguments and keyword arguments and then
@@ -69,6 +75,8 @@ def _target(child_conn, function, *args, **kwargs):
     raised, it is returned to Timeout to be raised by the value property.
     """
     try:
+        if not dec_hard_timeout:
+            child_conn.send('started')
         exception_occured = False
         child_conn.send((exception_occured, function(*args, **kwargs)))
     except:

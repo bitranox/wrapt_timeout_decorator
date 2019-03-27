@@ -10,7 +10,7 @@ from .wrap_helper import WrapHelper
 from.wrap_function_multiprocess import Timeout
 
 
-def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False):
+def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False, dec_hard_timeout=False):
     """Add a timeout parameter to a function and return it.
 
     ToDo :   Traceback information when use_signals=False (see https://pypi.python.org/pypi/tblib)
@@ -71,10 +71,24 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
 
                                 If enabled, the parameter of the function dec_timeout, or the parameter passed
                                 by kwarg dec_timeout will be evaluated if its type is string. You can access :
-                                wrapped (the function object)
+                                wrapped (the function object and all their exposed objects)
                                 instance    Example: 'instance.x' - see example above or doku
                                 args        Example: 'args[0]' - the timeout is the first argument in args
                                 kwargs      Example: 'kwargs["max_time"] * 2'
+
+    :param dec_hard_timeout:    only considered when use_signals = True (Windows)
+                                if dec_hard_timeout = True, the decorator will timeout after dec_timeout after the
+                                decorated function is called by the main program.
+                                If You set up a small timeout value like 0.1 seconds, in windows that function might
+                                actually never run - because setting up the process will already take longer
+                                then 0.1 seconds - that means the decorated function will ALWAYS time out (and never run).
+
+                                if dec_hard_timeout = False, the decorator will timeout after the process is allowed to
+                                run for dec_timeout seconds, that means the time to set up the new process is not considered.
+                                If You set up a small timeout value like 0.1 seconds, in windows that function might now
+                                take something like 0.6 seconds to timeout - 0.5 seconds to set up the process, and
+                                allowing the function in the process to run for 0.1 seconds.
+                                Since You can not know how long the spawn() will take under Windows, this is the default setting.
 
     * all parameters starting with dec_ can be overridden via kwargs passed to the wrapped function.
 
@@ -82,6 +96,7 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
     :type use_signals:          bool
     :type timeout_exception:    Exception
     :type exception_message:    str
+    :type dec_hard_timeout:     bool
 
     :raises:                    TimeoutError if time limit is reached
     :returns:                   the Result of the wrapped function
@@ -92,7 +107,7 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
 
     @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
-        wrap_helper = WrapHelper(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval)
+        wrap_helper = WrapHelper(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval, dec_hard_timeout)
         wrap_helper.get_kwargs(kwargs)
         wrap_helper.set_signals_to_false_if_not_possible()
         if wrap_helper.should_eval:
@@ -110,7 +125,7 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
             else:
                 try:
                     timeout_wrapper = Timeout(wrapped, wrap_helper.timeout_exception,
-                                              wrap_helper.exception_message, wrap_helper.dec_timeout)
+                                              wrap_helper.exception_message, wrap_helper.dec_timeout, wrap_helper.dec_hard_timeout)
                     return timeout_wrapper(*args, **kwargs)
                 except PicklingError:
                     wrap_helper.detect_unpickable_objects_and_reraise(wrapped)

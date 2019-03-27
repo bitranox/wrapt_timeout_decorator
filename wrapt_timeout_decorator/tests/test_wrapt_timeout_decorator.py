@@ -7,6 +7,7 @@ import sys
 from threading import Thread
 import time
 from wrapt_timeout_decorator import *
+from wrapt_timeout_decorator.wrap_helper import *
 
 
 if sys.version_info < (3, 3):             # there is no TimeoutError < Python 3.3
@@ -20,63 +21,54 @@ def use_signals(request):
 
 
 def test_timeout_decorator_arg(use_signals):
-    @timeout(1, use_signals=use_signals)
+    @timeout(0.1, use_signals=use_signals)
     def f():
-        time.sleep(2)
+        time.sleep(0.2)
     with pytest.raises(TimeoutError):
         f()
 
 
 def test_timeout_class_method(use_signals):
-    with pytest.raises(TimeoutError):
+    with pytest.raises(TimeoutError, match=r'Function f timed out after 0\.1 seconds'):
         ClassTest1().f(use_signals=use_signals)
     assert ClassTest1().f(dec_timeout='instance.x', dec_allow_eval=True, use_signals=use_signals) is None
 
 
 def test_timeout_class_method_can_pickle(use_signals):
-    my_object = ClassTest2(1)
-    with pytest.raises(TimeoutError):
+    my_object = ClassTest2(0.1)
+    with pytest.raises(TimeoutError, match=r'Function test_method timed out after 0\.1 seconds'):
         my_object.test_method(use_signals=use_signals)
-    my_object = ClassTest2(3)  # this will NOT work in Windows, You need to pass it as kwarg !
-    assert my_object.test_method(dec_timeout=3, use_signals=use_signals) == 'done'
+    my_object = ClassTest2(1.0)
+    assert my_object.test_method(use_signals=use_signals) == 'done'
 
 
 def test_timeout_kwargs(use_signals):
-    @timeout(3, use_signals=use_signals)
+    @timeout(1, use_signals=use_signals)
     def f():
-        time.sleep(2)
-    with pytest.raises(TimeoutError):
-        f(dec_timeout=1)
+        time.sleep(0.2)
+    with pytest.raises(TimeoutError, match=r'Function f timed out after 0\.1 seconds'):
+        f(dec_timeout=0.1)
 
 
 def test_timeout_alternate_exception(use_signals):
-    @timeout(3, use_signals=use_signals, timeout_exception=StopIteration)
+    @timeout(0.1, use_signals=use_signals, timeout_exception=StopIteration)
     def f():
-        time.sleep(2)
-    with pytest.raises(StopIteration):
-        f(dec_timeout=1)
+        time.sleep(0.2)
+    with pytest.raises(StopIteration, match=r'Function f timed out after 0\.1 seconds'):
+        f()
 
 
-def test_timeout_no_seconds(use_signals):
+def test_no_timeout_given(use_signals):
     @timeout(use_signals=use_signals)
     def f():
         time.sleep(0.1)
     f()
 
 
-def test_timeout_partial_seconds(use_signals):
-    @timeout(0.2, use_signals=use_signals)
-    def f():
-        time.sleep(0.5)
-
-    with pytest.raises(TimeoutError):
-        f()
-
-
 def test_timeout_ok_timeout_as_kwarg(use_signals):
-    @timeout(dec_timeout=2, use_signals=use_signals)
+    @timeout(dec_timeout=0.2, use_signals=use_signals)
     def f_test_timeout_ok_timeout_as_kwarg():
-        time.sleep(0.5)
+        time.sleep(0.1)
 
     f_test_timeout_ok_timeout_as_kwarg()
 
@@ -183,3 +175,25 @@ def test_not_main_thread(use_signals):
     test_thread.join()
     stop_time = time.time()
     assert 0.0 < (stop_time - start_time) < 0.7   # yes, it takes quiet some time to create the thread
+
+
+@timeout(0.1, use_signals=use_signals)
+def can_not_be_pickled_in_windows_because_in_main_context():
+    time.sleep(1)
+
+
+def test_pickle_detection_not_implemented_error():
+    wrap_helper = WrapHelper()
+    with pytest.raises(PicklingError, match=r'can not pickle can_not_be_pickled_in_windows_because_in_main_context, bad types can not be detected because of dill\.NotImplementedError'):
+        wrap_helper.detect_unpickable_objects_and_reraise(can_not_be_pickled_in_windows_because_in_main_context)
+
+
+def test_hard_timeout_windows_only():
+    @timeout(dec_timeout=0.15, use_signals=use_signals)
+    def f_test_hard_timeout():
+        time.sleep(0.1)
+        return 'done'
+    if WrapHelper.is_system_windows():
+        with pytest.raises(TimeoutError, match=r'Function f_test_hard_timeout timed out after 0.15 seconds'):
+            f_test_hard_timeout(dec_hard_timeout=True)
+        assert f_test_hard_timeout(dec_hard_timeout=False) == 'done'

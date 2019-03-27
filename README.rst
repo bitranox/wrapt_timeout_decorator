@@ -105,6 +105,63 @@ Specify an alternate exception to raise on timeout:
     if __name__ == '__main__':
         mytest('starting')
 
+
+Parameters
+----------
+
+::
+
+    @timeout(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval, dec_hard_timeout)
+    def f():
+        # interesting things happens here ...
+        ...
+
+    dec_timeout         the timeout period in seconds, or a string that can be evaluated when dec_allow_eval = True
+                        type: float, integer or string
+                        default: None (no Timeout set)
+
+    use_signals         if to use signals (linux, osx) to realize the timeout. The most accurate and preferred method.
+                        Please note that signals can be used only in the main thread and only on linux. In all other cases
+                        (not the main thread, or under Windows) signals will not be used, no matter what You set here,
+                        in that cases use_signals will be disabled automatically.
+                        type: boolean
+                        default: True
+
+    timeout_exception   the Exception that will be raised if a timeout occurs.
+                        type: exception
+                        default: TimeoutError, on Python < 3.3: Assertion Error (since TimeoutError does not exist on that Python Versions)
+
+    exception_message   custom Exception message.
+                        type: str
+                        default : 'Function {function_name} timed out after {dec_timeout} seconds' (will be formatted)
+
+    dec_allow_eval      will allow to evaluate the parameter dec_timeout.
+                        If enabled, the parameter of the function dec_timeout, or the parameter passed
+                        by kwarg dec_timeout will be evaluated if its type is string. You can access :
+                        wrapped (the decorated function object and all the exposed objects below)
+                        instance    Example: 'instance.x' - see example above or doku
+                        args        Example: 'args[0]' - the timeout is the first argument in args
+                        kwargs      Example: 'kwargs["max_time"] * 2'
+                        type: bool
+                        default: false
+
+    dec_hard_timeout    only relevant when signals can not be used. In that case a new process needs to be created.
+                        The creation of the process on windows might take 0.5 seconds and more, depending on the size
+                        of the main module and modules to be imported. Especially useful for small timeout periods.
+
+                        dec_hard_timeout = True : the decorated function will time out after dec_timeout, no matter what -
+                        that means if You set 0.1 seconds here, the subprocess can not be created in that time and the
+                        function will always time out and never run.
+
+                        dec_hard_timeout = False : the decorated function will time out after the called function
+                        is allowed to run for dec_timeout seconds. The time needed to create that process is not considered.
+                        That means if You set 0.1 seconds here, and the time to create the subprocess is 0.5 seconds,
+                        the decorated function will time out after 0.6 seconds in total, allowing the decorated function to run
+                        for 0.1 seconds.
+
+
+
+
 Multithreading
 --------------
 
@@ -148,7 +205,7 @@ The following Code will run on Linux but NOT on Windows :
 Override with kwargs
 --------------------
 
-decorator parameters starting with \dec_* can be overridden by kwargs with the same name :
+decorator parameters starting with \dec_* and use_signals can be overridden by kwargs with the same name :
 
 ::
 
@@ -352,6 +409,40 @@ here the same example, which will work on Windows:
             sleep(1)
             print("{} seconds have passed".format(i))
         return i
+
+
+use_signals = False (Windows) gives different total time
+--------------------------------------------------------
+
+when use_signals = False (this is the only method available on Windows), the timeout function is realized by starting
+another process and terminate that process after the given timeout.
+Under Linux fork() of a new process is very fast, under Windows it might take some considerable time,
+because the main context needs to be reloaded on spawn() since fork() is not available an Windows.
+Spawning of a small module might take something like 0.5 seconds and more.
+
+Since it is not predictable how long the spawn() will take on windows, the timeout will start AFTER
+spawning the new process.
+
+This means that the timeout given, is the time the process is allowed to run, excluding the time to setup the process.
+This is especially important if You use small timeout periods :
+
+for Instance:
+
+
+::
+
+
+    @timeout(0.1)
+    def test():
+        time.sleep(0.2)
+
+
+the total time on linux with use_signals = False will be around 0.1 seconds, but on windows this will take
+about 0.6 seconds. 0.5 seconds to set up the new process, and giving the function test() 0.1 seconds to run !
+
+If You need that a decorated function should time out exactly after the given timeout, You can pass
+the parameter dec_hard_timeout=True. in this case the function will time out exactly after the given time,
+no matter how long it took to spawn the process itself.
 
 
 Requirements
