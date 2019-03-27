@@ -112,13 +112,14 @@ Parameters
 ::
 
     @timeout(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval, dec_hard_timeout)
-    def f():
+    def decorated_function(*args, **kwargs):
         # interesting things happens here ...
         ...
 
     dec_timeout         the timeout period in seconds, or a string that can be evaluated when dec_allow_eval = True
                         type: float, integer or string
                         default: None (no Timeout set)
+                        can be overridden by passing the kwarg dec_timeout to the decorated function*
 
     use_signals         if to use signals (linux, osx) to realize the timeout. The most accurate and preferred method.
                         Please note that signals can be used only in the main thread and only on linux. In all other cases
@@ -126,6 +127,7 @@ Parameters
                         in that cases use_signals will be disabled automatically.
                         type: boolean
                         default: True
+                        can be overridden by passing the kwarg use_signals to the decorated function*
 
     timeout_exception   the Exception that will be raised if a timeout occurs.
                         type: exception
@@ -144,6 +146,7 @@ Parameters
                         kwargs      Example: 'kwargs["max_time"] * 2'
                         type: bool
                         default: false
+                        can be overridden by passing the kwarg dec_allow_eval to the decorated function*
 
     dec_hard_timeout    only relevant when signals can not be used. In that case a new process needs to be created.
                         The creation of the process on windows might take 0.5 seconds and more, depending on the size
@@ -158,6 +161,12 @@ Parameters
                         That means if You set 0.1 seconds here, and the time to create the subprocess is 0.5 seconds,
                         the decorated function will time out after 0.6 seconds in total, allowing the decorated function to run
                         for 0.1 seconds.
+
+                        type: bool
+                        default: false
+                        can be overridden by passing the kwarg dec_hard_timeout to the decorated function*
+
+    * that means the decorated_function must not use that kwarg itself, since this kwarg will be popped from the kwargs
 
 
 
