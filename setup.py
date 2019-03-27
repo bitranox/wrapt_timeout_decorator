@@ -27,7 +27,7 @@ long_description = (
 
 setup(
     name='wrapt-timeout-decorator',
-    version='1.0.8',
+    version='1.0.9',
     description='Timeout decorator',
     long_description=long_description,
     author='Robert Nowotny',

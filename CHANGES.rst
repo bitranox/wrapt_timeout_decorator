@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.0.9
+-----
+2019-03-27: added OsX and Windows tests, added parameter dec_hard_timeout for Windows, 100% Code Coverage
+
 1.0.8
 -----
 2019-02-26: complete refractoring and code cleaning

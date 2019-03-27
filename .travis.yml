@@ -40,14 +40,12 @@ install:
 - pip install --upgrade pip
 - if [[ $TRAVIS_PYTHON_VERSION == pypy3.5-6.0 ]]; then pip install "pytest-cov==2.6.0"; fi
 - pip install dill multiprocess wrapt codecov pytest>=3.6 pytest-pep8 pytest-cov
-# - pip install tox tox-travis dill multiprocess wrapt codecov pytest>=3.6 pytest-pep8 pytest-cov
 
 script:
   - py.test --pep8 --cov wrapt_timeout_decorator
 
 after_success:
 - pip install -e .
-# - coverage combine --append
 - coverage report
 - codecov
 

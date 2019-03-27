@@ -17,6 +17,7 @@ when not using signals (under Windows for instance). In that case multiprocess a
 
 to communicate with the child process (instead of multiprocessing.queue) which is faster and might work on Amazon AWS.
 
+100% code coverage, tested under linux, OsX and Windows
 
 -----
 
@@ -453,7 +454,6 @@ If You need that a decorated function should time out exactly after the given ti
 the parameter dec_hard_timeout=True. in this case the function will time out exactly after the given time,
 no matter how long it took to spawn the process itself.
 
-
 Requirements
 ------------
 
@@ -465,9 +465,6 @@ MULTIPROCESS, see: https://github.com/uqfoundation/multiprocess
 
 WRAPT, see : https://github.com/GrahamDumpleton/wrapt
 
-
-
-
 Acknowledgement
 ---------------
 
@@ -477,13 +474,13 @@ https://github.com/pnpnpn/timeout-decorator
 
 http://www.saltycrane.com/blog/2010/04/using-python-timeout-decorator-uploading-s3/
 
+and special thanks to Robert C. Martin, especially for his books on "clean code" and "clean architecture"
 
 Contribute
 ----------
 
 I would love for you to fork and send me pull request for this project.
 Please contribute.
-
 
 TODO: 
 -----

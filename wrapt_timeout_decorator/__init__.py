@@ -3,4 +3,4 @@
 from .wrapt_timeout_decorator import timeout
 
 __title__ = 'wrapt_timeout_decorator'
-__version__ = '1.0.8'
+__version__ = '1.0.9'
