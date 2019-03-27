@@ -10,7 +10,8 @@ from .wrap_helper import WrapHelper
 from.wrap_function_multiprocess import Timeout
 
 
-def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None, dec_allow_eval=False, dec_hard_timeout=False):
+def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None,
+            dec_allow_eval=False, dec_hard_timeout=False):
     """Add a timeout parameter to a function and return it.
 
     ToDo :   Traceback information when use_signals=False (see https://pypi.python.org/pypi/tblib)
