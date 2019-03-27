@@ -3,7 +3,6 @@
 from dill import PicklingError
 from .lib_test_helper import *
 import pytest
-import sys
 from threading import Thread
 import time
 from wrapt_timeout_decorator import *
