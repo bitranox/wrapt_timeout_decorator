@@ -184,7 +184,9 @@ def can_not_be_pickled_in_windows_because_in_main_context():
 
 def test_pickle_detection_not_implemented_error():
     wrap_helper = WrapHelper()
-    with pytest.raises(PicklingError, match=r'can not pickle can_not_be_pickled_in_windows_because_in_main_context, bad types can not be detected because of dill\.NotImplementedError'):
+    match = r'can not pickle can_not_be_pickled_in_windows_because_in_main_context, '
+    match += r'bad types can not be detected because of dill\.NotImplementedError'
+    with pytest.raises(PicklingError, match=match):
         wrap_helper.detect_unpickable_objects_and_reraise(can_not_be_pickled_in_windows_because_in_main_context)
 
 
