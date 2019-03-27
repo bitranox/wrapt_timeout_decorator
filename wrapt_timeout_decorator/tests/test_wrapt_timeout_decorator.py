@@ -161,25 +161,31 @@ def test_custom_exception(use_signals):
 
 def test_not_main_thread(use_signals):
     @timeout(0.1, use_signals=use_signals)
-    def f():
-        time.sleep(2)
+    def f(x):
+        time.sleep(x)
 
+    # get rid of not covered because in thread
+    f(0)
     # we can not check for the Exception here, it happens in the subthread
     # we would need to set up a queue to communicate.
     # but we can check if the timeout occured
-    test_thread = Thread(target=f)
+    test_thread = Thread(target=f, args=(0.2, ))
     test_thread.name = None
     test_thread.daemon = True
     start_time = time.time()
     test_thread.start()
     test_thread.join()
     stop_time = time.time()
-    assert 0.0 < (stop_time - start_time) < 1.5   # yes, it takes quiet some time to create the thread
+    assert 0.0 < (stop_time - start_time) < 1.5   # yes, it takes quiet some time to create the thread under windows
 
 
 @timeout(0.1, use_signals=use_signals)
-def can_not_be_pickled_in_windows_because_in_main_context():
-    time.sleep(1)
+def can_not_be_pickled_in_windows_because_in_main_context(x):
+    time.sleep(x)
+
+
+# get rid of not covered because can not be pickled
+can_not_be_pickled_in_windows_because_in_main_context(0, dec_timeout=0)
 
 
 def test_pickle_detection_not_implemented_error():
