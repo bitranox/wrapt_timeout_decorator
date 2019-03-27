@@ -1,4 +1,3 @@
-import platform
 from wrapt_timeout_decorator import *
 import time
 
