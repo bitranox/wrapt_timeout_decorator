@@ -50,7 +50,7 @@ class Timeout(object):
         raise_exception(self.timeout_exception, self.exception_message)
 
     def wait_until_process_started(self):
-        started = self.__parent_conn.recv()
+        self.__parent_conn.recv()
 
     @property
     def value(self):
