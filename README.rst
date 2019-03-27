@@ -466,6 +466,8 @@ MULTIPROCESS, see: https://github.com/uqfoundation/multiprocess
 
 WRAPT, see : https://github.com/GrahamDumpleton/wrapt
 
+PYTEST, see : https://github.com/pytest-dev/pytest
+
 Acknowledgement
 ---------------
 
