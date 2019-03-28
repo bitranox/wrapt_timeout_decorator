@@ -1,7 +1,7 @@
+import platform
 import sys
-from .wrap_helper import raise_exception
-import dill                            # we need that to enhance pickle
-import billiard as multiprocessing     # billiard supports also processes in subthreads
+from .wrap_helper import raise_exception, is_system_windows, is_in_main_thread
+import multiprocess as multiprocessing
 
 
 class Timeout(object):
@@ -33,9 +33,15 @@ class Timeout(object):
         self.__parent_conn, self.__child_conn = multiprocessing.Pipe(duplex=False)
         args = (self.__child_conn, self.dec_hard_timeout, self.function) + args
         self.__process = multiprocessing.Process(target=_target, args=args, kwargs=kwargs)
-        # for this we need billiard - python 2.7 under windows does not support
-        # to start a process is a subthread
-        self.__process.daemon = True
+
+        # python 2.7 windows multiprocess does not provide daemonic process
+        # in a subthread
+
+        if sys.version_info < (3, 0) and is_system_windows() and not is_in_main_thread():
+            self.__process.daemon = False
+        else:
+            self.__process.daemon = False
+
         self.__process.start()
         if not self.dec_hard_timeout:
             self.wait_until_process_started()

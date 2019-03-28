@@ -50,37 +50,8 @@ class WrapHelper(object):
         signal.signal(signal.SIGALRM, self.old_alarm_handler)
 
     def set_signals_to_false_if_not_possible(self):
-        if self.is_system_windows() or not self.is_in_main_thread():
+        if is_system_windows() or not is_in_main_thread():
             self.use_signals = False
-
-    @staticmethod
-    def is_system_windows():
-        if platform.system().lower().startswith('win'):
-            return True
-        else:
-            return False
-
-    def is_in_main_thread(self):
-        if sys.version_info < (3, 4):
-            return self.is_in_main_thread_pre_python_3_4()
-        else:
-            return self.is_in_main_thread_from_python_3_4_up()
-
-    @staticmethod
-    def is_in_main_thread_pre_python_3_4():
-        # old python versions below 3.4
-        if isinstance(threading.current_thread(), threading._MainThread):
-            return True
-        else:
-            return False
-
-    @staticmethod
-    def is_in_main_thread_from_python_3_4_up():
-        # python versions from 3.4 up
-        if threading.current_thread() == threading.main_thread():
-            return True
-        else:
-            return False
 
     def detect_unpickable_objects_and_reraise(self, object_to_pickle):
         # sometimes the detection detects unpickable objects but actually
@@ -110,3 +81,33 @@ def raise_exception(exception, exception_message):
     if not exception:
         exception = TimeoutError
     raise exception(exception_message)
+
+
+def is_in_main_thread():
+    if sys.version_info < (3, 4):
+        return is_in_main_thread_pre_python_3_4()
+    else:
+        return is_in_main_thread_from_python_3_4_up()
+
+
+def is_in_main_thread_pre_python_3_4():
+    # old python versions below 3.4
+    if isinstance(threading.current_thread(), threading._MainThread):
+        return True
+    else:
+        return False
+
+
+def is_in_main_thread_from_python_3_4_up():
+    # python versions from 3.4 up
+    if threading.current_thread() == threading.main_thread():
+        return True
+    else:
+        return False
+
+
+def is_system_windows():
+    if platform.system().lower().startswith('win'):
+        return True
+    else:
+        return False

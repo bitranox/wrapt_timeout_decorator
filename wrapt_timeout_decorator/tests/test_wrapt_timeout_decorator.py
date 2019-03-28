@@ -200,7 +200,7 @@ def test_hard_timeout_windows_only():
     def f_test_hard_timeout():
         time.sleep(0.1)
         return 'done'
-    if WrapHelper.is_system_windows():
+    if is_system_windows():
         with pytest.raises(TimeoutError, match=r'Function f_test_hard_timeout timed out after 0.15 seconds'):
             f_test_hard_timeout(dec_hard_timeout=True)
         assert f_test_hard_timeout(dec_hard_timeout=False) == 'done'
