@@ -34,7 +34,7 @@ setup(
     author_email='rnowotny1966@gmail.com',
     url='https://github.com/bitranox/wrapt-timeout-decorator',
     packages=['wrapt_timeout_decorator'],
-    install_requires=['billiard', 'dill', 'multiprocess', 'wrapt', 'pytest'],
+    install_requires=['dill', 'multiprocess', 'wrapt', 'pytest'],
     classifiers=CLASSIFIERS,
     setup_requires=['pytest-runner'],
     tests_require=['pytest'])

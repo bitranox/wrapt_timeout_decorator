@@ -1,4 +1,3 @@
-billiard
 dill
 multiprocess
 wrapt
