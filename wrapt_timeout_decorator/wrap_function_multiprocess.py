@@ -52,10 +52,9 @@ class Timeout(object):
 
     def cancel(self):
         """Terminate any possible execution of the embedded function."""
-        # self.__parent_conn.close()  ## try - You should be closing pipe ends in processes that don't need them.
         if self.__process.is_alive():
             self.__process.terminate()
-        self.__parent_conn.close()
+        # self.__parent_conn.close()  # try - not close it
 
         raise_exception(self.timeout_exception, self.exception_message)
 
@@ -65,11 +64,10 @@ class Timeout(object):
     @property
     def value(self):
         exception_occured, result = self.__parent_conn.recv()
-        # self.__parent_conn.close()    ## try - You should be closing pipe ends in processes that don't need them.
         # when self.__parent_conn.recv() exits, maybe __process is still alive,
         # then it might zombie the process. so join it explicitly
         self.__process.join(1)
-        self.__parent_conn.close()
+        # self.__parent_conn.close()    # try - not close it
 
         if exception_occured:
             raise result
