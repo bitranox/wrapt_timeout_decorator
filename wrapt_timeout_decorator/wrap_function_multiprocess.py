@@ -65,10 +65,11 @@ class Timeout(object):
     @property
     def value(self):
         exception_occured, result = self.__parent_conn.recv()
-        self.__parent_conn.close()
+        # self.__parent_conn.close()    ## try - You should be closing pipe ends in processes that don't need them.
         # when self.__parent_conn.recv() exits, maybe __process is still alive,
         # then it might zombie the process. so join it explicitly
         self.__process.join(1)
+        self.__parent_conn.close()
 
         if exception_occured:
             raise result
