@@ -13,8 +13,8 @@ python:
 # - '3.7'     # 2018-09-10 Python 3.7 not installed on travis
 - '3.7.1'     # 2019-03-25 latest Version
 - '3.7-dev'   # 2018-03-25 development Version
-- '3.8-dev' # 2018-09-10 does not exist now
-- 'nightly'   # 2019-03-28
+# - '3.8-dev'   # 2019-03-28 does not exist now
+# - 'nightly'   # 2019-03-28 does not exist now
 - 'pypy2.7-6.0'
 - 'pypy3.5-6.0'
 
