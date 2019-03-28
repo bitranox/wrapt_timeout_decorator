@@ -13,7 +13,8 @@ python:
 # - '3.7'     # 2018-09-10 Python 3.7 not installed on travis
 - '3.7.1'     # 2019-03-25 latest Version
 - '3.7-dev'   # 2018-03-25 development Version
-# - '3.8-dev' # 2018-09-10 does not exist now
+- '3.8-dev' # 2018-09-10 does not exist now
+- 'nightly'   # 2019-03-28
 - 'pypy2.7-6.0'
 - 'pypy3.5-6.0'
 
@@ -29,15 +30,6 @@ matrix:
 
   - os: windows
     language: sh
-    name: "Windows Python 3.7"
-    before_install:
-    - choco install python3
-    - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
-    - python -m pip install --upgrade pip
-    - pip install dill multiprocess wrapt codecov pytest-pep8 pytest-cov
-
-  - os: windows
-    language: sh
     name: "Windows Python 2.7"
     before_install:
     - choco install python
@@ -45,6 +37,14 @@ matrix:
     - python -m pip install --upgrade pip
     - pip install dill multiprocess wrapt codecov pytest-pep8 pytest-cov
 
+  - os: windows
+    language: sh
+    name: "Windows Python 3.7"
+    before_install:
+    - choco install python3
+    - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+    - python -m pip install --upgrade pip
+    - pip install dill multiprocess wrapt codecov pytest-pep8 pytest-cov
 
 install:
 - pip install --upgrade pip
