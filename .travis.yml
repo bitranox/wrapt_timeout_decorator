@@ -33,7 +33,7 @@ matrix:
     language: sh
     name: "Windows Python 2.7"
     before_install:
-    - choco install python
+    - choco install python2
     - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
     - python -m pip install --upgrade pip
     - pip install dill multiprocess wrapt codecov pytest-pep8 pytest-cov
