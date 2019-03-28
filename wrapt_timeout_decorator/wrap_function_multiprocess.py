@@ -1,4 +1,5 @@
 import multiprocess
+import platform
 import sys
 from .wrap_helper import raise_exception
 
@@ -32,7 +33,10 @@ class Timeout(object):
         self.__parent_conn, self.__child_conn = multiprocess.Pipe(duplex=False)
         args = (self.__child_conn, self.dec_hard_timeout, self.function) + args
         self.__process = multiprocess.Process(target=_target, args=args, kwargs=kwargs)
-        self.__process.daemon = True
+        if sys.version_info < (3, 0) and platform.system().lower() == 'windows':
+            self.__process.daemon = False
+        else:
+            self.__process.daemon = True  # daemonic processes are not allowed to have children on python 2.7 windows
         self.__process.start()
         if not self.dec_hard_timeout:
             self.wait_until_process_started()
