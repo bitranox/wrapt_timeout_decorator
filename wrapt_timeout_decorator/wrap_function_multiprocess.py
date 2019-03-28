@@ -1,5 +1,6 @@
 import sys
 from .wrap_helper import raise_exception
+import dill                            # we need that to enhance pickle
 import billiard as multiprocessing     # billiard supports also processes in subthreads
 
 
