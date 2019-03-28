@@ -1,7 +1,6 @@
-import multiprocess
-import platform
 import sys
 from .wrap_helper import raise_exception
+import billiard as multiprocessing     # billiard supports also processes in subthreads
 
 
 class Timeout(object):
@@ -30,13 +29,12 @@ class Timeout(object):
         requires that "ready" be intermittently polled. If and when it is
         True, the "value" property may then be checked for returned data.
         """
-        self.__parent_conn, self.__child_conn = multiprocess.Pipe(duplex=False)
+        self.__parent_conn, self.__child_conn = multiprocessing.Pipe(duplex=False)
         args = (self.__child_conn, self.dec_hard_timeout, self.function) + args
-        self.__process = multiprocess.Process(target=_target, args=args, kwargs=kwargs)
-        if sys.version_info < (3, 0) and platform.system().lower() == 'windows':
-            self.__process.daemon = False   # daemonic processes are not allowed to have children on python 2.7 windows
-        else:
-            self.__process.daemon = True
+        self.__process = multiprocessing.Process(target=_target, args=args, kwargs=kwargs)
+        # for this we need billiard - python 2.7 under windows does not support
+        # to start a process is a subthread
+        self.__process.daemon = True
         self.__process.start()
         if not self.dec_hard_timeout:
             self.wait_until_process_started()
