@@ -36,7 +36,8 @@ matrix:
     - choco install python2
     - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
     - python -m pip install --upgrade pip
-    - pip install dill multiprocess wrapt codecov pytest-pep8 pytest-cov
+    - pip install codecov pytest-pep8 pytest-cov
+    - pip install -e .
 
   - os: windows
     language: sh
@@ -45,18 +46,20 @@ matrix:
     - choco install python3
     - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
     - python -m pip install --upgrade pip
-    - pip install dill multiprocess wrapt codecov pytest-pep8 pytest-cov
+    - pip install codecov pytest-pep8 pytest-cov
+    - pip install -e .
 
 install:
 - pip install --upgrade pip
 - if [[ $TRAVIS_PYTHON_VERSION == pypy3.5-6.0 ]]; then pip install "pytest-cov==2.6.0"; fi
-- pip install dill multiprocess wrapt codecov pytest>=3.6 pytest-pep8 pytest-cov
+- pip install codecov pytest pytest-pep8 pytest-cov
+- pip install -e .
 
 script:
   - py.test --pep8 --cov wrapt_timeout_decorator
 
 after_success:
-- pip install -e .
+
 - coverage report
 - codecov
 
