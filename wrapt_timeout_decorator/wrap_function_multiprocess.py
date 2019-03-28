@@ -52,9 +52,10 @@ class Timeout(object):
 
     def cancel(self):
         """Terminate any possible execution of the embedded function."""
-        self.__parent_conn.close()
+        # self.__parent_conn.close()  ## try - You should be closing pipe ends in processes that don't need them.
         if self.__process.is_alive():
             self.__process.terminate()
+        self.__parent_conn.close()
 
         raise_exception(self.timeout_exception, self.exception_message)
 
