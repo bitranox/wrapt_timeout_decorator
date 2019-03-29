@@ -52,10 +52,10 @@ class Timeout(object):
 
     def cancel(self):
         """Terminate any possible execution of the embedded function."""
-        self.__parent_conn.close()
         if self.__process.is_alive():
             self.__process.terminate()
-
+        self.__process.join(timeout=1.0)
+        self.__parent_conn.close()
         raise_exception(self.timeout_exception, self.exception_message)
 
     def wait_until_process_started(self):
@@ -64,10 +64,10 @@ class Timeout(object):
     @property
     def value(self):
         exception_occured, result = self.__parent_conn.recv()
-        self.__parent_conn.close()
         # when self.__parent_conn.recv() exits, maybe __process is still alive,
         # then it might zombie the process. so join it explicitly
-        self.__process.join(1)
+        self.__process.join(timeout=1.0)
+        self.__parent_conn.close()
 
         if exception_occured:
             raise result
