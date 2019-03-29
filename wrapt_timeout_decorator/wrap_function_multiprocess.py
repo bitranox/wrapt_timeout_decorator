@@ -34,9 +34,7 @@ class Timeout(object):
         args = (self.__child_conn, self.dec_hard_timeout, self.function) + args
         self.__process = multiprocessing.Process(target=_target, args=args, kwargs=kwargs)
 
-        # python 2.7 windows multiprocess does not provide daemonic process
-        # in a subthread
-
+        # python 2.7 windows multiprocess does not provide daemonic process in a subthread
         if sys.version_info < (3, 0) and is_system_windows():
             self.__process.daemon = False
         else:
