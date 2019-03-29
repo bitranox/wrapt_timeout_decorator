@@ -26,7 +26,7 @@
 
 * **Please tell us about your environment:**
 
-- Version of wrapt-timeout-decorator : 
+- Release Number of the Repository used : 
 - Python Version : 
 - OS, OS Version : 
 
