@@ -347,6 +347,7 @@ I am also used to put all settings or configurations in a different file - so al
 
 here an example that will work on Linux but wont work on Windows (the variable "name" and the function "sleep" wont be found in the spawned process :
 
+known Issue on Python 2.7 under Windows : Class Methods can not be decorated because of pickle Error
 
 ::
 
@@ -371,7 +372,7 @@ here an example that will work on Linux but wont work on Windows (the variable "
         mytest()
 
 
-here the same example, which will work on Windows:
+here the same example, which will work on Windows with Python 3.x but not with Python 2.x because of pickling Errors:
 
 
 ::
