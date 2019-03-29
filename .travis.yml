@@ -64,7 +64,7 @@ install:
 - pip install -e .
 
 script:
-  - py.test --pep8 --cov wrapt_timeout_decorator
+  - py.test --pep8 --cov
 
 after_success:
 
