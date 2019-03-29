@@ -208,9 +208,6 @@ The following Code will run on Linux but NOT on Windows :
     
     Since Signals will not work on Windows, it is disabled by default, whatever You set. 
     
-    The granularity of the timeout is 0.1 seconds when using use_signals=False (on Windows
-    or in a sub-thread)
-
 
 Override with kwargs
 --------------------
