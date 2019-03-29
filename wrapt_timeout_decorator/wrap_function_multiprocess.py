@@ -40,7 +40,7 @@ class Timeout(object):
         if sys.version_info < (3, 0) and is_system_windows() and not is_in_main_thread():
             self.__process.daemon = False
         else:
-            self.__process.daemon = False
+            self.__process.daemon = True
 
         self.__process.start()
         if not self.dec_hard_timeout:
