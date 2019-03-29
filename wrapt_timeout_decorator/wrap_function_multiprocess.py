@@ -37,7 +37,7 @@ class Timeout(object):
         # python 2.7 windows multiprocess does not provide daemonic process
         # in a subthread
 
-        if sys.version_info < (3, 0) and is_system_windows() and not is_in_main_thread():
+        if sys.version_info < (3, 0) and is_system_windows():
             self.__process.daemon = False
         else:
             self.__process.daemon = True
