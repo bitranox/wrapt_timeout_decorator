@@ -39,6 +39,9 @@ def test_timeout_class_method(use_signals):
         ClassTest1().f(use_signals=use_signals)
     if not python_27_under_windows():
         assert ClassTest1().f(dec_timeout='instance.x', dec_allow_eval=True, use_signals=use_signals) is None
+    else:
+        with pytest.raises(Exception):
+            ClassTest1().f(dec_timeout='instance.x', dec_allow_eval=True, use_signals=use_signals)
 
 
 def test_timeout_class_method_can_pickle(use_signals):
@@ -48,6 +51,9 @@ def test_timeout_class_method_can_pickle(use_signals):
             my_object.test_method(use_signals=use_signals)
         my_object = ClassTest2(1.0)
         assert my_object.test_method(use_signals=use_signals) == 'done'
+    else:
+        with pytest.raises(Exception):
+            my_object.test_method(use_signals=use_signals)
 
 
 def test_timeout_kwargs(use_signals):
