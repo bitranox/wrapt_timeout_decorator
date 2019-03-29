@@ -23,11 +23,19 @@ matrix:
 
   - os: osx
     language: sh
+    name: "osX Python 2.7"
+    install:
+    - pip install --upgrade pip
+    - pip install codecov pytest-pep8 pytest-cov
+    - pip install -e .
+
+  - os: osx
+    language: sh
     name: "osX Python 3.6"
     install:
     - pip3 install --upgrade pip
-    - pip3 install dill multiprocess wrapt codecov pytest-pep8 pytest-cov
-
+    - pip3 install codecov pytest-pep8 pytest-cov
+    - pip3 install -e .
 
   - os: windows
     language: sh
