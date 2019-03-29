@@ -331,23 +331,22 @@ use with Windows
 On Windows the main module is imported again (but with name != 'main') because Windows is trying to simulate
 a forking-like behavior on a system that doesn't have forking. multiprocessing has no way to know that you didn't do
 anything important in you main module, so the import is done "just in case" to create an environment similar
-to the one in your main process. So all variables and all functions You defined in the "main" module are new objects
-but the decorator refers to the "old" objects of the main process, so they cant be found.
+to the one in your main process.
 
 It is more a problem of Windows, because the Windows Operating System does neither support "fork", nor "signals"
-
-here You can find more information on that :
+You can find more information on that here:
 
 https://stackoverflow.com/questions/45110287/workaround-for-using-name-main-in-python-multiprocessing
 
 https://docs.python.org/2/library/multiprocessing.html#windows
 
-In general (especially for windows) , the main() program should not have anything but the main function, the real thing should happen in the libraries.
+Classes in the __main__ context can not be pickled, You need to put decorated Classes into another module.
+In general (especially for windows) , the main() program should not have anything but the main function, the real thing should happen in the modules.
 I am also used to put all settings or configurations in a different file - so all processes or threads can access them (and also to keep them in one place together, not to forget typing hints and name completion in Your favorite editor)
+Please note that due some limitation in dill (the pickle replacement) Classes can not be decorated at all under Windows with Python 2.7
 
 here an example that will work on Linux but wont work on Windows (the variable "name" and the function "sleep" wont be found in the spawned process :
 
-known Issue on Python 2.7 under Windows : Class Methods can not be decorated because of pickle Error
 
 ::
 
