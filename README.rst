@@ -461,13 +461,13 @@ Requirements
 
 following Packets will be installed / needed :
 
-DILL, see  : https://github.com/uqfoundation/dill
+dill, see  : https://github.com/uqfoundation/dill
 
-MULTIPROCESS, see: https://github.com/uqfoundation/multiprocess
+multiprocess, see: https://github.com/uqfoundation/multiprocess
 
-WRAPT, see : https://github.com/GrahamDumpleton/wrapt
+wrapt, see : https://github.com/GrahamDumpleton/wrapt
 
-PYTEST, see : https://github.com/pytest-dev/pytest
+pytest, see : https://github.com/pytest-dev/pytest
 
 Acknowledgement
 ---------------
@@ -478,7 +478,7 @@ https://github.com/pnpnpn/timeout-decorator
 
 http://www.saltycrane.com/blog/2010/04/using-python-timeout-decorator-uploading-s3/
 
-and special thanks to Robert C. Martin, especially for his books on "clean code" and "clean architecture"
+and special thanks to "uncle bob" Robert C. Martin, especially for his books on "clean code" and "clean architecture"
 
 Contribute
 ----------
