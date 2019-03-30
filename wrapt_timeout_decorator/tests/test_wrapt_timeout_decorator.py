@@ -2,15 +2,23 @@
 
 from dill import PicklingError
 from .lib_test_helper import *
+import platform
 import pytest
+import sys
 from threading import Thread
 import time
 from wrapt_timeout_decorator import *
-from wrapt_timeout_decorator.wrap_helper import *
 
 
 if sys.version_info < (3, 3):             # there is no TimeoutError < Python 3.3
     TimeoutError = AssertionError
+
+
+def is_system_windows():
+    if platform.system().lower().startswith('win'):
+        return True
+    else:
+        return False
 
 
 def python_27_under_windows():
