@@ -1,4 +1,4 @@
-wrapt-timeout-decorator
+wrapt_timeout_decorator
 =======================
 
 |Build Status| |jupyter| |Pypi Status| |Codecov Status| |Better Code| |snyk security|
@@ -17,18 +17,18 @@ when not using signals (under Windows for instance). In that case multiprocess a
 
 to communicate with the child process (instead of multiprocessing.queue) which is faster and might work on Amazon AWS.
 
-`100% code coverage <https://codecov.io/gh/bitranox/wrapt-timeout-decorator>`_, tested under `Linux, OsX and Windows <https://travis-ci.org/bitranox/wrapt-timeout-decorator>`_
+`100% code coverage <https://codecov.io/gh/bitranox/wrapt_timeout_decorator>`_, tested under `Linux, OsX and Windows <https://travis-ci.org/bitranox/wrapt_timeout_decorator>`_
 
 -----
 
 
-`Report Issues <https://github.com/bitranox/wrapt-timeout-decorator/blob/master/ISSUE_TEMPLATE.md>`_
+`Report Issues <https://github.com/bitranox/wrapt_timeout_decorator/blob/master/ISSUE_TEMPLATE.md>`_
 
-`Contribute <https://github.com/bitranox/wrapt-timeout-decorator/blob/master/CONTRIBUTING.md>`_
+`Contribute <https://github.com/bitranox/wrapt_timeout_decorator/blob/master/CONTRIBUTING.md>`_
 
-`Pull Request <https://github.com/bitranox/wrapt-timeout-decorator/blob/master/PULL_REQUEST_TEMPLATE.md>`_
+`Pull Request <https://github.com/bitranox/wrapt_timeout_decorator/blob/master/PULL_REQUEST_TEMPLATE.md>`_
 
-`Code of Conduct <https://github.com/bitranox/wrapt-timeout-decorator/blob/master/CODE_OF_CONDUCT.md>`_
+`Code of Conduct <https://github.com/bitranox/wrapt_timeout_decorator/blob/master/CODE_OF_CONDUCT.md>`_
 
 
 -----
@@ -36,7 +36,7 @@ to communicate with the child process (instead of multiprocessing.queue) which i
 Try it in Jupyter Notebook
 --------------------------
 
-You might try it right away in Jupyter Notebook by using the "launch binder" badge, or click `here <https://mybinder.org/v2/gh/bitranox/wrapt-timeout-decorator/master?filepath=jupyter_test_wrapt_timeout_decorator.ipynb>`_
+You might try it right away in Jupyter Notebook by using the "launch binder" badge, or click `here <https://mybinder.org/v2/gh/bitranox/wrapt_timeout_decorator/master?filepath=jupyter_test_wrapt_timeout_decorator.ipynb>`_
 
 Installation and Upgrade
 ------------------------
@@ -52,14 +52,14 @@ via pip (preferred):
 
 ::
 
-    pip install --upgrade https://github.com/bitranox/wrapt-timeout-decorator/archive/master.zip
+    pip install --upgrade https://github.com/bitranox/wrapt_timeout_decorator/archive/master.zip
 
 via requirements.txt:
 
 ::
 
     Insert following line in Your requirements.txt:
-    https://github.com/bitranox/wrapt-timeout-decorator/archive/master.zip
+    https://github.com/bitranox/wrapt_timeout_decorator/archive/master.zip
 
     to install and upgrade all modules mentioned in requirements.txt:
     pip install --upgrade -r /<path>/requirements.txt
@@ -68,7 +68,7 @@ via python:
 
 ::
 
-    python -m pip install --upgrade https://github.com/bitranox/wrapt-timeout-decorator/archive/master.zip
+    python -m pip install --upgrade https://github.com/bitranox/wrapt_timeout_decorator/archive/master.zip
 
 
 Basic Usage
@@ -504,17 +504,17 @@ License
 
 This software is licensed under the `MIT license <http://en.wikipedia.org/wiki/MIT_License>`_
 
-See `License file <https://github.com/bitranox/wrapt-timeout-decorator/blob/master/LICENSE.txt>`_
+See `License file <https://github.com/bitranox/wrapt_timeout_decorator/blob/master/LICENSE.txt>`_
 
-.. |Build Status| image:: https://travis-ci.org/bitranox/wrapt-timeout-decorator.svg?branch=master
-   :target: https://travis-ci.org/bitranox/wrapt-timeout-decorator
-.. |Pypi Status| image:: https://badge.fury.io/py/wrapt-timeout-decorator.svg
-   :target: https://badge.fury.io/py/wrapt-timeout-decorator
-.. |Codecov Status| image:: https://codecov.io/gh/bitranox/wrapt-timeout-decorator/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/bitranox/wrapt-timeout-decorator
-.. |Better Code| image:: https://bettercodehub.com/edge/badge/bitranox/wrapt-timeout-decorator?branch=master
-   :target: https://bettercodehub.com/results/bitranox/wrapt-timeout-decorator
-.. |snyk security| image:: https://snyk.io/test/github/bitranox/wrapt-timeout-decorator/badge.svg
-   :target: https://snyk.io/test/github/bitranox/wrapt-timeout-decorator
+.. |Build Status| image:: https://travis-ci.org/bitranox/wrapt_timeout_decorator.svg?branch=master
+   :target: https://travis-ci.org/bitranox/wrapt_timeout_decorator
+.. |Pypi Status| image:: https://badge.fury.io/py/wrapt_timeout_decorator.svg
+   :target: https://badge.fury.io/py/wrapt_timeout_decorator
+.. |Codecov Status| image:: https://codecov.io/gh/bitranox/wrapt_timeout_decorator/branch/master/graph/badge.svg
+   :target: https://codecov.io/gh/bitranox/wrapt_timeout_decorator
+.. |Better Code| image:: https://bettercodehub.com/edge/badge/bitranox/wrapt_timeout_decorator?branch=master
+   :target: https://bettercodehub.com/results/bitranox/wrapt_timeout_decorator
+.. |snyk security| image:: https://snyk.io/test/github/bitranox/wrapt_timeout_decorator/badge.svg
+   :target: https://snyk.io/test/github/bitranox/wrapt_timeout_decorator
 .. |jupyter| image:: https://mybinder.org/badge.svg
-   :target: https://mybinder.org/v2/gh/bitranox/wrapt-timeout-decorator/master?filepath=jupyter_test_wrapt_timeout_decorator.ipynb
+   :target: https://mybinder.org/v2/gh/bitranox/wrapt_timeout_decorator/master?filepath=jupyter_test_wrapt_timeout_decorator.ipynb
