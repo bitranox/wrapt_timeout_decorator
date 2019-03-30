@@ -8,7 +8,7 @@ import sys
 from threading import Thread
 import time
 from wrapt_timeout_decorator import *
-
+from wrapt_timeout_decorator.wrapt_timeout_decorator.wrap_helper import *
 
 if sys.version_info < (3, 3):             # there is no TimeoutError < Python 3.3
     TimeoutError = AssertionError
