@@ -2,30 +2,15 @@
 
 from dill import PicklingError
 from .lib_test_helper import *
-import platform
 import pytest
-import sys
 from threading import Thread
 import time
 from wrapt_timeout_decorator import *
 from wrapt_timeout_decorator.wrapt_timeout_decorator.wrap_helper import *
+from wrapt_timeout_decorator.wrapt_timeout_decorator.wrap_function_multiprocess import *
 
 if sys.version_info < (3, 3):             # there is no TimeoutError < Python 3.3
     TimeoutError = AssertionError
-
-
-def is_system_windows():
-    if platform.system().lower().startswith('win'):
-        return True
-    else:
-        return False
-
-
-def python_27_under_windows():
-    if is_system_windows() and sys.version_info < (3, 0):
-        return True
-    else:
-        return False
 
 
 @pytest.fixture(params=[False, True])
@@ -45,7 +30,7 @@ def test_timeout_decorator_arg(use_signals):
 def test_timeout_class_method(use_signals):
     with pytest.raises(TimeoutError, match=r'Function f timed out after 0\.1 seconds'):
         ClassTest1().f(use_signals=use_signals)
-    if not python_27_under_windows():
+    if not is_python_27_under_windows():
         assert ClassTest1().f(dec_timeout='instance.x', dec_allow_eval=True, use_signals=use_signals) is None
     else:
         with pytest.raises(Exception):
@@ -54,7 +39,7 @@ def test_timeout_class_method(use_signals):
 
 def test_timeout_class_method_can_pickle(use_signals):
     my_object = ClassTest2(0.1)
-    if not python_27_under_windows():
+    if not is_python_27_under_windows():
         with pytest.raises(TimeoutError, match=r'Function test_method timed out after 0\.1 seconds'):
             my_object.test_method(use_signals=use_signals)
         my_object = ClassTest2(1.0)
