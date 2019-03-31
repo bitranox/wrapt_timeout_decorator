@@ -32,7 +32,7 @@ about: Template for Bug Reports, Feature Requests, Support Requests
 
 * **Please tell us about your environment:**
 
-- Version of wrapt-timeout-decorator : 
+- Version of wrapt_timeout_decorator : 
 - Python Version : 
 - OS, OS Version : 
 

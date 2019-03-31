@@ -32,7 +32,7 @@ setup(
     long_description=long_description,
     author='Robert Nowotny',
     author_email='rnowotny1966@gmail.com',
-    url='https://github.com/bitranox/wrapt-timeout-decorator',
+    url='https://github.com/bitranox/wrapt_timeout_decorator',
     packages=['wrapt_timeout_decorator'],
     install_requires=['dill', 'multiprocess', 'wrapt', 'pytest', 'typing'],
     classifiers=CLASSIFIERS,
