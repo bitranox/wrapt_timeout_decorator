@@ -469,6 +469,8 @@ wrapt, see : https://github.com/GrahamDumpleton/wrapt
 
 pytest, see : https://github.com/pytest-dev/pytest
 
+typing, see : https://pypi.org/project/typing/
+
 Acknowledgement
 ---------------
 
