@@ -1,6 +1,5 @@
-import platform
 import sys
-from .wrap_helper import raise_exception, is_system_windows, is_in_main_thread
+from .wrap_helper import raise_exception, is_system_windows
 import multiprocess as multiprocessing
 
 

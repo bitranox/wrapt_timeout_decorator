@@ -2,3 +2,4 @@ dill
 multiprocess
 wrapt
 pytest
+typing

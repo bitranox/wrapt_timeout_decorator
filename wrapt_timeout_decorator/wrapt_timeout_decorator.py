@@ -5,6 +5,7 @@ Timeout decorator.
 """
 
 from dill import PicklingError
+from typing import Union, Callable
 import wrapt
 from .wrap_helper import WrapHelper
 from.wrap_function_multiprocess import Timeout
@@ -12,13 +13,17 @@ from.wrap_function_multiprocess import Timeout
 
 def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None,
             dec_allow_eval=False, dec_hard_timeout=False):
+
+    # type: (Union[None, float, str], bool, Exception, str, bool, bool) -> Callable
+
     """Add a timeout parameter to a function and return it.
 
     ToDo :   Traceback information when use_signals=False (see https://pypi.python.org/pypi/tblib)
              connect the Logger of the Subprocess to the main logger when use_signals=False
              makes life easier on Windows
 
-    Windows remark : dont use the decorator in the main.py because of Windows multiprocessing limitations - read the README
+    Windows remark : dont use the decorator on classes in the main.py because of Windows multiprocessing limitations
+                     read the README
 
     Usage:
 
@@ -92,12 +97,6 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
                                 Since You can not know how long the spawn() will take under Windows, this is the default setting.
 
     * all parameters starting with dec_ can be overridden via kwargs passed to the wrapped function.
-
-    :type dec_timeout:          float
-    :type use_signals:          bool
-    :type timeout_exception:    Exception
-    :type exception_message:    str
-    :type dec_hard_timeout:     bool
 
     :raises:                    TimeoutError if time limit is reached
     :returns:                   the Result of the wrapped function
