@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.1.0
+-----
+2019-04-03: added pickle analyze convenience function
+
 1.0.9
 -----
 2019-03-27: added OsX and Windows tests, added parameter dec_hard_timeout for Windows, 100% Code Coverage
