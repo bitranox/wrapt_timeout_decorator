@@ -43,30 +43,30 @@ Installation and Upgrade
 
 From source code:
 
-::
+.. code-block:: bash
 
     python setup.py install
     python setup.py test
 
 via pip (preferred):
 
-::
+.. code-block:: bash
 
     pip install --upgrade https://github.com/bitranox/wrapt_timeout_decorator/archive/master.zip
 
 via requirements.txt:
 
-::
+.. code-block:: bash
 
-    Insert following line in Your requirements.txt:
-    https://github.com/bitranox/wrapt_timeout_decorator/archive/master.zip
+    # Insert following line in Your requirements.txt:
+    # https://github.com/bitranox/wrapt_timeout_decorator/archive/master.zip
+    # to install and upgrade all modules mentioned in requirements.txt:
 
-    to install and upgrade all modules mentioned in requirements.txt:
     pip install --upgrade -r /<path>/requirements.txt
 
 via python:
 
-::
+.. code-block:: bash
 
     python -m pip install --upgrade https://github.com/bitranox/wrapt_timeout_decorator/archive/master.zip
 
@@ -74,7 +74,7 @@ via python:
 Basic Usage
 -----------
 
-::
+.. code-block:: py
 
     import time
     from wrapt_timeout_decorator import *
@@ -91,7 +91,7 @@ Basic Usage
 
 Specify an alternate exception to raise on timeout:
 
-::
+.. code-block:: py
 
     import time
     from wrapt_timeout_decorator import *
@@ -110,13 +110,14 @@ Specify an alternate exception to raise on timeout:
 Parameters
 ----------
 
-::
+.. code-block:: py
 
     @timeout(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval, dec_hard_timeout)
     def decorated_function(*args, **kwargs):
         # interesting things happens here ...
         ...
 
+    """
     dec_timeout         the timeout period in seconds, or a string that can be evaluated when dec_allow_eval = True
                         type: float, integer or string
                         default: None (no Timeout set)
@@ -168,7 +169,7 @@ Parameters
                         can be overridden by passing the kwarg dec_hard_timeout to the decorated function*
 
     * that means the decorated_function must not use that kwarg itself, since this kwarg will be popped from the kwargs
-
+    """
 
 
 
@@ -186,7 +187,7 @@ decorator function for testing. If Your program should (also) run on Windows, I 
 Windows, since Windows does not support forking (read more under Section ``use with Windows``).
 The following Code will run on Linux but NOT on Windows :
 
-::
+.. code-block:: py
 
     import time
     from wrapt_timeout_decorator import *
@@ -214,7 +215,7 @@ Override with kwargs
 
 decorator parameters starting with \dec_* and use_signals can be overridden by kwargs with the same name :
 
-::
+.. code-block:: py
 
 
     import time
@@ -236,7 +237,7 @@ Using the decorator without actually decorating the function
 ------------------------------------------------------------
 
 
-::
+.. code-block:: py
 
 
     import time
@@ -278,7 +279,7 @@ You can access :
     modifying the timeout decorator.
 
 
-::
+.. code-block:: py
 
 
     def class ClassTest4(object):
@@ -349,7 +350,7 @@ Please note that for some unknown reason, probably in multiprocess, Class method
 Here an example that will work on Linux but wont work on Windows (the variable "name" and the function "sleep" wont be found in the spawned process :
 
 
-::
+.. code-block:: py
 
     main.py:
 
@@ -375,10 +376,10 @@ Here an example that will work on Linux but wont work on Windows (the variable "
 here the same example, which will work on Windows:
 
 
-::
+.. code-block:: py
 
 
-    my_program_main.py:
+    # my_program_main.py:
 
     from multiprocessing import freeze_support
     import lib_test
@@ -392,10 +393,10 @@ here the same example, which will work on Windows:
         main()
 
 
-::
+.. code-block:: py
 
 
-        conf_my_program.py:
+        # conf_my_program.py:
 
         class ConfMyProgram(object):
             def __init__(self):
@@ -404,10 +405,9 @@ here the same example, which will work on Windows:
         conf_my_program = ConfMyProgram()
 
 
-::
+.. code-block:: py
 
-
-    lib_test.py:
+    # lib_test.py:
 
     from wrapt_timeout_decorator import *
     from time import sleep
@@ -440,8 +440,7 @@ This is especially important if You use small timeout periods :
 for Instance:
 
 
-::
-
+.. code-block:: py
 
     @timeout(0.1)
     def test():
