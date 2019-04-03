@@ -94,25 +94,33 @@ def detect_unpickable_objects(object_to_pickle, dill_trace=True):
 
 def get_bad_pickling_types(object_to_pickle):
     bad_types = list()
+    # noinspection PyBroadException
     try:
         bad_types = dill.detect.badtypes(object_to_pickle)
-    except NotImplementedError:
-        bad_types = 'can not be detected because of dill.NotImplementedError'
+    except Exception:
+        bad_types = [sys.exc_info()[1]]
     finally:
         return bad_types
 
 
 def get_bad_pickling_items(object_to_pickle):
-    bad_items = dill.detect.baditems(object_to_pickle)
-    return bad_items
+    bad_items = list()
+    # noinspection PyBroadException
+    try:
+        bad_items = dill.detect.baditems(object_to_pickle)
+    except Exception:
+        bad_items = [sys.exc_info()[1]]
+    finally:
+        return bad_items
 
 
 def get_bad_pickling_objects(object_to_pickle):
     bad_objects = list()
+    # noinspection PyBroadException
     try:
         bad_objects = dill.detect.badobjects(object_to_pickle)
-    except NotImplementedError:
-        bad_objects = 'can not be detected because of dill.NotImplementedError'
+    except Exception:
+        bad_objects = [sys.exc_info()[1]]
     finally:
         return bad_objects
 

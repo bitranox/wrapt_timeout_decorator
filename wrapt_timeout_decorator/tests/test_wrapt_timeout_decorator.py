@@ -187,25 +187,27 @@ def test_not_main_thread(use_signals):
 
 
 @timeout(0.1, use_signals=use_signals)
-def can_not_be_pickled_in_windows_because_in_main_context(x):
+def can_not_be_pickled(x):
     time.sleep(x)
 
 
 # get rid of not covered because can not be pickled
-can_not_be_pickled_in_windows_because_in_main_context(0, dec_timeout=0)
+can_not_be_pickled(0, dec_timeout=0)
 
 
 def test_pickle_detection_not_implemented_error():
     wrap_helper = WrapHelper()
-    match = r'can not pickle can_not_be_pickled_in_windows_because_in_main_context, '
+    match = r'can not pickle can_not_be_pickled, '
     with pytest.raises(PicklingError, match=match):
-        detect_unpickable_objects_and_reraise(can_not_be_pickled_in_windows_because_in_main_context)
+        detect_unpickable_objects_and_reraise(can_not_be_pickled)
 
 
 def test_pickle_analyser():
-    result = detect_unpickable_objects(can_not_be_pickled_in_windows_because_in_main_context, dill_trace=True)
-    assert result == {'bad_items': [], 'bad_objects': [], 'bad_types': [],
-                      'object_name': 'can_not_be_pickled_in_windows_because_in_main_context'}
+    result = detect_unpickable_objects(can_not_be_pickled, dill_trace=True)
+    assert str(result['bad_items']) == '[TypeError("\'function\' object is not iterable")]'
+    assert str(result['bad_objects']) == '[NotImplementedError(\'object proxy must define __reduce_ex__()\')]'
+    assert str(result['bad_types']) == '[NotImplementedError(\'object proxy must define __reduce_ex__()\')]'
+    assert result['object_name'] == 'can_not_be_pickled'
 
 
 def test_hard_timeout_windows_only():
