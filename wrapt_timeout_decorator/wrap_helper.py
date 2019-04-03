@@ -103,13 +103,8 @@ def get_bad_pickling_types(object_to_pickle):
 
 
 def get_bad_pickling_items(object_to_pickle):
-    bad_items = list()
-    try:
-        bad_items = dill.detect.baditems(object_to_pickle)
-    except NotImplementedError:
-        bad_items = 'can not be detected because of dill.NotImplementedError'
-    finally:
-        return bad_items
+    bad_items = dill.detect.baditems(object_to_pickle)
+    return bad_items
 
 
 def get_bad_pickling_objects(object_to_pickle):

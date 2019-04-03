@@ -202,6 +202,12 @@ def test_pickle_detection_not_implemented_error():
         detect_unpickable_objects_and_reraise(can_not_be_pickled_in_windows_because_in_main_context)
 
 
+def test_pickle_analyser():
+    result = detect_unpickable_objects(can_not_be_pickled_in_windows_because_in_main_context, dill_trace=True)
+    assert result == {'bad_items': [], 'bad_objects': [], 'bad_types': [],
+                      'object_name': 'can_not_be_pickled_in_windows_because_in_main_context'}
+
+
 def test_hard_timeout_windows_only():
     @timeout(dec_timeout=0.15, use_signals=use_signals)
     def f_test_hard_timeout():
