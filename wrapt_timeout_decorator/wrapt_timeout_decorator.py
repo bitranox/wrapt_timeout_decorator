@@ -7,7 +7,7 @@ Timeout decorator.
 from dill import PicklingError
 from typing import Union, Callable
 import wrapt
-from .wrap_helper import WrapHelper
+from .wrap_helper import WrapHelper, detect_unpickable_objects_and_reraise
 from.wrap_function_multiprocess import Timeout
 
 
@@ -128,5 +128,5 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
                                               wrap_helper.exception_message, wrap_helper.dec_timeout, wrap_helper.dec_hard_timeout)
                     return timeout_wrapper(*args, **kwargs)
                 except PicklingError:
-                    wrap_helper.detect_unpickable_objects_and_reraise(wrapped)
+                    detect_unpickable_objects_and_reraise(wrapped)
     return wrapper

@@ -3,6 +3,7 @@ import platform
 import signal
 import sys
 import threading
+from typing import Any, Dict
 
 if sys.version_info < (3, 3):
     TimeoutError = AssertionError  # there is no TimeoutError below Python 3.3
@@ -53,24 +54,72 @@ class WrapHelper(object):
         if is_system_windows() or not is_in_main_thread():
             self.use_signals = False
 
-    def detect_unpickable_objects_and_reraise(self, object_to_pickle):
-        # sometimes the detection detects unpickable objects but actually
-        # they can be pickled - so we just try to start the thread and report
-        # the unpickable objects if that fails
-        bad_types = self.get_bad_pickling_types(object_to_pickle)
-        object_name = object_to_pickle.__name__ or 'object'
-        s_err = 'can not pickle {on}, bad types {bt}'.format(on=object_name, bt=bad_types)
-        raise dill.PicklingError(s_err)
 
-    @staticmethod
-    def get_bad_pickling_types(object_to_pickle):
-        bad_types = list()
-        try:
-            bad_types = dill.detect.badtypes(object_to_pickle)
-        except NotImplementedError:
-            bad_types = 'can not be detected because of dill.NotImplementedError'
-        finally:
-            return bad_types
+def detect_unpickable_objects_and_reraise(object_to_pickle):
+    # sometimes the detection detects unpickable objects but actually
+    # they can be pickled - so we just try to start the thread and report
+    # the unpickable objects if that fails
+    dict_result = detect_unpickable_objects(object_to_pickle, dill_trace=False)
+    s_err = 'can not pickle {on}, bad items: {bi}, bad objects: {bo}, bad types {bt}'.format(on=dict_result['object_name'],
+                                                                                             bi=dict_result['bad_items'],
+                                                                                             bo=dict_result['bad_objects'],
+                                                                                             bt=dict_result['bad_types'])
+    raise dill.PicklingError(s_err)
+
+
+def detect_unpickable_objects(object_to_pickle, dill_trace=True):
+    # type: (Any, bool) -> Dict
+    dict_result = dict()
+    dict_result['object_name'] = ''
+    dict_result['bad_items'] = list()
+    dict_result['bad_objects'] = list()
+    dict_result['bad_types'] = list()
+
+    safe_status_of_dill_trace = dill.detect.trace
+    # noinspection PyBroadException
+    try:
+        if dill_trace:
+            dill.detect.trace = True
+        pickled_object = dill.dumps(object_to_pickle)
+        dill.loads(pickled_object)
+    except Exception:
+        dict_result['object_name'] = object_to_pickle.__name__ or 'object'
+        dict_result['bad_items'] = get_bad_pickling_items(object_to_pickle)
+        dict_result['bad_objects'] = get_bad_pickling_objects(object_to_pickle)
+        dict_result['bad_types'] = get_bad_pickling_types(object_to_pickle)
+    finally:
+        dill.detect.trace = safe_status_of_dill_trace
+        return dict_result
+
+
+def get_bad_pickling_types(object_to_pickle):
+    bad_types = list()
+    try:
+        bad_types = dill.detect.badtypes(object_to_pickle)
+    except NotImplementedError:
+        bad_types = 'can not be detected because of dill.NotImplementedError'
+    finally:
+        return bad_types
+
+
+def get_bad_pickling_items(object_to_pickle):
+    bad_items = list()
+    try:
+        bad_items = dill.detect.baditems(object_to_pickle)
+    except NotImplementedError:
+        bad_items = 'can not be detected because of dill.NotImplementedError'
+    finally:
+        return bad_items
+
+
+def get_bad_pickling_objects(object_to_pickle):
+    bad_objects = list()
+    try:
+        bad_objects = dill.detect.badobjects(object_to_pickle)
+    except NotImplementedError:
+        bad_objects = 'can not be detected because of dill.NotImplementedError'
+    finally:
+        return bad_objects
 
 
 def raise_exception(exception, exception_message):

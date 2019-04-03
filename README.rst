@@ -422,6 +422,17 @@ here the same example, which will work on Windows:
         return i
 
 
+convenience function to detect pickle errors
+--------------------------------------------
+
+remember that decorated functions in Windows needs to be pickable. In order to detect pickle problems You can use :
+
+.. code-block:: py
+
+    from wrapt_timeout_decorator import *
+    detect_unpickable_objects(object_to_pickle, dill_trace=True)  # type: (Any, bool) -> Dict
+
+
 use_signals = False (Windows) gives different total time
 --------------------------------------------------------
 
