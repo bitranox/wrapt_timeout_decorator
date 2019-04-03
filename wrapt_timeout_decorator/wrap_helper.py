@@ -1,9 +1,13 @@
 import dill
+import logging
 import platform
 import signal
 import sys
 import threading
 from typing import Any, Dict
+
+logging.basicConfig()
+logger = logging.getLogger('pickle_analyzer')
 
 if sys.version_info < (3, 3):
     TimeoutError = AssertionError  # there is no TimeoutError below Python 3.3
@@ -59,7 +63,7 @@ def detect_unpickable_objects_and_reraise(object_to_pickle):
     # sometimes the detection detects unpickable objects but actually
     # they can be pickled - so we just try to start the thread and report
     # the unpickable objects if that fails
-    dict_result = detect_unpickable_objects(object_to_pickle, dill_trace=False)
+    dict_result = detect_unpickable_objects(object_to_pickle, dill_trace=False, log_warning=False)
     s_err = 'can not pickle {on}, bad items: {bi}, bad objects: {bo}, bad types {bt}'.format(on=dict_result['object_name'],
                                                                                              bi=dict_result['bad_items'],
                                                                                              bo=dict_result['bad_objects'],
@@ -67,8 +71,10 @@ def detect_unpickable_objects_and_reraise(object_to_pickle):
     raise dill.PicklingError(s_err)
 
 
-def detect_unpickable_objects(object_to_pickle, dill_trace=True):
-    # type: (Any, bool) -> Dict
+def detect_unpickable_objects(object_to_pickle, dill_trace=True, log_warning=True):
+    # type: (Any, bool, bool) -> Dict
+    if log_warning:
+        logger.warning('always remember that the "object_to_pickle" should not be defined within the main context')
     dict_result = dict()
     dict_result['object_name'] = ''
     dict_result['bad_items'] = list()
