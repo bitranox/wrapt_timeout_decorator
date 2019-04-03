@@ -84,7 +84,6 @@ def detect_unpickable_objects(object_to_pickle, dill_trace=True):
         dill.loads(pickled_object)
     except Exception:
         dict_result['object_name'] = object_to_pickle.__name__ or 'object'
-        dict_result['bad_items'] = get_bad_pickling_items(object_to_pickle)
         dict_result['bad_objects'] = get_bad_pickling_objects(object_to_pickle)
         dict_result['bad_types'] = get_bad_pickling_types(object_to_pickle)
     finally:
@@ -101,17 +100,6 @@ def get_bad_pickling_types(object_to_pickle):
         bad_types = [sys.exc_info()[1]]
     finally:
         return bad_types
-
-
-def get_bad_pickling_items(object_to_pickle):
-    bad_items = list()
-    # noinspection PyBroadException
-    try:
-        bad_items = dill.detect.baditems(object_to_pickle)
-    except Exception:
-        bad_items = [sys.exc_info()[1]]
-    finally:
-        return bad_items
 
 
 def get_bad_pickling_objects(object_to_pickle):
