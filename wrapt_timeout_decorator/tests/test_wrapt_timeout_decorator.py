@@ -204,8 +204,8 @@ def test_pickle_detection_not_implemented_error():
 
 def test_pickle_analyser():
     result = detect_unpickable_objects(can_not_be_pickled, dill_trace=True)
-    assert str(result['bad_objects']) == '[NotImplementedError(\'object proxy must define __reduce_ex__()\')]'
-    assert str(result['bad_types']) == '[NotImplementedError(\'object proxy must define __reduce_ex__()\')]'
+    assert str(result['bad_objects']) == '[NotImplementedError(\'object proxy must define __reduce_ex__()\')]' or '[NotImplementedError(\'object proxy must define __reduce_ex__()\',)]'
+    assert str(result['bad_types']) == '[NotImplementedError(\'object proxy must define __reduce_ex__()\')]' or '[NotImplementedError(\'object proxy must define __reduce_ex__()\',)]'
     assert result['object_name'] == 'can_not_be_pickled'
 
 
