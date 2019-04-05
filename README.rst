@@ -45,14 +45,21 @@ From source code:
 
 .. code-block:: bash
 
+    # normal install
     python setup.py install
+    # test without installing
     python setup.py test
 
 via pip (preferred):
 
 .. code-block:: bash
 
+    # upgrade all dependencies regardless of version number (PREFERRED)
+    pip install --upgrade https://github.com/bitranox/wrapt_timeout_decorator/archive/master.zip  --upgrade-strategy eager
+    # normal install
     pip install --upgrade https://github.com/bitranox/wrapt_timeout_decorator/archive/master.zip
+    # test without installing
+    pip install --upgrade https://github.com/bitranox/wrapt_timeout_decorator/archive/master.zip --install-option test
 
 via requirements.txt:
 
