@@ -4,7 +4,7 @@
 # noinspection PyBroadException
 try:
     from .wrapt_timeout_decorator.wrapt_timeout_decorator import timeout
-except Exception:
+except ImportError:
     pass
 
 __title__ = 'wrapt_timeout_decorator'
