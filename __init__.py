@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
+import logging
 
-# this is only for local development when the package is actually not installed
-# noinspection PyBroadException
 try:
     from .wrapt_timeout_decorator.wrapt_timeout_decorator import timeout
 except ImportError:
-    pass
+    logger = logging.getLogger()
+    logger.debug('Import Error - this __init__.py is only meant for local package development')
 
 __title__ = 'wrapt_timeout_decorator'
 __version__ = '1.0.9'
