@@ -17,7 +17,7 @@ when not using signals (under Windows for instance). In that case multiprocess a
 
 to communicate with the child process (instead of multiprocessing.queue) which is faster and might work on Amazon AWS.
 
-`100% code coverage <https://codecov.io/gh/bitranox/wrapt_timeout_decorator>`_, tested under `Linux, OsX and Windows <https://travis-ci.org/bitranox/wrapt_timeout_decorator>`_
+`100% code coverage <https://codecov.io/gh/bitranox/wrapt_timeout_decorator>`_, tested under `Linux, OsX, Windows and Wine <https://travis-ci.org/bitranox/wrapt_timeout_decorator>`_
 
 -----
 
