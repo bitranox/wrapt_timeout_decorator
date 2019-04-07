@@ -1,82 +1,132 @@
 language: python
 group: travis_latest
 dist: xenial
+sudo: true
 
-sudo: false
+env:
+    global:
+        - github_master="https://github.com/${TRAVIS_REPO_SLUG}/archive/master.zip"
 
 python:
-# - '2.6'    # 2019-02-24 dropped Python 2.6 Support, since wrapt dropped it
-- '2.7'
-- '3.4'
-- '3.5'
-- '3.6'
-# - '3.7'     # 2018-09-10 Python 3.7 not installed on travis
-- '3.7.1'     # 2019-03-25 latest Version
-- '3.7-dev'   # 2018-03-25 development Version
-# - '3.8-dev'   # 2019-03-28 does not exist now
-# - 'nightly'   # 2019-03-28 does not exist now
-- 'pypy2.7-6.0'
-- 'pypy3.5-6.0'
+    # you might check https://storage.googleapis.com/travis-ci-language-archives for available archives
+    - '2.7'
+    - '3.4'
+    - '3.5'
+    - '3.6'
+    - '3.7.1'     # 2019-03-25 latest Version
+    - '3.7-dev'   # 2018-03-25 development Version
+    # - '3.8-dev'   # 2019-03-28 does not exist now
+    # - 'nightly'   # 2019-03-28 does not exist now
+    - 'pypy2.7-6.0'
+    - 'pypy3.5-6.0'
 
 
+### install xvfb virtual framebuffer - start commands with xvfb-run <command> - this we need for WINE
+addons:
+    apt:
+        packages:
+            - xvfb
+            - winbind
+    #################################################################################
+    #################################################################################
 matrix:
-  include:
-
-  - os: osx
-    language: sh
-    name: "osX Python 2.7"
-    install:
-    - pip install --upgrade pip
-    - pip install codecov pytest-pep8 pytest-cov
-    - pip install -e .
-
-  - os: osx
-    language: sh
-    name: "osX Python 3.6"
-    install:
-    - pip3 install --upgrade pip
-    - pip3 install codecov pytest-pep8 pytest-cov
-    - pip3 install -e .
-
-  - os: windows
-    language: sh
-    name: "Windows Python 2.7"
-    before_install:
-    - choco install python2
-    - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
-    - python -m pip install --upgrade pip
-    - pip install codecov pytest-pep8 pytest-cov
-    - pip install -e .
-
-  - os: windows
-    language: sh
-    name: "Windows Python 3.7"
-    before_install:
-    - choco install python3
-    - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
-    - python -m pip install --upgrade pip
-    - pip install codecov pytest-pep8 pytest-cov
-    - pip install -e .
+    include:
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE 32 Bit Python 2.7.16"
+      env:
+          - WINEARCH="win32"
+          - WINEPREFIX="${HOME}/wine/wine32"
+          - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
+          - CMDPREFIX="wine"
+      # services:
+      #   - xvfb    # this does not work 2019-04-04
+      before_install:
+          - chmod 755 ./*.sh    # make shell scripts executable, just in case.
+          - ./install_wine.sh
+          - ./install_wine_machine.sh
+          - ./install_wine_python2_preinstalled.sh
+          - ./install_wine_git_portable.sh
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE 64 Bit Python 2.7.16"
+      env:
+          - WINEPREFIX="${HOME}/wine/wine64"
+          - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
+          - CMDPREFIX="wine"
+      before_install:
+          - chmod 755 ./*.sh    # make shell scripts executable, just in case.
+          - ./install_wine.sh
+          - ./install_wine_machine.sh
+          - ./install_wine_python2_preinstalled.sh
+          - ./install_wine_git_portable.sh
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE 32 Bit Python 3.7.3"
+      env:
+          - WINEARCH="win32"
+          - WINEPREFIX="${HOME}/wine/wine32"
+          - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
+          - CMDPREFIX="wine"
+      # services:
+      #   - xvfb    # this does not work 2019-04-04
+      before_install:
+          - chmod 755 ./*.sh    # make shell scripts executable, just in case.
+          - ./install_wine.sh
+          - ./install_wine_machine.sh
+          - ./install_wine_python3_preinstalled.sh
+          - ./install_wine_git_portable.sh
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE 64 Bit Python 3.7.3"
+      env:
+          - WINEPREFIX="${HOME}/wine/wine64"
+          - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
+          - CMDPREFIX="wine"
+      before_install:
+          - chmod 755 ./*.sh    # make shell scripts executable, just in case.
+          - ./install_wine.sh
+          - ./install_wine_machine.sh
+          - ./install_wine_python3_preinstalled.sh
+          - ./install_wine_git_portable.sh
+    #################################################################################
+    - os: osx
+      language: sh
+      name: "osX Python 2.7"
+    #################################################################################
+    - os: osx
+      language: sh
+      name: "osX Python 3.6"
+    #################################################################################
+    - os: windows
+      language: sh
+      name: "Windows Python 2.7"
+      before_install:
+          - choco install python2
+          - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
+    #################################################################################
+    - os: windows
+      language: sh
+      name: "Windows Python 3.7"
+      before_install:
+        - choco install python3
+        - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+    #################################################################################
+    #################################################################################
 
 install:
-- pip install --upgrade pip
-- if [[ $TRAVIS_PYTHON_VERSION == pypy3.5-6.0 ]]; then pip install "pytest-cov==2.6.0"; fi
-- pip install codecov pytest pytest-pep8 pytest-cov
-- pip install -e .
+    - ${CMDPREFIX} python -m pip install --upgrade pip
+    - if [[ $TRAVIS_PYTHON_VERSION == pypy3.5-6.0 ]]; then ${CMDPREFIX} pip install "pytest-cov==2.6.0"; fi
+    - ${CMDPREFIX} pip install codecov pytest pytest-pep8 pytest-cov dill
+    - ${CMDPREFIX} pip install -e .
 
 script:
-  - py.test --pep8 --cov
-
+    - ${CMDPREFIX} pip install ${github_master} --install-option test # test setup.py test option
+    - ${CMDPREFIX} python -m pytest --pep8 --cov
 after_success:
-
-- coverage report
-- codecov
-
-
-#deploy:
-#  provider: pypi
-#  user: png
-#  password:
-#    secure: ZXoq3kgfu+IICjhhmQZr0s0xE6bvWzH04GjdE/VL4BxdDdGI4fHEwudGEjzLXJbt2d09vNOO67Nqam+MwPWtq+WZEP69g/Fhyy4kbkuUl/CMeqashQzU/N+3lwv97Y2qvzTUwDnSoz4zyBFu67SSrovKruFsYaiH00bwvWcvLa0=
-#  on:
-#    python: 2.7
+    - ${CMDPREFIX} coverage report
+    - ${CMDPREFIX} codecov
