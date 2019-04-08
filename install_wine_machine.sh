@@ -11,7 +11,6 @@ if [[ -z ${wine_windows_version} ]]
 echo "Setup Wine Machine at ${WINEPREFIX}, WINEARCH=${WINEARCH}, wine_windows_version=${wine_windows_version}"
 mkdir -p ${WINEPREFIX}
 wine_drive_c_dir=${WINEPREFIX}/drive_c
-
 # xvfb-run --auto-servernum winecfg # fails marshal_object couldnt get IPSFactory buffer for interface ...
 winecfg
 
@@ -22,9 +21,9 @@ echo "Set Windows Version to ${wine_windows_version}"
 winetricks -q ${wine_windows_version}
 
 echo "Install common Packets"
-winetricks -q msxml6
-winetricks -q dotnet462
-winetricks -q allfonts
+# winetricks -q msxml6
+# winetricks -q dotnet462
+# winetricks -q allfonts
 winetricks -q windowscodecs
 
 cd ${save_path}
