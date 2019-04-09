@@ -2,315 +2,375 @@ language: python
 group: travis_latest
 dist: xenial
 sudo: true
+
 env:
-  global:
-  - github_master="https://github.com/${TRAVIS_REPO_SLUG}/archive/master.zip"
+    global:
+        - github_master="https://github.com/${TRAVIS_REPO_SLUG}/archive/master.zip"
+
 python:
-- '2.7'
-- '3.4'
-- '3.5'
-- '3.6'
-- 3.7.1
-- 3.7-dev
-- pypy2.7-6.0
-- pypy3.5-6.0
+    # you might check https://storage.googleapis.com/travis-ci-language-archives for available archives
+    - '2.7'
+    - '3.4'
+    - '3.5'
+    - '3.6'
+    - '3.7.1'     # 2019-03-25 latest Version
+    - '3.7-dev'   # 2018-03-25 development Version
+    # - '3.8-dev'   # 2019-03-28 does not exist now
+    # - 'nightly'   # 2019-03-28 does not exist now
+    - 'pypy2.7-6.0'
+    - 'pypy3.5-6.0'
+
+
+### install xvfb virtual framebuffer - start commands with xvfb-run <command> - this we need for WINE
 addons:
-  apt:
-    packages:
-    - xvfb
-    - winbind
+    apt:
+        packages:
+            - xvfb
+            - winbind
+    #################################################################################
 matrix:
-  include:
-  - os: linux
-    language: sh
-    name: WINE stable 32 Bit Python 2.7.16, Windows XP
-    env:
-    - WINEARCH="win32"
-    - WINEPREFIX="${HOME}/wine/wine32"
-    - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="winxp"
-    - wine_version="stable"
-    - wine_python_version="python2"
-  - os: linux
-    language: sh
-    name: WINE stable 64 Bit Python 2.7.16, Windows XP
-    env:
-    - WINEPREFIX="${HOME}/wine/wine64"
-    - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="winxp"
-    - wine_version="stable"
-    - wine_python_version="python2"
-  - os: linux
-    language: sh
-    name: WINE stable 32 Bit Python 3.7.3, Windows XP
-    env:
-    - WINEARCH="win32"
-    - WINEPREFIX="${HOME}/wine/wine32"
-    - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="winxp"
-    - wine_version="stable"
-    - wine_python_version="python3"
-  - os: linux
-    language: sh
-    name: WINE stable 64 Bit Python 3.7.3, Windows XP
-    env:
-    - WINEPREFIX="${HOME}/wine/wine64"
-    - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="winxp"
-    - wine_version="stable"
-    - wine_python_version="python3"
-  - os: linux
-    language: sh
-    name: WINE stable 32 Bit Python 2.7.16, Windows 10
-    env:
-    - WINEARCH="win32"
-    - WINEPREFIX="${HOME}/wine/wine32"
-    - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="win10"
-    - wine_version="stable"
-    - wine_python_version="python2"
-  - os: linux
-    language: sh
-    name: WINE stable 64 Bit Python 2.7.16, Windows 10
-    env:
-    - WINEPREFIX="${HOME}/wine/wine64"
-    - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="win10"
-    - wine_version="stable"
-    - wine_python_version="python2"
-  - os: linux
-    language: sh
-    name: WINE stable 32 Bit Python 3.7.3, Windows 10
-    env:
-    - WINEARCH="win32"
-    - WINEPREFIX="${HOME}/wine/wine32"
-    - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="win10"
-    - wine_version="stable"
-    - wine_python_version="python3"
-  - os: linux
-    language: sh
-    name: WINE stable 64 Bit Python 3.7.3, Windows 10
-    env:
-    - WINEPREFIX="${HOME}/wine/wine64"
-    - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="win10"
-    - wine_version="stable"
-    - wine_python_version="python3"
-  - os: linux
-    language: sh
-    name: WINE devel 32 Bit Python 2.7.16, Windows XP
-    env:
-    - WINEARCH="win32"
-    - WINEPREFIX="${HOME}/wine/wine32"
-    - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="winxp"
-    - wine_version="devel"
-    - wine_python_version="python2"
-  - os: linux
-    language: sh
-    name: WINE devel 64 Bit Python 2.7.16, Windows XP
-    env:
-    - WINEPREFIX="${HOME}/wine/wine64"
-    - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="winxp"
-    - wine_version="devel"
-    - wine_python_version="python2"
-  - os: linux
-    language: sh
-    name: WINE devel 32 Bit Python 3.7.3, Windows XP
-    env:
-    - WINEARCH="win32"
-    - WINEPREFIX="${HOME}/wine/wine32"
-    - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="winxp"
-    - wine_version="devel"
-    - wine_python_version="python3"
-  - os: linux
-    language: sh
-    name: WINE devel 64 Bit Python 3.7.3, Windows XP
-    env:
-    - WINEPREFIX="${HOME}/wine/wine64"
-    - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="winxp"
-    - wine_version="devel"
-    - wine_python_version="python3"
-  - os: linux
-    language: sh
-    name: WINE devel 32 Bit Python 2.7.16, Windows 10
-    env:
-    - WINEARCH="win32"
-    - WINEPREFIX="${HOME}/wine/wine32"
-    - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="win10"
-    - wine_version="devel"
-    - wine_python_version="python2"
-  - os: linux
-    language: sh
-    name: WINE devel 64 Bit Python 2.7.16, Windows 10
-    env:
-    - WINEPREFIX="${HOME}/wine/wine64"
-    - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="win10"
-    - wine_version="devel"
-    - wine_python_version="python2"
-  - os: linux
-    language: sh
-    name: WINE devel 32 Bit Python 3.7.3, Windows 10
-    env:
-    - WINEARCH="win32"
-    - WINEPREFIX="${HOME}/wine/wine32"
-    - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="win10"
-    - wine_version="devel"
-    - wine_python_version="python3"
-  - os: linux
-    language: sh
-    name: WINE devel 64 Bit Python 3.7.3, Windows 10
-    env:
-    - WINEPREFIX="${HOME}/wine/wine64"
-    - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="win10"
-    - wine_version="devel"
-    - wine_python_version="python3"
-  - os: linux
-    language: sh
-    name: WINE staging 32 Bit Python 2.7.16, Windows XP
-    env:
-    - WINEARCH="win32"
-    - WINEPREFIX="${HOME}/wine/wine32"
-    - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="winxp"
-    - wine_version="staging"
-    - wine_python_version="python2"
-  - os: linux
-    language: sh
-    name: WINE staging 64 Bit Python 2.7.16, Windows XP
-    env:
-    - WINEPREFIX="${HOME}/wine/wine64"
-    - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="winxp"
-    - wine_version="staging"
-    - wine_python_version="python2"
-  - os: linux
-    language: sh
-    name: WINE staging 32 Bit Python 3.7.3, Windows XP
-    env:
-    - WINEARCH="win32"
-    - WINEPREFIX="${HOME}/wine/wine32"
-    - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="winxp"
-    - wine_version="staging"
-    - wine_python_version="python3"
-  - os: linux
-    language: sh
-    name: WINE staging 64 Bit Python 3.7.3, Windows XP
-    env:
-    - WINEPREFIX="${HOME}/wine/wine64"
-    - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="winxp"
-    - wine_version="staging"
-    - wine_python_version="python3"
-  - os: linux
-    language: sh
-    name: WINE staging 32 Bit Python 2.7.16, Windows 10
-    env:
-    - WINEARCH="win32"
-    - WINEPREFIX="${HOME}/wine/wine32"
-    - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="win10"
-    - wine_version="staging"
-    - wine_python_version="python2"
-  - os: linux
-    language: sh
-    name: WINE staging 64 Bit Python 2.7.16, Windows 10
-    env:
-    - WINEPREFIX="${HOME}/wine/wine64"
-    - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="win10"
-    - wine_version="staging"
-    - wine_python_version="python2"
-  - os: linux
-    language: sh
-    name: WINE staging 32 Bit Python 3.7.3, Windows 10
-    env:
-    - WINEARCH="win32"
-    - WINEPREFIX="${HOME}/wine/wine32"
-    - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="win10"
-    - wine_version="staging"
-    - wine_python_version="python3"
-  - os: linux
-    language: sh
-    name: WINE staging 64 Bit Python 3.7.3, Windows 10
-    env:
-    - WINEPREFIX="${HOME}/wine/wine64"
-    - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
-    - CMDPREFIX="wine"
-    - wine_windows_version="win10"
-    - wine_version="staging"
-    - wine_python_version="python3"
-  - os: osx
-    language: sh
-    name: osX Python 2.7
-  - os: osx
-    language: sh
-    name: osX Python 3.6
-  - os: windows
-    language: sh
-    name: Windows Python 2.7
-    before_install:
-    - choco install python2
-    - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
-  - os: windows
-    language: sh
-    name: Windows Python 3.7
-    before_install:
-    - choco install python3
-    - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+    include:
+    #################################################################################
+    - os: windows
+      language: sh
+      env:
+          - do_release="True"
+      name: "Windows Python 2.7"
+      before_install:
+          - choco install python2
+          - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
+    #################################################################################
+    - os: windows
+      language: sh
+      name: "Windows Python 3.7"
+      before_install:
+        - choco install python3
+        - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+    #################################################################################
+    # WINE Stable XP
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE stable 32 Bit Python 2.7.16, Windows XP"
+      env:
+          - WINEARCH="win32"
+          - WINEPREFIX="${HOME}/wine/wine32"
+          - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="winxp"
+          - wine_version="stable"
+          - wine_python_version="python2"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE stable 64 Bit Python 2.7.16, Windows XP"
+      env:
+          - WINEPREFIX="${HOME}/wine/wine64"
+          - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="winxp"
+          - wine_version="stable"
+          - wine_python_version="python2"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE stable 32 Bit Python 3.7.3, Windows XP"
+      env:
+          - WINEARCH="win32"
+          - WINEPREFIX="${HOME}/wine/wine32"
+          - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="winxp"
+          - wine_version="stable"
+          - wine_python_version="python3"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE stable 64 Bit Python 3.7.3, Windows XP"
+      env:
+          - WINEPREFIX="${HOME}/wine/wine64"
+          - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="winxp"
+          - wine_version="stable"
+          - wine_python_version="python3"
+    #################################################################################
+    # WINE Stable WIN10
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE stable 32 Bit Python 2.7.16, Windows 10"
+      env:
+          - WINEARCH="win32"
+          - WINEPREFIX="${HOME}/wine/wine32"
+          - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="win10"
+          - wine_version="stable"
+          - wine_python_version="python2"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE stable 64 Bit Python 2.7.16, Windows 10"
+      env:
+          - WINEPREFIX="${HOME}/wine/wine64"
+          - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="win10"
+          - wine_version="stable"
+          - wine_python_version="python2"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE stable 32 Bit Python 3.7.3, Windows 10"
+      env:
+          - WINEARCH="win32"
+          - WINEPREFIX="${HOME}/wine/wine32"
+          - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="win10"
+          - wine_version="stable"
+          - wine_python_version="python3"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE stable 64 Bit Python 3.7.3, Windows 10"
+      env:
+          - WINEPREFIX="${HOME}/wine/wine64"
+          - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="win10"
+          - wine_version="stable"
+          - wine_python_version="python3"
+    #################################################################################
+    # WINE Develop XP
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE devel 32 Bit Python 2.7.16, Windows XP"
+      env:
+          - WINEARCH="win32"
+          - WINEPREFIX="${HOME}/wine/wine32"
+          - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="winxp"
+          - wine_version="devel"
+          - wine_python_version="python2"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE devel 64 Bit Python 2.7.16, Windows XP"
+      env:
+          - WINEPREFIX="${HOME}/wine/wine64"
+          - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="winxp"
+          - wine_version="devel"
+          - wine_python_version="python2"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE devel 32 Bit Python 3.7.3, Windows XP"
+      env:
+          - WINEARCH="win32"
+          - WINEPREFIX="${HOME}/wine/wine32"
+          - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="winxp"
+          - wine_version="devel"
+          - wine_python_version="python3"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE devel 64 Bit Python 3.7.3, Windows XP"
+      env:
+          - WINEPREFIX="${HOME}/wine/wine64"
+          - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="winxp"
+          - wine_version="devel"
+          - wine_python_version="python3"
+    #################################################################################
+    # WINE Develop WIN10
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE devel 32 Bit Python 2.7.16, Windows 10"
+      env:
+          - WINEARCH="win32"
+          - WINEPREFIX="${HOME}/wine/wine32"
+          - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="win10"
+          - wine_version="devel"
+          - wine_python_version="python2"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE devel 64 Bit Python 2.7.16, Windows 10"
+      env:
+          - WINEPREFIX="${HOME}/wine/wine64"
+          - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="win10"
+          - wine_version="devel"
+          - wine_python_version="python2"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE devel 32 Bit Python 3.7.3, Windows 10"
+      env:
+          - WINEARCH="win32"
+          - WINEPREFIX="${HOME}/wine/wine32"
+          - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="win10"
+          - wine_version="devel"
+          - wine_python_version="python3"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE devel 64 Bit Python 3.7.3, Windows 10"
+      env:
+          - WINEPREFIX="${HOME}/wine/wine64"
+          - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="win10"
+          - wine_version="devel"
+          - wine_python_version="python3"
+    #################################################################################
+    # WINE Staging XP
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE staging 32 Bit Python 2.7.16, Windows XP"
+      env:
+          - WINEARCH="win32"
+          - WINEPREFIX="${HOME}/wine/wine32"
+          - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="winxp"
+          - wine_version="staging"
+          - wine_python_version="python2"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE staging 64 Bit Python 2.7.16, Windows XP"
+      env:
+          - WINEPREFIX="${HOME}/wine/wine64"
+          - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="winxp"
+          - wine_version="staging"
+          - wine_python_version="python2"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE staging 32 Bit Python 3.7.3, Windows XP"
+      env:
+          - WINEARCH="win32"
+          - WINEPREFIX="${HOME}/wine/wine32"
+          - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="winxp"
+          - wine_version="staging"
+          - wine_python_version="python3"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE staging 64 Bit Python 3.7.3, Windows XP"
+      env:
+          - WINEPREFIX="${HOME}/wine/wine64"
+          - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="winxp"
+          - wine_version="staging"
+          - wine_python_version="python3"
+    #################################################################################
+    # WINE Develop WIN10
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE staging 32 Bit Python 2.7.16, Windows 10"
+      env:
+          - WINEARCH="win32"
+          - WINEPREFIX="${HOME}/wine/wine32"
+          - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="win10"
+          - wine_version="staging"
+          - wine_python_version="python2"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE staging 64 Bit Python 2.7.16, Windows 10"
+      env:
+          - WINEPREFIX="${HOME}/wine/wine64"
+          - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="win10"
+          - wine_version="staging"
+          - wine_python_version="python2"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE staging 32 Bit Python 3.7.3, Windows 10"
+      env:
+          - WINEARCH="win32"
+          - WINEPREFIX="${HOME}/wine/wine32"
+          - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="win10"
+          - wine_version="staging"
+          - wine_python_version="python3"
+    #################################################################################
+    - os: linux
+      language: sh
+      name: "WINE staging 64 Bit Python 3.7.3, Windows 10"
+      env:
+          - WINEPREFIX="${HOME}/wine/wine64"
+          - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
+          - CMDPREFIX="wine"
+          - wine_windows_version="win10"
+          - wine_version="staging"
+          - wine_python_version="python3"
+
+    #################################################################################
+    #################################################################################
+    #################################################################################
+    #################################################################################
+    #################################################################################
+    #################################################################################
+    - os: osx
+      language: sh
+      name: "osX Python 2.7"
+    #################################################################################
+    - os: osx
+      language: sh
+      name: "osX Python 3.6"
+    #################################################################################
+
+
 install:
-- if [[ ${CMDPREFIX} == "wine" ]]; then chmod 755 ./*.sh ; fi
-- if [[ ${CMDPREFIX} == "wine" ]]; then ./install_wine.sh ; fi
-- if [[ ${CMDPREFIX} == "wine" ]]; then ./install_wine_machine.sh ; fi
-- if [[ ${wine_python_version} == "python2" ]]; then ./install_wine_python2_preinstalled.sh
-  ; fi
-- if [[ ${wine_python_version} == "python3" ]]; then ./install_wine_python3_preinstalled.sh
-  ; fi
-- if [[ ${CMDPREFIX} == "wine" ]]; then ./install_wine_git_portable.sh ; fi
-- "${CMDPREFIX} python -m pip install --upgrade pip"
-- if [[ $TRAVIS_PYTHON_VERSION == pypy3.5-6.0 ]]; then ${CMDPREFIX} pip install "pytest-cov==2.6.0";
-  fi
-- "${CMDPREFIX} pip install codecov pytest pytest-pep8 pytest-cov dill"
-- "${CMDPREFIX} pip install -e ."
+    - if [[ ${CMDPREFIX} == "wine" ]]; then chmod 755 ./*.sh ; fi
+    - if [[ ${CMDPREFIX} == "wine" ]]; then ./install_wine.sh ; fi
+    - if [[ ${CMDPREFIX} == "wine" ]]; then ./install_wine_machine.sh ; fi
+    - if [[ ${wine_python_version} == "python2" ]]; then ./install_wine_python2_preinstalled.sh ; fi
+    - if [[ ${wine_python_version} == "python3" ]]; then ./install_wine_python3_preinstalled.sh ; fi
+    - if [[ ${CMDPREFIX} == "wine" ]]; then ./install_wine_git_portable.sh ; fi
+
+    - ${CMDPREFIX} python -m pip install --upgrade pip
+    - if [[ $TRAVIS_PYTHON_VERSION == pypy3.5-6.0 ]]; then ${CMDPREFIX} pip install "pytest-cov==2.6.0"; fi
+    - ${CMDPREFIX} pip install codecov pytest pytest-pep8 pytest-cov dill
+    - ${CMDPREFIX} pip install -e .
+
 script:
-- "${CMDPREFIX} pip install ${github_master} --install-option test"
-- "${CMDPREFIX} python -m pytest --pep8 --cov"
+    - ${CMDPREFIX} pip install ${github_master} --install-option test # test setup.py test option
+    - ${CMDPREFIX} python -m pytest --pep8 --cov
 after_success:
-- "${CMDPREFIX} coverage report"
-- "${CMDPREFIX} codecov"
+    - ${CMDPREFIX} coverage report
+    - ${CMDPREFIX} codecov
+
 
 ## PYPI
 deploy:
@@ -321,3 +381,5 @@ deploy:
   distributions: "sdist bdist_wheel"
   on:
       tags: true
+      condition: ${do_release} = "True"
+
