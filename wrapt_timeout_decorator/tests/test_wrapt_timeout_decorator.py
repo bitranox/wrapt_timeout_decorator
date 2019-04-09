@@ -167,7 +167,7 @@ def test_custom_exception(use_signals):
 
 
 def test_not_main_thread(use_signals):
-    @timeout(0.1, use_signals=use_signals)
+    @timeout(0.3, use_signals=use_signals)
     def f(x):
         time.sleep(x)
 
@@ -176,14 +176,14 @@ def test_not_main_thread(use_signals):
     # we can not check for the Exception here, it happens in the subthread
     # we would need to set up a queue to communicate.
     # but we can check if the timeout occured
-    test_thread = Thread(target=f, args=(0.2, ))
+    test_thread = Thread(target=f, args=(0.6, ))
     test_thread.name = None
     test_thread.daemon = True
     start_time = time.time()
     test_thread.start()
     test_thread.join()
     stop_time = time.time()
-    assert 0.0 < (stop_time - start_time) < 1.5   # yes, it takes quiet some time to create the thread under windows
+    assert 0.0 < (stop_time - start_time) < 2.5   # yes, it takes quiet some time to create the thread under windows
 
 
 @timeout(0.1, use_signals=use_signals)
