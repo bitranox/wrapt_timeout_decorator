@@ -1,7 +1,7 @@
 Changelog
 =========
 
-1.1.10
+1.2.0
 ------
 2019-04-09: initial PyPi release
 
