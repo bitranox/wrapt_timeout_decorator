@@ -333,3 +333,4 @@ deploy:
   server: https://test.pypi.org/legacy/
     on:
     tags: true
+
