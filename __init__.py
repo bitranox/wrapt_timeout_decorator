@@ -9,3 +9,4 @@ except ImportError:
 
 __title__ = 'wrapt_timeout_decorator'
 __version__ = '1.0.9'
+__name__ = 'wrapt_timeout_decorator'
