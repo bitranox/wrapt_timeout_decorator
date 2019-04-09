@@ -35,8 +35,6 @@ matrix:
     - os: linux
       language: python
       python: '3.7.1'
-      env:
-        - do_release="True"
     #################################################################################
     - os: linux
       language: python
@@ -392,11 +390,10 @@ after_success:
 ## PYPI
 deploy:
   provider: pypi
-  user: "bitranox"
+  user: bitranox
   password:
       secure: OmuE4xOsDBut8rtNaN4dAavZKTzMuHRdbAP281n7m1EU1Jei67TzXgGxdRlhKhmdv3+n4C7w+4hS2PwEtb+3I4uw8Q6CVGwuHG1bjYroqYcI2ozjxMf26+KKQGOHxqAWUkCJoLI6dtFeqBE1EHxIhyFaTQ6NmMUEqHkKp88POwn41JMnWdUGTJFR75jMiXQ38o8vHuXAtuVPm6ISAbcUcL1fH8ftA9M5hxAdotOHgecIvCRb+CDM/b0BbnN1Mr0dBWm8purhnZBN7MaaelkwRFtXGgSvMAhGY8Ztc2Xo4SHp8bhrh3AfoqjyZNb3WkIJev+LbCn3TEimYSHEt7z8x21+k5HbzLbLg04rSXjuYWkpeCw+pOgYb/ntXnGWE2f/urpQQvxYGzQqiZQJSMQrLD/uupQ9dWUvafZebAS+FUCoXheRsfOlTs5v7DMo9w0mStvSMAZIQ6lbNDLR3dm4+77Gdfsey0NumpKsybesAzh+ELOT01NbqhzcPaejfyQEe7eg8q4b0lDwNvLAnztavR59g/k/Yve6N6UdP10yZvD2i6CiAIdJTUWohwamYNgKSfu5Pv+y9gNnlbG3wihP3nujkoBnOJqjlf3x3qQjW1cua5ePVGkE7ZyhE9bgv5ug0TLJQg+HU+NTWNX79LAlKZdu6mzHa9g5xg0QJCbxEC4=
   distributions: "sdist bdist_wheel"
   on:
       tags: true
-      condition: $do_release = True
-
+      python: 3.6
