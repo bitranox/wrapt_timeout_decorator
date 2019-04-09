@@ -7,21 +7,6 @@ env:
     global:
         - github_master="https://github.com/${TRAVIS_REPO_SLUG}/archive/master.zip"
 
-python:
-    # you might check https://storage.googleapis.com/travis-ci-language-archives for available archives
-    - '2.7'
-    - '3.4'
-    - '3.5'
-    - '3.6'
-    - '3.7.1'     # 2019-03-25 latest Version
-    - '3.7-dev'   # 2018-03-25 development Version
-    # - '3.8-dev'   # 2019-03-28 does not exist now
-    # - 'nightly'   # 2019-03-28 does not exist now
-    - 'pypy2.7-6.0'
-    - 'pypy3.5-6.0'
-
-
-### install xvfb virtual framebuffer - start commands with xvfb-run <command> - this we need for WINE
 addons:
     apt:
         packages:
@@ -30,6 +15,48 @@ addons:
     #################################################################################
 matrix:
     include:
+    #################################################################################
+    - os: linux
+      language: python
+      python:
+          - '2.7'
+    #################################################################################
+    - os: linux
+      language: python
+      python:
+          - '3.4'
+    #################################################################################
+    - os: linux
+      language: python
+      python:
+          - '3.5'
+    #################################################################################
+    - os: linux
+      language: python
+      python:
+        - '3.6'
+    #################################################################################
+    - os: linux
+      language: python
+      python:
+          - '3.7.1'
+      env:
+          - do_release="True"
+    #################################################################################
+    - os: linux
+      language: python
+      python:
+        - '3.7-dev'
+    #################################################################################
+    - os: linux
+      language: python
+      python:
+        - 'pypy2.7-6.0'
+    #################################################################################
+    - os: linux
+      language: python
+      python:
+        - 'pypy3.5-6.0'
     #################################################################################
     - os: windows
       language: sh
@@ -41,11 +68,11 @@ matrix:
     - os: windows
       language: sh
       name: "Windows Python 3.7"
-      env:
-          - do_release="True"
       before_install:
         - choco install python3
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+
+
     #################################################################################
     # WINE Stable XP
     #################################################################################
