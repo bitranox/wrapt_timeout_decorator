@@ -321,7 +321,7 @@ after_success:
 #   distributions: "sdist bdist_wheel"
 #   skip_existing: true
 #   on:
-#      branch: release
+#     tags: true
 
 ## PYPI TEST
 deploy:
@@ -333,4 +333,4 @@ deploy:
   server: https://test.pypi.org/legacy/
   skip_existing: true
   on:
-      branch: release
+    tags: true
