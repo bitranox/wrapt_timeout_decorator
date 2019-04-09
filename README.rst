@@ -50,7 +50,16 @@ From source code:
     # test without installing
     python setup.py test
 
-via pip (preferred):
+
+via pip latest Release:
+
+.. code-block:: bash
+
+    # latest Release from pypi
+    pip install wrapt_timeout_decorator
+
+
+via pip latest Development Version:
 
 .. code-block:: bash
 
@@ -66,15 +75,22 @@ via requirements.txt:
 .. code-block:: bash
 
     # Insert following line in Your requirements.txt:
+    # for the latest Release:
+    # wrapt_timeout_decorator
+    # for the latest Development Version :
     # https://github.com/bitranox/wrapt_timeout_decorator/archive/master.zip
-    # to install and upgrade all modules mentioned in requirements.txt:
 
+    # to install and upgrade all modules mentioned in requirements.txt:
     pip install --upgrade -r /<path>/requirements.txt
 
 via python:
 
 .. code-block:: bash
 
+    # latest Release:
+    python -m pip install wrapt_timeout_decorator
+
+    # latest Development Version:
     python -m pip install --upgrade https://github.com/bitranox/wrapt_timeout_decorator/archive/master.zip
 
 

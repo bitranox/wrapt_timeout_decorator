@@ -8,5 +8,4 @@ except ImportError:
     logger.debug('Import Error - this __init__.py is only meant for local package development')
 
 __title__ = 'wrapt_timeout_decorator'
-__version__ = '1.0.9'
 __name__ = 'wrapt_timeout_decorator'
