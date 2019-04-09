@@ -331,6 +331,5 @@ deploy:
       secure: uIvwNhR07Msv2IbcoEGUPcSGP502A5dpYMLwbIymBlbXP4OKkzcPJqZ0+8ANViTekiZXH0Mw6tbguDH/E4YsfuehF3B5Vh3D5Znjfnj4LGq3jqYtvVPs1gy5n1HFXSqCP69kncdHn7dtSJJSN2uKzBqd2wernQEa93vJUJjFGFkb6OLC9zbBc7hpO78YBh4wXPqGVQOsyS+Ig+CqICWEI6CcuMY3q70khf3JEv89aOyRWTGLo1wNCJSy9ozhzsPHUgF6jwtezVi6B4YV+YEDR1G4B2E32MjV7DVvRcm7+SAzFZrpCdPRSA/qDLAeCgoYR4ugq/hCiVaiM91yasx636B5CvZsNzm8i21OQS2+Pn8HwO7H5mZNFDWtkEjRwG+LamADcAMCMyBcX/sOaaTMPDqVUUMcCKbB/V1zU+CqamF+05veFE8P9EqSgtcrKpCR5ur1x5tVh5l0VDl1+m5eMjZACs+YfGqiKHu5NwNo4OIfbuSu6EzlL3VarhwChPI8otx6Fwj2l83BOORnjOMFBEbJOESEaYIv6rXfHAtBdfv7WmowXDTyGCvQ2qghbxX7OGsMbq/zZKl4HSUgyyHu7YQLShhtGolCGxxvM40DC4JrGlKczG9xK8XwGi531nZY7Nik6NFJdwfvcIE1rXVkt4EDRDvjVlZ5i/Ze0NYx2DQ=
   distributions: "sdist bdist_wheel"
   server: https://test.pypi.org/legacy/
-  skip_existing: true
-  on:
+    on:
     tags: true
