@@ -18,45 +18,37 @@ matrix:
     #################################################################################
     - os: linux
       language: python
-      python:
-          - '2.7'
+      python: '2.7'
     #################################################################################
     - os: linux
       language: python
-      python:
-          - '3.4'
+      python: '3.4'
     #################################################################################
     - os: linux
       language: python
-      python:
-          - '3.5'
+      python: '3.5'
     #################################################################################
     - os: linux
       language: python
-      python:
-        - '3.6'
+      python: '3.6'
     #################################################################################
     - os: linux
       language: python
-      python:
-          - '3.7.1'
+      python: '3.7.1'
       env:
-          - do_release="True"
+        - do_release="True"
     #################################################################################
     - os: linux
       language: python
-      python:
-        - '3.7-dev'
+      python: '3.7-dev'
     #################################################################################
     - os: linux
       language: python
-      python:
-        - 'pypy2.7-6.0'
+      python: 'pypy2.7-6.0'
     #################################################################################
     - os: linux
       language: python
-      python:
-        - 'pypy3.5-6.0'
+      python: 'pypy3.5-6.0'
     #################################################################################
     - os: windows
       language: sh
@@ -71,8 +63,6 @@ matrix:
       before_install:
         - choco install python3
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
-
-
     #################################################################################
     # WINE Stable XP
     #################################################################################
@@ -408,5 +398,5 @@ deploy:
   distributions: "sdist bdist_wheel"
   on:
       tags: true
-      condition: ${do_release} = "True"
+      condition: $do_release = True
 
