@@ -33,8 +33,6 @@ matrix:
     #################################################################################
     - os: windows
       language: sh
-      env:
-          - do_release="True"
       name: "Windows Python 2.7"
       before_install:
           - choco install python2
@@ -43,6 +41,8 @@ matrix:
     - os: windows
       language: sh
       name: "Windows Python 3.7"
+      env:
+          - do_release="True"
       before_install:
         - choco install python3
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
