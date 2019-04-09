@@ -311,26 +311,7 @@ script:
 after_success:
 - "${CMDPREFIX} coverage report"
 - "${CMDPREFIX} codecov"
-
-## PYPI
-# deploy:
-#   provider: pypi
-#   user: "bitranox"
-#   password:
-#     secure: OmuE4xOsDBut8rtNaN4dAavZKTzMuHRdbAP281n7m1EU1Jei67TzXgGxdRlhKhmdv3+n4C7w+4hS2PwEtb+3I4uw8Q6CVGwuHG1bjYroqYcI2ozjxMf26+KKQGOHxqAWUkCJoLI6dtFeqBE1EHxIhyFaTQ6NmMUEqHkKp88POwn41JMnWdUGTJFR75jMiXQ38o8vHuXAtuVPm6ISAbcUcL1fH8ftA9M5hxAdotOHgecIvCRb+CDM/b0BbnN1Mr0dBWm8purhnZBN7MaaelkwRFtXGgSvMAhGY8Ztc2Xo4SHp8bhrh3AfoqjyZNb3WkIJev+LbCn3TEimYSHEt7z8x21+k5HbzLbLg04rSXjuYWkpeCw+pOgYb/ntXnGWE2f/urpQQvxYGzQqiZQJSMQrLD/uupQ9dWUvafZebAS+FUCoXheRsfOlTs5v7DMo9w0mStvSMAZIQ6lbNDLR3dm4+77Gdfsey0NumpKsybesAzh+ELOT01NbqhzcPaejfyQEe7eg8q4b0lDwNvLAnztavR59g/k/Yve6N6UdP10yZvD2i6CiAIdJTUWohwamYNgKSfu5Pv+y9gNnlbG3wihP3nujkoBnOJqjlf3x3qQjW1cua5ePVGkE7ZyhE9bgv5ug0TLJQg+HU+NTWNX79LAlKZdu6mzHa9g5xg0QJCbxEC4=
-#   distributions: "sdist bdist_wheel"
-#   skip_existing: true
-#   on:
-#      branch: release
-
-## PYPI TEST
 deploy:
-  provider: pypi
-  user: "bitranox"
+  # pypy real
   password:
-      secure: uIvwNhR07Msv2IbcoEGUPcSGP502A5dpYMLwbIymBlbXP4OKkzcPJqZ0+8ANViTekiZXH0Mw6tbguDH/E4YsfuehF3B5Vh3D5Znjfnj4LGq3jqYtvVPs1gy5n1HFXSqCP69kncdHn7dtSJJSN2uKzBqd2wernQEa93vJUJjFGFkb6OLC9zbBc7hpO78YBh4wXPqGVQOsyS+Ig+CqICWEI6CcuMY3q70khf3JEv89aOyRWTGLo1wNCJSy9ozhzsPHUgF6jwtezVi6B4YV+YEDR1G4B2E32MjV7DVvRcm7+SAzFZrpCdPRSA/qDLAeCgoYR4ugq/hCiVaiM91yasx636B5CvZsNzm8i21OQS2+Pn8HwO7H5mZNFDWtkEjRwG+LamADcAMCMyBcX/sOaaTMPDqVUUMcCKbB/V1zU+CqamF+05veFE8P9EqSgtcrKpCR5ur1x5tVh5l0VDl1+m5eMjZACs+YfGqiKHu5NwNo4OIfbuSu6EzlL3VarhwChPI8otx6Fwj2l83BOORnjOMFBEbJOESEaYIv6rXfHAtBdfv7WmowXDTyGCvQ2qghbxX7OGsMbq/zZKl4HSUgyyHu7YQLShhtGolCGxxvM40DC4JrGlKczG9xK8XwGi531nZY7Nik6NFJdwfvcIE1rXVkt4EDRDvjVlZ5i/Ze0NYx2DQ=
-  distributions: "sdist bdist_wheel"
-  server: https://test.pypi.org/legacy/
-  skip_existing: true
-  on:
-      branch: release
+    secure: OmuE4xOsDBut8rtNaN4dAavZKTzMuHRdbAP281n7m1EU1Jei67TzXgGxdRlhKhmdv3+n4C7w+4hS2PwEtb+3I4uw8Q6CVGwuHG1bjYroqYcI2ozjxMf26+KKQGOHxqAWUkCJoLI6dtFeqBE1EHxIhyFaTQ6NmMUEqHkKp88POwn41JMnWdUGTJFR75jMiXQ38o8vHuXAtuVPm6ISAbcUcL1fH8ftA9M5hxAdotOHgecIvCRb+CDM/b0BbnN1Mr0dBWm8purhnZBN7MaaelkwRFtXGgSvMAhGY8Ztc2Xo4SHp8bhrh3AfoqjyZNb3WkIJev+LbCn3TEimYSHEt7z8x21+k5HbzLbLg04rSXjuYWkpeCw+pOgYb/ntXnGWE2f/urpQQvxYGzQqiZQJSMQrLD/uupQ9dWUvafZebAS+FUCoXheRsfOlTs5v7DMo9w0mStvSMAZIQ6lbNDLR3dm4+77Gdfsey0NumpKsybesAzh+ELOT01NbqhzcPaejfyQEe7eg8q4b0lDwNvLAnztavR59g/k/Yve6N6UdP10yZvD2i6CiAIdJTUWohwamYNgKSfu5Pv+y9gNnlbG3wihP3nujkoBnOJqjlf3x3qQjW1cua5ePVGkE7ZyhE9bgv5ug0TLJQg+HU+NTWNX79LAlKZdu6mzHa9g5xg0QJCbxEC4=

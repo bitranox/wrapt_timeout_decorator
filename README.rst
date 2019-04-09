@@ -522,7 +522,6 @@ register on Pypi
 License
 -------
 
-
 This software is licensed under the `MIT license <http://en.wikipedia.org/wiki/MIT_License>`_
 
 See `License file <https://github.com/bitranox/wrapt_timeout_decorator/blob/master/LICENSE.txt>`_
