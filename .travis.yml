@@ -6,6 +6,7 @@ sudo: true
 env:
     global:
         - github_master="https://github.com/${TRAVIS_REPO_SLUG}/archive/master.zip"
+        # password needs to be created for every repository with ruby gem travis:   travis encrypt password=******* from the project directory
         - secure: "rLJoumYHIJLArNRb/544fDet+5m9Ddn7Pu9PCM/f70CbRNxRUV25NdErGfl+mRAvm8o5eB/Ovi1PsR2vaC04rsJgLQZmBREFGes6zV/wio6xEuDc50+fawoFy655Ce8h64++570CNjwO5Pe8DvIo+LBl8/WCGasZvwb7F7KaTfTF4ItwQml/H/TRGCigyQB00fG7NvCaZHUHUPR2imvmXLyzNjgRK+oSRQY8DCqk0wZQNsNyZQh36nW5a+zCLTf9jJEOBN9eMlCwgzy9QpvU6srHm/ywd6yKi6S9fBniaxrcW8WISkisvqlCSryvT0Iq3S9sOUTYEXrlaZ+GGSYsYjvzc3tbdfDSUzBnOigIdL7AtcFgSqYSDLuVsxMrtVBxEnu9fsFqv2fGzMu79XOieXWFGwkqF6UevMcnic0h9/S7BziD78tElfATAluS2ZZEM96nRvNQzkA7HOi+Tlpva9q2I6Q0ydvSYTFWdB+um2FbWKkic8oZ3KIMmESBq9mJPZgGQmcM6i94A7uLXv+nz4ipsdU8YBGedTy3psga13wJiPeG9uIqH/miTV+fqwO8FPLcEd9xort/qbnVm7h9yCXpoML8bzIMfmEbHADUZtjx+IHlwEvD+OWYP5fA2MH4al142jG/PCppj//v5h8OsiW4yWGxMpY/x/x6GkpWYB8="
 
 
@@ -389,10 +390,11 @@ script:
 after_success:
     - ${CMDPREFIX} coverage report
     - ${CMDPREFIX} codecov
-    - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then pip install -U twine ; fi
-    - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then pip install wheel ; fi
-    - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then python setup.py sdist bdist_wheel ; fi
-    - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then twine upload --repository-url https://upload.pypi.org/legacy/ -u bitranox -p ${password} dist/* ; fi
+    # due to travis bug deploy not working - so we do it our self, only for git tagged commits :
+    - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} pip install -U twine ; fi
+    - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} pip install wheel ; fi
+    - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} python setup.py sdist bdist_wheel ; fi
+    - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} twine upload --repository-url https://upload.pypi.org/legacy/ -u bitranox -p ${password} dist/* ; fi
 
 # PYPI - upload the project once with twine before, or travis build will not work
 # pip install -U twine
@@ -404,7 +406,7 @@ after_success:
 # after that upload with travis works
 # twine upload --repository-url https://upload.pypi.org/legacy/ -u bitranox -p ${password} dist/*
 
-# NOT WORKING !
+# NOT WORKING 2019-04-09 - again a travis bug. Its so annoying!
 # deploy:
 #   provider: pypi
 #   user: bitranox

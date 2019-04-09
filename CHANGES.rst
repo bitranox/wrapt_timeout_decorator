@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.1.10
+------
+2019-04-09: initial PyPi release
+
 1.1.0
 -----
 2019-04-03: added pickle analyze convenience function

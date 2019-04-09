@@ -522,17 +522,11 @@ Contribute
 I would love for you to fork and send me pull request for this project.
 Please contribute.
 
-TODO: 
------
-
-conserving correct Traceback information when use_signals=False, possibly by using tblib
-
-(see https://pypi.python.org/pypi/tblib)
+Future Enhancements:
+--------------------
 
 better logging for signals=false. Since a new process is created, we can not log to the logger of the main process.
 logger=logging.getLogger() will crate a new Logger in the wrapped function.
-
-register on Pypi
 
 
 License
