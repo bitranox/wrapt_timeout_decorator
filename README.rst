@@ -538,7 +538,8 @@ See `License file <https://github.com/bitranox/wrapt_timeout_decorator/blob/mast
 
 .. |Build Status| image:: https://travis-ci.org/bitranox/wrapt_timeout_decorator.svg?branch=master
    :target: https://travis-ci.org/bitranox/wrapt_timeout_decorator
-.. |Pypi Status| image:: https://badge.fury.io/py/wrapt_timeout_decorator.svg
+.. for the pypi status link note the dashes, not the underscore !
+.. |Pypi Status| image:: https://badge.fury.io/py/wrapt-timeout-decorator.svg
    :target: https://badge.fury.io/py/wrapt_timeout_decorator
 .. |Codecov Status| image:: https://codecov.io/gh/bitranox/wrapt_timeout_decorator/branch/master/graph/badge.svg
    :target: https://codecov.io/gh/bitranox/wrapt_timeout_decorator
