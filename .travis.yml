@@ -385,6 +385,9 @@ script:
 after_success:
     - ${CMDPREFIX} coverage report
     - ${CMDPREFIX} codecov
+    env:
+      - secure: "PlBJDJFZiyuII70bPB26r0ePAOhVLHRRwl17yPHIBMdApiQe2jsW68jx2TT948RTmqtiF6cWyUQe3kVd65fgeHLo0aV4L38Co45nJoIktrAUhHdXw+kk/OuTQ1A0z31OAnyIxJqooyi8OcoP/mUZSIjXiuGfNXEJqYImu99TnJpCpz/dd0sDkbebje/+WX/EnXM+gJZgqJGiyr+Dmt3ybxZKOel6FGjpBwpce4FrbQVnnVYhASkS8kGye6K8j74kEIJNhuEruOH0y07XsUYBU+LyWtGAZuAzUW1Gtlx4prNzGrHEbzb8zQ1ZiE6iVVjuFGTEeFkYQEb0jjJQhDqvNGSQki+AwSQS9m8o6PPkYveiSLkpYxHUdsbOyaFwquayCzTcOFQdpYrvqi0s/M3467X/pqzDBfPGw+AlTrkiILdsDh8dqULsqtnzxcECIdrzBiIrN7yofHeMEuzAQZFaOq42tAgX7L/n0E+v5LA72f4aJmPKkSim/+/jZyTOUc9Rdm/vuSSSOZcpxVZie1Z21f44UXFNIE+wDWvHpW9jOhlIOHblaLvnhIeLahW/OYxPzjj+z9JqW04rzAF5VKnLY+OwA9nDdRmnEYvIKb/ZSI18IDepNDS/TAUZCox5wLuuFAD92DErXpL5lCuOr0QtTKuTR7ydgVuocJxITkdqkng="
+
     # PYPI - upload the project once with twine before, or travis build will not work
     # due to travis bug deploy not working - so we do it our self, only for git tagged commits :
     # pip install -U twine
@@ -404,8 +407,6 @@ after_success:
 
 # NOT WORKING 2019-04-09 - again a travis bug. Its so annoying!
 deploy:
-  env:
-    - secure: "PlBJDJFZiyuII70bPB26r0ePAOhVLHRRwl17yPHIBMdApiQe2jsW68jx2TT948RTmqtiF6cWyUQe3kVd65fgeHLo0aV4L38Co45nJoIktrAUhHdXw+kk/OuTQ1A0z31OAnyIxJqooyi8OcoP/mUZSIjXiuGfNXEJqYImu99TnJpCpz/dd0sDkbebje/+WX/EnXM+gJZgqJGiyr+Dmt3ybxZKOel6FGjpBwpce4FrbQVnnVYhASkS8kGye6K8j74kEIJNhuEruOH0y07XsUYBU+LyWtGAZuAzUW1Gtlx4prNzGrHEbzb8zQ1ZiE6iVVjuFGTEeFkYQEb0jjJQhDqvNGSQki+AwSQS9m8o6PPkYveiSLkpYxHUdsbOyaFwquayCzTcOFQdpYrvqi0s/M3467X/pqzDBfPGw+AlTrkiILdsDh8dqULsqtnzxcECIdrzBiIrN7yofHeMEuzAQZFaOq42tAgX7L/n0E+v5LA72f4aJmPKkSim/+/jZyTOUc9Rdm/vuSSSOZcpxVZie1Z21f44UXFNIE+wDWvHpW9jOhlIOHblaLvnhIeLahW/OYxPzjj+z9JqW04rzAF5VKnLY+OwA9nDdRmnEYvIKb/ZSI18IDepNDS/TAUZCox5wLuuFAD92DErXpL5lCuOr0QtTKuTR7ydgVuocJxITkdqkng="
   provider: pypi
   user: bitranox
   password: ${pypi_password}
