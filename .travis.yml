@@ -27,7 +27,6 @@ matrix:
       name: "Windows Python 2.7"
       before_install:
           # oddly the secure password causes that choco fails
-          - export pypi_password=""
           - choco install python2
           - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
 
@@ -36,7 +35,6 @@ matrix:
       name: "Windows Python 3.7"
       before_install:
         # oddly the secure password causes that choco fails
-        - export pypi_password=""
         - choco install python3
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
 
@@ -58,6 +56,7 @@ matrix:
       # we can do that also with env - but we dont want to show it on the travis build overview
       before_install:
         - export deploy_on_pypi="True"
+        secure: "PlBJDJFZiyuII70bPB26r0ePAOhVLHRRwl17yPHIBMdApiQe2jsW68jx2TT948RTmqtiF6cWyUQe3kVd65fgeHLo0aV4L38Co45nJoIktrAUhHdXw+kk/OuTQ1A0z31OAnyIxJqooyi8OcoP/mUZSIjXiuGfNXEJqYImu99TnJpCpz/dd0sDkbebje/+WX/EnXM+gJZgqJGiyr+Dmt3ybxZKOel6FGjpBwpce4FrbQVnnVYhASkS8kGye6K8j74kEIJNhuEruOH0y07XsUYBU+LyWtGAZuAzUW1Gtlx4prNzGrHEbzb8zQ1ZiE6iVVjuFGTEeFkYQEb0jjJQhDqvNGSQki+AwSQS9m8o6PPkYveiSLkpYxHUdsbOyaFwquayCzTcOFQdpYrvqi0s/M3467X/pqzDBfPGw+AlTrkiILdsDh8dqULsqtnzxcECIdrzBiIrN7yofHeMEuzAQZFaOq42tAgX7L/n0E+v5LA72f4aJmPKkSim/+/jZyTOUc9Rdm/vuSSSOZcpxVZie1Z21f44UXFNIE+wDWvHpW9jOhlIOHblaLvnhIeLahW/OYxPzjj+z9JqW04rzAF5VKnLY+OwA9nDdRmnEYvIKb/ZSI18IDepNDS/TAUZCox5wLuuFAD92DErXpL5lCuOr0QtTKuTR7ydgVuocJxITkdqkng="
 
     - os: linux
       language: python
@@ -396,6 +395,8 @@ after_success:
     # twine upload --repository-url https://upload.pypi.org/legacy/ -u bitranox -p ${pypi_password} dist/*
 
     # This works for sure - lets do it our self and not rely on travis deploy: , because its buggy
+    # env:
+    #   - secure: "PlBJDJFZiyuII70bPB26r0ePAOhVLHRRwl17yPHIBMdApiQe2jsW68jx2TT948RTmqtiF6cWyUQe3kVd65fgeHLo0aV4L38Co45nJoIktrAUhHdXw+kk/OuTQ1A0z31OAnyIxJqooyi8OcoP/mUZSIjXiuGfNXEJqYImu99TnJpCpz/dd0sDkbebje/+WX/EnXM+gJZgqJGiyr+Dmt3ybxZKOel6FGjpBwpce4FrbQVnnVYhASkS8kGye6K8j74kEIJNhuEruOH0y07XsUYBU+LyWtGAZuAzUW1Gtlx4prNzGrHEbzb8zQ1ZiE6iVVjuFGTEeFkYQEb0jjJQhDqvNGSQki+AwSQS9m8o6PPkYveiSLkpYxHUdsbOyaFwquayCzTcOFQdpYrvqi0s/M3467X/pqzDBfPGw+AlTrkiILdsDh8dqULsqtnzxcECIdrzBiIrN7yofHeMEuzAQZFaOq42tAgX7L/n0E+v5LA72f4aJmPKkSim/+/jZyTOUc9Rdm/vuSSSOZcpxVZie1Z21f44UXFNIE+wDWvHpW9jOhlIOHblaLvnhIeLahW/OYxPzjj+z9JqW04rzAF5VKnLY+OwA9nDdRmnEYvIKb/ZSI18IDepNDS/TAUZCox5wLuuFAD92DErXpL5lCuOr0QtTKuTR7ydgVuocJxITkdqkng="
     # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} ${pip_command} install -U twine ; fi
     # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} ${pip_command} install wheel ; fi
     # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} ${python_command} setup.py sdist bdist_wheel ; fi
@@ -403,6 +404,8 @@ after_success:
 
 # NOT WORKING 2019-04-09 - again a travis bug. Its so annoying!
 deploy:
+  env:
+    - secure: "PlBJDJFZiyuII70bPB26r0ePAOhVLHRRwl17yPHIBMdApiQe2jsW68jx2TT948RTmqtiF6cWyUQe3kVd65fgeHLo0aV4L38Co45nJoIktrAUhHdXw+kk/OuTQ1A0z31OAnyIxJqooyi8OcoP/mUZSIjXiuGfNXEJqYImu99TnJpCpz/dd0sDkbebje/+WX/EnXM+gJZgqJGiyr+Dmt3ybxZKOel6FGjpBwpce4FrbQVnnVYhASkS8kGye6K8j74kEIJNhuEruOH0y07XsUYBU+LyWtGAZuAzUW1Gtlx4prNzGrHEbzb8zQ1ZiE6iVVjuFGTEeFkYQEb0jjJQhDqvNGSQki+AwSQS9m8o6PPkYveiSLkpYxHUdsbOyaFwquayCzTcOFQdpYrvqi0s/M3467X/pqzDBfPGw+AlTrkiILdsDh8dqULsqtnzxcECIdrzBiIrN7yofHeMEuzAQZFaOq42tAgX7L/n0E+v5LA72f4aJmPKkSim/+/jZyTOUc9Rdm/vuSSSOZcpxVZie1Z21f44UXFNIE+wDWvHpW9jOhlIOHblaLvnhIeLahW/OYxPzjj+z9JqW04rzAF5VKnLY+OwA9nDdRmnEYvIKb/ZSI18IDepNDS/TAUZCox5wLuuFAD92DErXpL5lCuOr0QtTKuTR7ydgVuocJxITkdqkng="
   provider: pypi
   user: bitranox
   password: ${pypi_password}
