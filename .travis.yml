@@ -58,14 +58,14 @@ matrix:
       language: sh
       name: "Windows Python 2.7"
       before_install:
-          - choco install python2
+          - choco -f install python2
           - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
     #################################################################################
     - os: windows
       language: sh
       name: "Windows Python 3.7"
       before_install:
-        - choco install python3
+        - choco -f install python3
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
     #################################################################################
     # WINE Stable XP
@@ -365,10 +365,12 @@ matrix:
     - os: osx
       language: sh
       name: "osX Python 2.7"
+      python: "2.7"
     #################################################################################
     - os: osx
       language: sh
       name: "osX Python 3.6"
+      python: "3.6"
     #################################################################################
 
 
