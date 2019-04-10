@@ -6,6 +6,8 @@ sudo: true
 env:
     global:
         - github_master="https://github.com/${TRAVIS_REPO_SLUG}/archive/master.zip"
+        - pip_command="pip"
+        - python_command="python"
         # password needs to be created for every repository with ruby gem travis:   travis encrypt pypi_password=******* --org from the project directory
         # option --org for travis.org
         - secure: "PlBJDJFZiyuII70bPB26r0ePAOhVLHRRwl17yPHIBMdApiQe2jsW68jx2TT948RTmqtiF6cWyUQe3kVd65fgeHLo0aV4L38Co45nJoIktrAUhHdXw+kk/OuTQ1A0z31OAnyIxJqooyi8OcoP/mUZSIjXiuGfNXEJqYImu99TnJpCpz/dd0sDkbebje/+WX/EnXM+gJZgqJGiyr+Dmt3ybxZKOel6FGjpBwpce4FrbQVnnVYhASkS8kGye6K8j74kEIJNhuEruOH0y07XsUYBU+LyWtGAZuAzUW1Gtlx4prNzGrHEbzb8zQ1ZiE6iVVjuFGTEeFkYQEb0jjJQhDqvNGSQki+AwSQS9m8o6PPkYveiSLkpYxHUdsbOyaFwquayCzTcOFQdpYrvqi0s/M3467X/pqzDBfPGw+AlTrkiILdsDh8dqULsqtnzxcECIdrzBiIrN7yofHeMEuzAQZFaOq42tAgX7L/n0E+v5LA72f4aJmPKkSim/+/jZyTOUc9Rdm/vuSSSOZcpxVZie1Z21f44UXFNIE+wDWvHpW9jOhlIOHblaLvnhIeLahW/OYxPzjj+z9JqW04rzAF5VKnLY+OwA9nDdRmnEYvIKb/ZSI18IDepNDS/TAUZCox5wLuuFAD92DErXpL5lCuOr0QtTKuTR7ydgVuocJxITkdqkng="
@@ -367,11 +369,11 @@ matrix:
     - os: osx
       language: sh
       name: "osX Python 3.6.5"
-      osx_image: xcode10.2  # Python 3.7.2 running on macOS 10.14.3
-      before_install:
-        - pip3 install --upgrade pip
-        - python -V
-        - python3 -V
+      python: "3.7"
+      # osx_image: xcode10.2  # Python 3.7.2 running on macOS 10.14.3
+      env:
+        - pip_command="pip3"
+        - python_command="python3"
 
 install:
     - if [[ ${CMDPREFIX} == "wine" ]]; then chmod 755 ./*.sh ; fi
@@ -381,14 +383,14 @@ install:
     - if [[ ${wine_python_version} == "python3" ]]; then ./install_wine_python3_preinstalled.sh ; fi
     - if [[ ${CMDPREFIX} == "wine" ]]; then ./install_wine_git_portable.sh ; fi
 
-    - ${CMDPREFIX} python -m pip install --upgrade pip
-    - if [[ $TRAVIS_PYTHON_VERSION == pypy3.5-6.0 ]]; then ${CMDPREFIX} pip install "pytest-cov==2.6.0"; fi
-    - ${CMDPREFIX} pip install codecov pytest pytest-pep8 pytest-cov dill
-    - ${CMDPREFIX} pip install -e .
+    - ${CMDPREFIX} ${python_command} -m pip install --upgrade pip
+    - if [[ $TRAVIS_PYTHON_VERSION == pypy3.5-6.0 ]]; then ${CMDPREFIX} ${pip_command} install "pytest-cov==2.6.0"; fi
+    - ${CMDPREFIX} ${pip_command} install codecov pytest pytest-pep8 pytest-cov dill
+    - ${CMDPREFIX} ${pip_command} install -e .
 
 script:
-    - ${CMDPREFIX} pip install ${github_master} --install-option test # test setup.py test option
-    - ${CMDPREFIX} python -m pytest --pep8 --cov
+    - ${CMDPREFIX} ${pip_command} install ${github_master} --install-option test # test setup.py test option
+    - ${CMDPREFIX} ${python_command} -m pytest --pep8 --cov
 after_success:
     - ${CMDPREFIX} coverage report
     - ${CMDPREFIX} codecov
@@ -401,8 +403,8 @@ after_success:
     # twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
     # twine upload --repository-url https://upload.pypi.org/legacy/ -u bitranox -p ${password} dist/*
 
-    # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} pip install -U twine ; fi
-    # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} pip install wheel ; fi
+    # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} ${pip_command} install -U twine ; fi
+    # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} ${pip_command} install wheel ; fi
     # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} python setup.py sdist bdist_wheel ; fi
     # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} twine upload --repository-url https://upload.pypi.org/legacy/ -u bitranox -p ${pypi_password} dist/* ; fi
 
