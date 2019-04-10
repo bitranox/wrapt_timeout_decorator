@@ -405,7 +405,6 @@ after_success:
     # python setup.py sdist bdist_wheel
     # twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
     # twine upload --repository-url https://upload.pypi.org/legacy/ -u bitranox -p ${pypi_password} dist/*
-
     # This works for sure - lets do it our self and not rely on travis deploy: , because its buggy
     # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} ${pip_command} install -U twine ; fi
     # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} ${pip_command} install wheel ; fi
@@ -418,6 +417,6 @@ deploy:
   user: bitranox
   password: ${pypi_password}
   distributions: "sdist bdist_wheel"
-    on:
-      tags: true
-      python: 3.6
+  on:
+    tags: true
+    python: 3.6
