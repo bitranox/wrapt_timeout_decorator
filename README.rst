@@ -76,9 +76,9 @@ via requirements.txt:
 
     # Insert following line in Your requirements.txt:
     # for the latest Release:
-    # wrapt_timeout_decorator
+    wrapt_timeout_decorator
     # for the latest Development Version :
-    # https://github.com/bitranox/wrapt_timeout_decorator/archive/master.zip
+    https://github.com/bitranox/wrapt_timeout_decorator/archive/master.zip
 
     # to install and upgrade all modules mentioned in requirements.txt:
     pip install --upgrade -r /<path>/requirements.txt
