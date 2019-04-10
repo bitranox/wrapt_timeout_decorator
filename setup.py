@@ -27,7 +27,7 @@ long_description = (
 
 setup(
     name='wrapt_timeout_decorator',
-    version='1.2.5',
+    version='1.2.6',
     description='Timeout decorator',
     long_description=long_description,
     long_description_content_type='text/x-rst',
