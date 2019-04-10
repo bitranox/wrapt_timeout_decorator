@@ -414,7 +414,6 @@ after_success:
     # password
     # - secure: "dZjV5F04WevJwtirLvp5WaKJrwBUUCBJWfATobzmSwEeNPON48TKkRmJny8D2FWCBJ6XG0tokjPzG8PaJNJs16o/2tWtOnQ52I6qq864n6BBLIv4ypleANHgEQmDDahEmmC6a3VxSWOzVOlPK57KsNWOOlknDz/upFlKWSTp0KLjm1bpqNuJyRtk+GXKPQ5kDL/FS9YOn2kztAXSXsBts+gxJfAbRypSBLU7o+jOhqlW0aOjS6TN7FEWkoTIWtp+trVBCr0RU/Ug2ujvVeO9VB2EQUEvzFLxnsZd1GABCmjIqLYs/U1YalFGsQpkUjOSlAS8QfHzBeYlgXgklQH5tMYz/Q67SUwQ3sUsdNUx1YtDC93vy0cvZGNoOIbqgiw2DfJ88XMqu3fNn6MjIwRNhQe8HBYpCW1CLkBByLGBXDprczbrEOXJwWrj5tjWjzhXeCfT9DsQoWIwnPRiK08a4CyXTh8xUk4LipkYvxdxuUA7glH/R0kYGbMZK/pR/XFSAJf/xHvVOlJVBX9KQoeCAXnP0+DpUzPPf3ZbP/Mq42TUJslqOTaZ4vKXieh6MyAbm+s/ni2/MlEzjptg8gfQtA/0TJdWRBfpcE3+abjE8/hLBFC1jMMaiFXPDWjLf4reFZEj5jv0Fkq/dC1C+Z/8M/GRhc1CbtprcGQgjRI8yZQ="
 
-
 deploy:
   provider: pypi
   user: bitranox
