@@ -61,6 +61,7 @@ matrix:
       before_install:
         - export deploy_on_pypi="True"
 
+
       # password needs to be created for every repository with ruby gem travis:   travis encrypt pypi_password=******* --org from the project directory
       # option --org for travis.org
       # the secure password points to env_variable ${pypi_password}
