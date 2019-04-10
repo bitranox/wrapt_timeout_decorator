@@ -341,32 +341,37 @@ matrix:
           - wine_windows_version="win10"
           - wine_version="staging"
           - wine_python_version="python3"
-    #################################################################################
+
     - os: windows
-      language: sh
       name: "Windows Python 2.7"
+      # see: https://github.com/cclauss/Travis-CI-Python-on-three-OSes
+      python: '2.7'
+      language: shell
       before_install:
-          - choco install python2
-          - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
-    #################################################################################
+        - choco install python2
+        - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
+
     - os: windows
-      language: sh
       name: "Windows Python 3.7"
+      # see: https://github.com/cclauss/Travis-CI-Python-on-three-OSes
+      language: shell
       before_install:
         - choco install python3
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
-    #################################################################################
+
     - os: osx
       language: sh
       name: "osX Python 2.7"
       python: "2.7"
-    #################################################################################
+
     - os: osx
       language: sh
       name: "osX Python 3.6.5"
-      python: "3.6.5"
-    #################################################################################
-
+      osx_image: xcode10.2  # Python 3.7.2 running on macOS 10.14.3
+      before_install:
+        - pip3 install --upgrade pip
+        - python -V
+        - python3 -V
 
 install:
     - if [[ ${CMDPREFIX} == "wine" ]]; then chmod 755 ./*.sh ; fi
