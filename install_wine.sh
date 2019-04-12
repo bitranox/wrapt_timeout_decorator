@@ -20,8 +20,9 @@ echo "Wine Packages Update"
 sudo apt-get update
 echo "Wine Packages Install"
 sudo apt-get install --install-recommends winehq-${wine_version}
-# sudo apt-get install -y winetricks
 sudo apt-get install -y cabextract
+sudo apt-get install -y libxml2
+sudo apt-get install -y libpng
 
 echo "Install latest Winetricks"
 cd /usr/bin
@@ -32,3 +33,8 @@ sudo winetricks -q --self-update
 echo "Install latest Winetricks - done"
 
 cd ${save_path}
+
+echo "******************************************************************************************************************"
+echo "******************************************************************************************************************"
+echo "FINISHED installing WINE and WINETRICKS"
+echo "******************************************************************************************************************"

@@ -8,37 +8,41 @@ env:
         - github_master="https://github.com/${TRAVIS_REPO_SLUG}/archive/master.zip"
         - pip_command="pip"
         - python_command="python"
-        # password needs to be created for every repository with ruby gem travis:   travis encrypt pypi_password=******* --org from the project directory
-        # option --org for travis.org
-        # the secure password points to env_variable ${pypi_password}
-        # oddly the secure password under env: global: causes that choco for windows builds fails
-        # so we put it into the matrix
-        # - secure: "PlBJDJFZiyuII70bPB26r0ePAOhVLHRRwl17yPHIBMdApiQe2jsW68jx2TT948RTmqtiF6cWyUQe3kVd65fgeHLo0aV4L38Co45nJoIktrAUhHdXw+kk/OuTQ1A0z31OAnyIxJqooyi8OcoP/mUZSIjXiuGfNXEJqYImu99TnJpCpz/dd0sDkbebje/+WX/EnXM+gJZgqJGiyr+Dmt3ybxZKOel6FGjpBwpce4FrbQVnnVYhASkS8kGye6K8j74kEIJNhuEruOH0y07XsUYBU+LyWtGAZuAzUW1Gtlx4prNzGrHEbzb8zQ1ZiE6iVVjuFGTEeFkYQEb0jjJQhDqvNGSQki+AwSQS9m8o6PPkYveiSLkpYxHUdsbOyaFwquayCzTcOFQdpYrvqi0s/M3467X/pqzDBfPGw+AlTrkiILdsDh8dqULsqtnzxcECIdrzBiIrN7yofHeMEuzAQZFaOq42tAgX7L/n0E+v5LA72f4aJmPKkSim/+/jZyTOUc9Rdm/vuSSSOZcpxVZie1Z21f44UXFNIE+wDWvHpW9jOhlIOHblaLvnhIeLahW/OYxPzjj+z9JqW04rzAF5VKnLY+OwA9nDdRmnEYvIKb/ZSI18IDepNDS/TAUZCox5wLuuFAD92DErXpL5lCuOr0QtTKuTR7ydgVuocJxITkdqkng="
+        - WINEDEBUG=fixme-all       # switch off wine fix me messages
 
-# install xvfb virtual framebuffer - start commands with xvfb-run <command> - this we need for WINE
 addons:
     apt:
         packages:
-            - xvfb
-            - winbind
+            - xvfb      # install xvfb virtual framebuffer - this we need for WINE
+            - winbind   # needed for WINE
+
+services:   # start services
+  - xvfb    # is needed for WINE on headless installation
+
 
 matrix:
     include:
     - os: windows
       language: sh
       name: "Windows Python 2.7"
+
+      # oddly a secure password under env: global: causes that choco fails
+      # so we need to put the option : filter_secrets: false
+      # this can be a security issue, check that You dont leak secrets here !
+      filter_secrets: false
       before_install:
-          # oddly the secure password under env: global: causes that choco fails
-          # so we put it directly under the deploy section
           - choco install python2
           - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
 
     - os: windows
       language: sh
       name: "Windows Python 3.7"
+
+      # oddly a secure password under env: global: causes that choco fails
+      # so we need to put the option : filter_secrets: false
+      # this can be a security issue, check that You dont leak secrets here !
+      filter_secrets: false
       before_install:
-        # oddly the secure password under env: global: causes that choco fails
-        # so we put it directly under the deploy section
         - choco install python3
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
 
@@ -61,19 +65,6 @@ matrix:
       before_install:
         - export deploy_on_pypi="True"
 
-
-      # password needs to be created for every repository with ruby gem travis:   travis encrypt pypi_password=******* --org from the project directory
-      # option --org for travis.org
-      # the secure password points to env_variable ${pypi_password}
-      # oddly the secure password under env: global: causes that choco for windows builds fails
-      # so we put it into the matrix
-      # ${pypi_password}
-      # - secure: "PlBJDJFZiyuII70bPB26r0ePAOhVLHRRwl17yPHIBMdApiQe2jsW68jx2TT948RTmqtiF6cWyUQe3kVd65fgeHLo0aV4L38Co45nJoIktrAUhHdXw+kk/OuTQ1A0z31OAnyIxJqooyi8OcoP/mUZSIjXiuGfNXEJqYImu99TnJpCpz/dd0sDkbebje/+WX/EnXM+gJZgqJGiyr+Dmt3ybxZKOel6FGjpBwpce4FrbQVnnVYhASkS8kGye6K8j74kEIJNhuEruOH0y07XsUYBU+LyWtGAZuAzUW1Gtlx4prNzGrHEbzb8zQ1ZiE6iVVjuFGTEeFkYQEb0jjJQhDqvNGSQki+AwSQS9m8o6PPkYveiSLkpYxHUdsbOyaFwquayCzTcOFQdpYrvqi0s/M3467X/pqzDBfPGw+AlTrkiILdsDh8dqULsqtnzxcECIdrzBiIrN7yofHeMEuzAQZFaOq42tAgX7L/n0E+v5LA72f4aJmPKkSim/+/jZyTOUc9Rdm/vuSSSOZcpxVZie1Z21f44UXFNIE+wDWvHpW9jOhlIOHblaLvnhIeLahW/OYxPzjj+z9JqW04rzAF5VKnLY+OwA9nDdRmnEYvIKb/ZSI18IDepNDS/TAUZCox5wLuuFAD92DErXpL5lCuOr0QtTKuTR7ydgVuocJxITkdqkng="
-      # ${password}
-      # - secure: "dZjV5F04WevJwtirLvp5WaKJrwBUUCBJWfATobzmSwEeNPON48TKkRmJny8D2FWCBJ6XG0tokjPzG8PaJNJs16o/2tWtOnQ52I6qq864n6BBLIv4ypleANHgEQmDDahEmmC6a3VxSWOzVOlPK57KsNWOOlknDz/upFlKWSTp0KLjm1bpqNuJyRtk+GXKPQ5kDL/FS9YOn2kztAXSXsBts+gxJfAbRypSBLU7o+jOhqlW0aOjS6TN7FEWkoTIWtp+trVBCr0RU/Ug2ujvVeO9VB2EQUEvzFLxnsZd1GABCmjIqLYs/U1YalFGsQpkUjOSlAS8QfHzBeYlgXgklQH5tMYz/Q67SUwQ3sUsdNUx1YtDC93vy0cvZGNoOIbqgiw2DfJ88XMqu3fNn6MjIwRNhQe8HBYpCW1CLkBByLGBXDprczbrEOXJwWrj5tjWjzhXeCfT9DsQoWIwnPRiK08a4CyXTh8xUk4LipkYvxdxuUA7glH/R0kYGbMZK/pR/XFSAJf/xHvVOlJVBX9KQoeCAXnP0+DpUzPPf3ZbP/Mq42TUJslqOTaZ4vKXieh6MyAbm+s/ni2/MlEzjptg8gfQtA/0TJdWRBfpcE3+abjE8/hLBFC1jMMaiFXPDWjLf4reFZEj5jv0Fkq/dC1C+Z/8M/GRhc1CbtprcGQgjRI8yZQ="
-      env:
-        - secure: "PlBJDJFZiyuII70bPB26r0ePAOhVLHRRwl17yPHIBMdApiQe2jsW68jx2TT948RTmqtiF6cWyUQe3kVd65fgeHLo0aV4L38Co45nJoIktrAUhHdXw+kk/OuTQ1A0z31OAnyIxJqooyi8OcoP/mUZSIjXiuGfNXEJqYImu99TnJpCpz/dd0sDkbebje/+WX/EnXM+gJZgqJGiyr+Dmt3ybxZKOel6FGjpBwpce4FrbQVnnVYhASkS8kGye6K8j74kEIJNhuEruOH0y07XsUYBU+LyWtGAZuAzUW1Gtlx4prNzGrHEbzb8zQ1ZiE6iVVjuFGTEeFkYQEb0jjJQhDqvNGSQki+AwSQS9m8o6PPkYveiSLkpYxHUdsbOyaFwquayCzTcOFQdpYrvqi0s/M3467X/pqzDBfPGw+AlTrkiILdsDh8dqULsqtnzxcECIdrzBiIrN7yofHeMEuzAQZFaOq42tAgX7L/n0E+v5LA72f4aJmPKkSim/+/jZyTOUc9Rdm/vuSSSOZcpxVZie1Z21f44UXFNIE+wDWvHpW9jOhlIOHblaLvnhIeLahW/OYxPzjj+z9JqW04rzAF5VKnLY+OwA9nDdRmnEYvIKb/ZSI18IDepNDS/TAUZCox5wLuuFAD92DErXpL5lCuOr0QtTKuTR7ydgVuocJxITkdqkng="
-
     - os: linux
       language: python
       python: '3.7.1'
@@ -91,276 +82,252 @@ matrix:
       python: 'pypy3.5-6.0'
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE stable 32 Bit Python 2.7.16, Windows XP"
       env:
           - WINEARCH="win32"
           - WINEPREFIX="${HOME}/wine/wine32"
-          - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="winxp"
           - wine_version="stable"
           - wine_python_version="python2"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE stable 64 Bit Python 2.7.16, Windows XP"
       env:
           - WINEPREFIX="${HOME}/wine/wine64"
-          - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="winxp"
           - wine_version="stable"
           - wine_python_version="python2"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE stable 32 Bit Python 3.7.3, Windows XP"
       env:
           - WINEARCH="win32"
           - WINEPREFIX="${HOME}/wine/wine32"
-          - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="winxp"
           - wine_version="stable"
           - wine_python_version="python3"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE stable 64 Bit Python 3.7.3, Windows XP"
       env:
           - WINEPREFIX="${HOME}/wine/wine64"
-          - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="winxp"
           - wine_version="stable"
           - wine_python_version="python3"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE stable 32 Bit Python 2.7.16, Windows 10"
       env:
           - WINEARCH="win32"
           - WINEPREFIX="${HOME}/wine/wine32"
-          - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="win10"
           - wine_version="stable"
           - wine_python_version="python2"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE stable 64 Bit Python 2.7.16, Windows 10"
       env:
           - WINEPREFIX="${HOME}/wine/wine64"
-          - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="win10"
           - wine_version="stable"
           - wine_python_version="python2"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE stable 32 Bit Python 3.7.3, Windows 10"
       env:
           - WINEARCH="win32"
           - WINEPREFIX="${HOME}/wine/wine32"
-          - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="win10"
           - wine_version="stable"
           - wine_python_version="python3"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE stable 64 Bit Python 3.7.3, Windows 10"
       env:
           - WINEPREFIX="${HOME}/wine/wine64"
-          - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="win10"
           - wine_version="stable"
           - wine_python_version="python3"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE devel 32 Bit Python 2.7.16, Windows XP"
       env:
           - WINEARCH="win32"
           - WINEPREFIX="${HOME}/wine/wine32"
-          - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="winxp"
           - wine_version="devel"
           - wine_python_version="python2"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE devel 64 Bit Python 2.7.16, Windows XP"
       env:
           - WINEPREFIX="${HOME}/wine/wine64"
-          - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="winxp"
           - wine_version="devel"
           - wine_python_version="python2"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE devel 32 Bit Python 3.7.3, Windows XP"
       env:
           - WINEARCH="win32"
           - WINEPREFIX="${HOME}/wine/wine32"
-          - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="winxp"
           - wine_version="devel"
           - wine_python_version="python3"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE devel 64 Bit Python 3.7.3, Windows XP"
       env:
           - WINEPREFIX="${HOME}/wine/wine64"
-          - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="winxp"
           - wine_version="devel"
           - wine_python_version="python3"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE devel 32 Bit Python 2.7.16, Windows 10"
       env:
           - WINEARCH="win32"
           - WINEPREFIX="${HOME}/wine/wine32"
-          - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="win10"
           - wine_version="devel"
           - wine_python_version="python2"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE devel 64 Bit Python 2.7.16, Windows 10"
       env:
           - WINEPREFIX="${HOME}/wine/wine64"
-          - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="win10"
           - wine_version="devel"
           - wine_python_version="python2"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE devel 32 Bit Python 3.7.3, Windows 10"
       env:
           - WINEARCH="win32"
           - WINEPREFIX="${HOME}/wine/wine32"
-          - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="win10"
           - wine_version="devel"
           - wine_python_version="python3"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE devel 64 Bit Python 3.7.3, Windows 10"
       env:
           - WINEPREFIX="${HOME}/wine/wine64"
-          - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="win10"
           - wine_version="devel"
           - wine_python_version="python3"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE staging 32 Bit Python 2.7.16, Windows XP"
       env:
           - WINEARCH="win32"
           - WINEPREFIX="${HOME}/wine/wine32"
-          - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="winxp"
           - wine_version="staging"
           - wine_python_version="python2"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE staging 64 Bit Python 2.7.16, Windows XP"
       env:
           - WINEPREFIX="${HOME}/wine/wine64"
-          - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="winxp"
           - wine_version="staging"
           - wine_python_version="python2"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE staging 32 Bit Python 3.7.3, Windows XP"
       env:
           - WINEARCH="win32"
           - WINEPREFIX="${HOME}/wine/wine32"
-          - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="winxp"
           - wine_version="staging"
           - wine_python_version="python3"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE staging 64 Bit Python 3.7.3, Windows XP"
       env:
           - WINEPREFIX="${HOME}/wine/wine64"
-          - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="winxp"
           - wine_version="staging"
           - wine_python_version="python3"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE staging 32 Bit Python 2.7.16, Windows 10"
       env:
           - WINEARCH="win32"
           - WINEPREFIX="${HOME}/wine/wine32"
-          - WINEPATH="c:/PortableGit32/cmd;c:/Python27-32;c:/Python27-32/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="win10"
           - wine_version="staging"
           - wine_python_version="python2"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE staging 64 Bit Python 2.7.16, Windows 10"
       env:
           - WINEPREFIX="${HOME}/wine/wine64"
-          - WINEPATH="c:/PortableGit64/cmd;c:/Python27-64;c:/Python27-64/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="win10"
           - wine_version="staging"
           - wine_python_version="python2"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE staging 32 Bit Python 3.7.3, Windows 10"
       env:
           - WINEARCH="win32"
           - WINEPREFIX="${HOME}/wine/wine32"
-          - WINEPATH="c:/PortableGit32/cmd;c:/Python37-32;c:/Python37-32/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="win10"
           - wine_version="staging"
           - wine_python_version="python3"
 
     - os: linux
-      language: sh
+      language: python
       name: "WINE staging 64 Bit Python 3.7.3, Windows 10"
       env:
           - WINEPREFIX="${HOME}/wine/wine64"
-          - WINEPATH="c:/PortableGit64/cmd;c:/Python37-64;c:/Python37-64/Scripts"
           - CMDPREFIX="wine"
           - wine_windows_version="win10"
           - wine_version="staging"
@@ -382,6 +349,7 @@ matrix:
 
 
 install:
+    - if [[ ${TRAVIS_OS_NAME} == "linux" ]]; then service xvfb status ; fi
     - if [[ ${CMDPREFIX} == "wine" ]]; then chmod 755 ./*.sh ; fi
     - if [[ ${CMDPREFIX} == "wine" ]]; then ./install_wine.sh ; fi
     - if [[ ${CMDPREFIX} == "wine" ]]; then ./install_wine_machine.sh ; fi
@@ -402,40 +370,29 @@ after_success:
     - ${CMDPREFIX} coverage report
     - ${CMDPREFIX} codecov
 
-    # This works for sure - lets do it our self and not rely on travis deploy: , because its buggy
-    - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} ${pip_command} install -U twine ; fi
-    - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} ${pip_command} install wheel ; fi
-    - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} ${python_command} setup.py sdist bdist_wheel ; fi
-    - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} twine upload --repository-url https://upload.pypi.org/legacy/ -u bitranox -p ${pypi_password} dist/* ; fi
+    # This works for sure - but might expose the secure password within the matrix,
+    # because windows builds need filter_secrets: false at the Moment (2019-04-12)
+    # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} ${pip_command} install -U twine ; fi
+    # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} ${pip_command} install wheel ; fi
+    # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} ${python_command} setup.py sdist bdist_wheel ; fi
+    # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} twine upload --repository-url https://upload.pypi.org/legacy/ -u bitranox -p ${pypi_password} dist/* ; fi
 
 
-# ${pypi_password}
-# - secure: "PlBJDJFZiyuII70bPB26r0ePAOhVLHRRwl17yPHIBMdApiQe2jsW68jx2TT948RTmqtiF6cWyUQe3kVd65fgeHLo0aV4L38Co45nJoIktrAUhHdXw+kk/OuTQ1A0z31OAnyIxJqooyi8OcoP/mUZSIjXiuGfNXEJqYImu99TnJpCpz/dd0sDkbebje/+WX/EnXM+gJZgqJGiyr+Dmt3ybxZKOel6FGjpBwpce4FrbQVnnVYhASkS8kGye6K8j74kEIJNhuEruOH0y07XsUYBU+LyWtGAZuAzUW1Gtlx4prNzGrHEbzb8zQ1ZiE6iVVjuFGTEeFkYQEb0jjJQhDqvNGSQki+AwSQS9m8o6PPkYveiSLkpYxHUdsbOyaFwquayCzTcOFQdpYrvqi0s/M3467X/pqzDBfPGw+AlTrkiILdsDh8dqULsqtnzxcECIdrzBiIrN7yofHeMEuzAQZFaOq42tAgX7L/n0E+v5LA72f4aJmPKkSim/+/jZyTOUc9Rdm/vuSSSOZcpxVZie1Z21f44UXFNIE+wDWvHpW9jOhlIOHblaLvnhIeLahW/OYxPzjj+z9JqW04rzAF5VKnLY+OwA9nDdRmnEYvIKb/ZSI18IDepNDS/TAUZCox5wLuuFAD92DErXpL5lCuOr0QtTKuTR7ydgVuocJxITkdqkng="
-# ${password}
-# - secure: "dZjV5F04WevJwtirLvp5WaKJrwBUUCBJWfATobzmSwEeNPON48TKkRmJny8D2FWCBJ6XG0tokjPzG8PaJNJs16o/2tWtOnQ52I6qq864n6BBLIv4ypleANHgEQmDDahEmmC6a3VxSWOzVOlPK57KsNWOOlknDz/upFlKWSTp0KLjm1bpqNuJyRtk+GXKPQ5kDL/FS9YOn2kztAXSXsBts+gxJfAbRypSBLU7o+jOhqlW0aOjS6TN7FEWkoTIWtp+trVBCr0RU/Ug2ujvVeO9VB2EQUEvzFLxnsZd1GABCmjIqLYs/U1YalFGsQpkUjOSlAS8QfHzBeYlgXgklQH5tMYz/Q67SUwQ3sUsdNUx1YtDC93vy0cvZGNoOIbqgiw2DfJ88XMqu3fNn6MjIwRNhQe8HBYpCW1CLkBByLGBXDprczbrEOXJwWrj5tjWjzhXeCfT9DsQoWIwnPRiK08a4CyXTh8xUk4LipkYvxdxuUA7glH/R0kYGbMZK/pR/XFSAJf/xHvVOlJVBX9KQoeCAXnP0+DpUzPPf3ZbP/Mq42TUJslqOTaZ4vKXieh6MyAbm+s/ni2/MlEzjptg8gfQtA/0TJdWRBfpcE3+abjE8/hLBFC1jMMaiFXPDWjLf4reFZEj5jv0Fkq/dC1C+Z/8M/GRhc1CbtprcGQgjRI8yZQ="
+# the password needs to be encrypted pointing to ${deploy.password}
+# make a backup before adding secrets by travis gem, all comments in the yml files get lost !
+# password needs to be created from the project directory for every repository with ruby gem travis:   travis encrypt "*******" --add deploy.password --org
+# option --org for travis.org, --com for travis.com
 
-# since travis deploy: module is buggy, we dont use it.
-# NOT working, need to pass password !
-# deploy:
-#   provider: pypi
-#   user: bitranox
-#   password:
-#     secure: "dZjV5F04WevJwtirLvp5WaKJrwBUUCBJWfATobzmSwEeNPON48TKkRmJny8D2FWCBJ6XG0tokjPzG8PaJNJs16o/2tWtOnQ52I6qq864n6BBLIv4ypleANHgEQmDDahEmmC6a3VxSWOzVOlPK57KsNWOOlknDz/upFlKWSTp0KLjm1bpqNuJyRtk+GXKPQ5kDL/FS9YOn2kztAXSXsBts+gxJfAbRypSBLU7o+jOhqlW0aOjS6TN7FEWkoTIWtp+trVBCr0RU/Ug2ujvVeO9VB2EQUEvzFLxnsZd1GABCmjIqLYs/U1YalFGsQpkUjOSlAS8QfHzBeYlgXgklQH5tMYz/Q67SUwQ3sUsdNUx1YtDC93vy0cvZGNoOIbqgiw2DfJ88XMqu3fNn6MjIwRNhQe8HBYpCW1CLkBByLGBXDprczbrEOXJwWrj5tjWjzhXeCfT9DsQoWIwnPRiK08a4CyXTh8xUk4LipkYvxdxuUA7glH/R0kYGbMZK/pR/XFSAJf/xHvVOlJVBX9KQoeCAXnP0+DpUzPPf3ZbP/Mq42TUJslqOTaZ4vKXieh6MyAbm+s/ni2/MlEzjptg8gfQtA/0TJdWRBfpcE3+abjE8/hLBFC1jMMaiFXPDWjLf4reFZEj5jv0Fkq/dC1C+Z/8M/GRhc1CbtprcGQgjRI8yZQ="
-#   distributions: "sdist bdist_wheel"
-#   on:
-#     tags: true
-#     python: 3.6
-
-# WORKING, pass as env:
-# deploy:
-#   provider: pypi
-#   user: bitranox
-#   password: ${password}
-#   distributions: "sdist bdist_wheel"
-#   on:
-#     tags: true
-#     python: 3.6
-
+# secure password for wrapt_timeout_decorator !
 deploy:
+  provider: pypi
+  user: bitranox
   password:
     secure: frMslRFZ5dX5mwyZ9z/wgqwHlH1Bc6S1QMVl89ZMnZJZ781LQFyOwEpfh6bEiRLdqtf88OdAaDi78xbBv12SESLY7jMyUCLCYZFZplg8Foutb0qsO1HOijKuIVIF2J0p8VS2E7F7gs3/GOoK1cOUk9u48aEqY52yxvSDSWjimrsWeYiNU937Ds5HQWbagrucfhYwKTo2fJ2eZnqTMgZmJS4uXw7tUvRQpovxaBRGrysM1h7aGY1dvZnI4HHubTfqLCw101YnOdjyXP0+mtlGieZDxYNlCixBwtaQIfUGXx105l5E4sXZbB1i+mzdXrlHZazy15lpxY4aAlAV5rBQet9UlxSgyORAKzRwfOWU7KhIQGiVn8Iu/cEHZPYZ2n9ZZKJClwUQ/cyIDoS37kV+m0Q/jkBwSIaupON/QxugIp0bNY80FQO65wnz5GLS0e9rdUpPP7fN1lQRPfcpNmzF3g99/BairfQmqEYY3ZgMvpz+hpyI2/KPxaMAkN28zcpMI2RUN+8IGSunusaqDhPCvDvmH8Ir4/X4tQdKWijwzfkla+sXUHUrkVjgpH3HBtwLJT5pEnMu73JCE3t7JK5hHm7Zdd+k+D+wzFU7T2VWVIYcemiDYoMkLwxAtQRO58MY8HOsQEn3dmREYvtEwr40tloItLd8pCDfY5QILp2JCq4=
+  distributions: "sdist bdist_wheel"
+  on:
+    tags: true
+    # python: 3.6
+    # we need this, because on projects with windows builds only, we can not build on windows, because of
+    # the filter_secure issue. So we build on WINE, but need somehow to address the matrix include on which to build
+    condition: ${deploy_on_pypi} = "True"
