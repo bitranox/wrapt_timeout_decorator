@@ -360,11 +360,11 @@ install:
     - ${CMDPREFIX} ${python_command} -m pip install --upgrade pip
     - if [[ $TRAVIS_PYTHON_VERSION == pypy3.5-6.0 ]]; then ${CMDPREFIX} ${pip_command} install "pytest-cov==2.6.0"; fi
     - ${CMDPREFIX} ${pip_command} install codecov pytest pytest-pep8 pytest-cov dill
-    - ${CMDPREFIX} ${pip_command} install -e .
+    - if [[ -f setup.py ]]; then ${CMDPREFIX} ${pip_command} install -e . ; else echo -e "\033[01;31m*** no setup.py found, nothing to install\033[00m" ; fi
 
 script:
-    - ${CMDPREFIX} ${pip_command} install ${github_master} --install-option test # test setup.py test option
-    - ${CMDPREFIX} ${python_command} -m pytest --pep8 --cov
+    - if [[ -f setup.py ]]; then ${CMDPREFIX} ${pip_command} install ${github_master} --install-option test ; else echo -e "\033[01;31m*** no setup.py found, nothing to test\033[00m" ; fi  # test setup.py test option
+    - if [[ -f setup.py ]]; then ${CMDPREFIX} ${python_command} -m pytest --pep8 --cov ; else echo -e "\033[01;31m*** no setup.py found, nothing to test\033[00m" ; fi
 
 after_success:
     - ${CMDPREFIX} coverage report

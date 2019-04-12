@@ -16,6 +16,14 @@ if [[ -z ${WINEPREFIX} ]]
     fi
 
 
+if [[ -z ${WINEARCH} ]]
+    then
+        echo "WARNING - no WINEARCH in environment - will install 64 Bit Python"
+        echo "in Order to install 32Bit You need to set WINEARCH=\"win32\""
+        echo "in Order to install 64Bit You need to set WINEARCH=\"\""
+    fi
+
+
 echo "Check if we run headless and xvfb Server is running"
 xvfb_framebuffer_service_active="False"
 systemctl is-active --quiet xvfb && xvfb_framebuffer_service_active="True"

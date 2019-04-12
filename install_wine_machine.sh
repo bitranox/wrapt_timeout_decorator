@@ -20,6 +20,14 @@ if [[ -z ${wine_windows_version} ]]
         wine_windows_version="win10"
     fi
 
+if [[ -z ${WINEARCH} ]]
+    then
+        echo "WARNING - no WINEARCH in environment - will install 64 Bit Wine"
+        echo "in Order to install 32Bit You need to set WINEARCH=\"win32\""
+        echo "in Order to install 64Bit You need to set WINEARCH=\"\""
+    fi
+
+
 echo "Setup Wine Machine at ${WINEPREFIX}, WINEARCH=${WINEARCH}, wine_windows_version=${wine_windows_version}"
 mkdir -p ${WINEPREFIX}
 wine_drive_c_dir=${WINEPREFIX}/drive_c
