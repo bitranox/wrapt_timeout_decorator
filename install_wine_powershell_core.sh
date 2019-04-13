@@ -1,5 +1,13 @@
 #!/bin/bash
-save_path="`dirname \"$0\"`"
+function include_dependencies {
+    local my_dir="$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )"  # this gives the full path, even for sourced scripts
+    chmod +x "${my_dir}/lib_bash/*.sh"
+    source "${my_dir}/lib_bash/lib_color.sh"
+    source "${my_dir}/lib_bash/lib_retry.sh"
+    source "${my_dir}/lib_bash/lib_wine_install.sh"
+}
+
+include_dependencies  # me need to do that via a function to have local scope of my_dir
 
 ## set wine prefix to ${HOME}/.wine if not given by environment variable
 if [[ -z ${WINEPREFIX} ]]
@@ -27,4 +35,3 @@ unzip -qq ./powershell.zip -d ${powershell_install_dir}
 rm ./powershell.zip
 wine ${powershell_install_dir}/pwsh -ExecutionPolicy unrestricted -Command "get-executionpolicy"
 
-cd ${save_path}

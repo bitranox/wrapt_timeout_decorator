@@ -1,9 +1,14 @@
 #!/bin/bash
-my_dir="$(dirname "${0}")"
-chmod +x ${my_dir}/lib_bash/*.sh
-source ${my_dir}/lib_bash/lib_color.sh
-source ${my_dir}/lib_bash/lib_retry.sh
-source ${my_dir}/lib_bash/lib_wine_install.sh
+
+function include_dependencies {
+    local my_dir="$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )"  # this gives the full path, even for sourced scripts
+    chmod +x "${my_dir}/lib_bash/*.sh"
+    source "${my_dir}/lib_bash/lib_color.sh"
+    source "${my_dir}/lib_bash/lib_retry.sh"
+    source "${my_dir}/lib_bash/lib_wine_install.sh"
+}
+
+include_dependencies  # me need to do that via a function to have local scope of my_dir
 
 # if used outside github/travis You need to set :
 # WINEARCH=win32    for 32 Bit Wine
@@ -52,4 +57,3 @@ clr_green "done"
 clr_green "******************************************************************************************************************"
 clr_bold clr_green "FINISHED installing Python 3.7 on Wine Machine ${WINEPREFIX}"
 clr_green "******************************************************************************************************************"
-cd ${my_dir}
