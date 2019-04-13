@@ -365,6 +365,7 @@ install:
     - if [[ "${setup_py_found}" == "True" ]]; then ${CMDPREFIX} ${pip_command} install -e . ; fi
 
 script:
+    - if [[ "${setup_py_found}" != "True" ]]; then ./lib_bash/lib_color.sh clr_bold clr_red  "no setup.py found, nothing to test" ; fi
     # - ./lib_bash/lib_color.sh clr_red "test for install option 'setup.py test' is disabled. Enable it if Your setup.py supports the option 'test'"
     - if [[ "${setup_py_found}" == "True" ]]; then ${CMDPREFIX} ${pip_command} install ${github_master} --install-option test ; fi
     - if [[ "${setup_py_found}" == "True" ]]; then ${CMDPREFIX} ${python_command} -m pytest --pep8 --cov ; fi
