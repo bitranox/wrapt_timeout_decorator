@@ -1,40 +1,37 @@
 #!/bin/bash
-save_path="`dirname \"$0\"`"
+my_dir="$(dirname "${0}")"
+chmod +x ${my_dir}/lib_bash/*.sh
+source ${my_dir}/lib_bash/lib_color.sh
+source ${my_dir}/lib_bash/lib_retry.sh
+source ${my_dir}/lib_bash/lib_wine_install.sh
 
-if [[ -z ${wine_version} ]]
-    then
-        echo "WARNING - no wine_version in environment - set now to devel"
-        echo "available Versions: stable, devel, staging"
-        wine_version="devel"
-    fi
+clr_bold clr_green "Install WINE"
+check_wine_version
 
-
-echo "Build Start"
-echo "add 386 Architecture"
-sudo dpkg --add-architecture i386
-echo "add Wine Keys"
-wget -nc https://dl.winehq.org/wine-builds/winehq.key
+clr_green "add 386 Architecture"
+retry sudo dpkg --add-architecture i386
+clr_green "add Wine Keys"
+retry wget https://dl.winehq.org/wine-builds/winehq.key
 sudo apt-key add winehq.key
 sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ xenial main'
-echo "Wine Packages Update"
-sudo apt-get update
-echo "Wine Packages Install"
-sudo apt-get install --install-recommends winehq-${wine_version}
-sudo apt-get install -y cabextract
-sudo apt-get install -y libxml2
-sudo apt-get install -y libpng
+clr_green "Wine Packages Update"
+retry sudo apt-get update
+clr_green "Wine Packages Install"
+retry sudo apt-get install --install-recommends winehq-${wine_version}
+retry sudo apt-get install -y cabextract
+retry sudo apt-get install -y libxml2
+retry sudo apt-get install -y libpng-dev
 
-echo "Install latest Winetricks"
+clr_green "Install latest Winetricks"
 cd /usr/bin
 sudo rm -f winetricks
-sudo wget  https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
+retry sudo wget https://raw.githubusercontent.com/Winetricks/winetricks/master/src/winetricks
 sudo chmod +x winetricks
-sudo winetricks -q --self-update
-echo "Install latest Winetricks - done"
+retry sudo winetricks -q --self-update
+clr_green "Install latest Winetricks - done"
 
-cd ${save_path}
-
-echo "******************************************************************************************************************"
-echo "******************************************************************************************************************"
-echo "FINISHED installing WINE and WINETRICKS"
-echo "******************************************************************************************************************"
+clr_green "done"
+clr_green "******************************************************************************************************************"
+clr_bold clr_green "FINISHED installing WINE and WINETRICKS"
+clr_green "******************************************************************************************************************"
+cd ${my_dir}

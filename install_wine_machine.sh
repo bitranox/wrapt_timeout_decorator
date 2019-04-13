@@ -1,34 +1,17 @@
 #!/bin/bash
-save_path="`dirname \"$0\"`"
+my_dir="$(dirname "${0}")"
+chmod +x ${my_dir}/lib_bash/*.sh
+source ${my_dir}/lib_bash/lib_color.sh
+source ${my_dir}/lib_bash/lib_retry.sh
+source ${my_dir}/lib_bash/lib_wine_install.sh
 
-echo "Check if we run headless and xvfb Server is running"
-xvfb_framebuffer_service_active="False"
-systemctl is-active --quiet xvfb && xvfb_framebuffer_service_active="True"
-# run winetricks with xvfb if needed
-if [[ ${xvfb_framebuffer_service_active} == "True" ]]
-	then
-		echo "we run headless, xvfb service is running"
-	else
-	    echo "we run on normal console, xvfb service is not running"
-	fi
+clr_bold clr_green "Install Wine Machine"
+check_wine_prefix
+check_wine_arch
+check_wine_windows_version
+check_headless_xvfb
 
-
-if [[ -z ${wine_windows_version} ]]
-    then
-        echo "WARNING - no wine_windows_version in environment - set now to win10"
-        echo "available Versions: win10, win2k, win2k3, win2k8, win31, win7, win8, win81, win95, win98, winxp"
-        wine_windows_version="win10"
-    fi
-
-if [[ -z ${WINEARCH} ]]
-    then
-        echo "WARNING - no WINEARCH in environment - will install 64 Bit Wine"
-        echo "in Order to install 32Bit You need to set WINEARCH=\"win32\""
-        echo "in Order to install 64Bit You need to set WINEARCH=\"\""
-    fi
-
-
-echo "Setup Wine Machine at ${WINEPREFIX}, WINEARCH=${WINEARCH}, wine_windows_version=${wine_windows_version}"
+clr_green "Setup Wine Machine at ${WINEPREFIX}, WINEARCH=${WINEARCH}, wine_windows_version=${wine_windows_version}"
 mkdir -p ${WINEPREFIX}
 wine_drive_c_dir=${WINEPREFIX}/drive_c
 # xvfb-run --auto-servernum winecfg # fails marshal_object couldnt get IPSFactory buffer for interface ...
@@ -45,7 +28,11 @@ winetricks -q ${wine_windows_version}
 
 echo "Install common Packets"
 
-winetricks -q windowscodecs
-winetricks -q msxml3
+retry winetricks -q windowscodecs
+retry winetricks -q msxml3
 
-cd ${save_path}
+clr_green "done"
+clr_green "******************************************************************************************************************"
+clr_bold clr_green "FINISHED installing Wine Machine ${WINEPREFIX}"
+clr_green "******************************************************************************************************************"
+cd ${my_dir}
