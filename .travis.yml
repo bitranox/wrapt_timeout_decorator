@@ -361,10 +361,11 @@ install:
     - ${CMDPREFIX} ${python_command} -m pip install --upgrade pip
     - if [[ $TRAVIS_PYTHON_VERSION == pypy3.5-6.0 ]]; then ${CMDPREFIX} ${pip_command} install "pytest-cov==2.6.0"; fi
     - ${CMDPREFIX} ${pip_command} install codecov pytest pytest-pep8 pytest-cov dill
-    - if [[ -f setup.py ]]; then export setup_py_found="True" ; else ./lib_bash/lib_color.sh clr_bold clr_red  "*** no setup.py found, nothing to test" ; fi
+    - if [[ -f setup.py ]]; then export setup_py_found="True" && ./lib_bash/lib_color.sh clr_bold clr_green "setup.py found" ; else ./lib_bash/lib_color.sh clr_bold clr_red  "*** no setup.py found, nothing to test" ; fi
     - if [[ "${setup_py_found}" == "True" ]]; then ${CMDPREFIX} ${pip_command} install -e . ; fi
 
 script:
+    # - ./lib_bash/lib_color.sh clr_red "test for install option 'setup.py test' is disabled. Enable it if Your setup.py supports the option 'test'"
     - if [[ "${setup_py_found}" == "True" ]]; then ${CMDPREFIX} ${pip_command} install ${github_master} --install-option test ; fi
     - if [[ "${setup_py_found}" == "True" ]]; then ${CMDPREFIX} ${python_command} -m pytest --pep8 --cov ; fi
 
