@@ -8,7 +8,7 @@ function include_dependencies {
     source "${my_dir}/lib_bash/lib_wine_install.sh"
 }
 
-include_dependencies  # me need to do that via a function to have local scope of my_dir
+include_dependencies  # we need to do that via a function to have local scope of my_dir
 
 # if used outside github/travis You need to set :
 # WINEARCH=win32    for 32 Bit Wine
@@ -29,7 +29,7 @@ python_version_short=python27
 python_version_doc="Python 2.7"
 
 clr_green "Download ${python_version_doc} Binaries from https://github.com/bitranox/binaries_${python_version_short}_wine/archive/master.zip"
-retry wget --no-check-certificate -O ${decompress_dir}/binaries_${python_version_short}_wine-master.zip https://github.com/bitranox/binaries_${python_version_short}_wine/archive/master.zip
+retry wget -nc --no-check-certificate -O ${decompress_dir}/binaries_${python_version_short}_wine-master.zip https://github.com/bitranox/binaries_${python_version_short}_wine/archive/master.zip
 
 clr_green "Unzip ${python_version_doc} Master to ${HOME}"
 unzip -nqq ${decompress_dir}/binaries_${python_version_short}_wine-master.zip -d ${decompress_dir}
@@ -49,8 +49,6 @@ clr_green "Unzip ${python_version_doc} to ${wine_drive_c_dir}"
 unzip -qq ${decompress_dir}/binaries_${python_version_short}_wine-master/bin/joined_${python_version_short}.zip -d ${wine_drive_c_dir}
 
 prepend_path_to_wine_registry ${add_pythonpath}
-
-rm -r ${decompress_dir}
 
 clr_green "done"
 clr_green "******************************************************************************************************************"

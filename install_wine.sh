@@ -6,12 +6,12 @@ function include_dependencies {
     source "${my_dir}/lib_bash/lib_color.sh"
     source "${my_dir}/lib_bash/lib_retry.sh"
     source "${my_dir}/lib_bash/lib_wine_install.sh"
+    source "${my_dir}/lib_bash/lib_helpers.sh"
 }
 
 include_dependencies  # me need to do that via a function to have local scope of my_dir
 
-
-
+get_linux_codename
 
 clr_bold clr_green "Install WINE"
 check_wine_version
@@ -21,7 +21,7 @@ retry sudo dpkg --add-architecture i386
 clr_green "add Wine Keys"
 retry wget https://dl.winehq.org/wine-builds/winehq.key
 sudo apt-key add winehq.key
-sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ xenial main'
+sudo apt-add-repository 'deb https://dl.winehq.org/wine-builds/ubuntu/ ${linux_codename} main'
 clr_green "Wine Packages Update"
 retry sudo apt-get update
 clr_green "Wine Packages Install"

@@ -13,23 +13,8 @@ function fail {
   exit 1
 }
 
-
-function retry {
-  local n=1
-  local max=5
-  local delay=5
-  while true; do
-	my_command="${@}"
-    "$@" && break || {
-      if [[ $n -lt $max ]]; then
-        ((n++))
-        clr_bold clr_red "Command \"${my_command}\" failed. Attempt ${n}/${max}:"
-        sleep $delay;
-      else
-        fail "The command \"${my_command}\" has failed after ${n} attempts."
-      fi
-    }
-  done
+function get_linux_codename {
+    export linux_codename=`lsb_release --codename | cut -f2`
 }
 
 

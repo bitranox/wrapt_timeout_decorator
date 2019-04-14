@@ -8,7 +8,7 @@ function include_dependencies {
     source "${my_dir}/lib_bash/lib_wine_install.sh"
 }
 
-include_dependencies  # me need to do that via a function to have local scope of my_dir
+include_dependencies  # we need to do that via a function to have local scope of my_dir
 
 # if used outside github/travis You need to set :
 # WINEARCH=win32    for 32 Bit Wine
@@ -26,7 +26,7 @@ decompress_dir=${HOME}/bitranox_decompress
 mkdir -p ${decompress_dir}
 
 clr_green "Download Git Portable Binaries"
-retry wget --no-check-certificate -O ${decompress_dir}/binaries_portable_git-master.zip https://github.com/bitranox/binaries_portable_git/archive/master.zip
+retry wget -nc --no-check-certificate -O ${decompress_dir}/binaries_portable_git-master.zip https://github.com/bitranox/binaries_portable_git/archive/master.zip
 
 clr_green "Unzip Git Portable Binaries Master to ${decompress_dir}"
 unzip -nqq ${decompress_dir}/binaries_portable_git-master.zip -d ${decompress_dir}
@@ -46,8 +46,6 @@ clr_green "Unzip Git Portable Binaries to ${wine_drive_c_dir}"
 unzip -qq ${decompress_dir}/binaries_portable_git-master/bin/joined_PortableGit.zip -d ${wine_drive_c_dir}
 
 prepend_path_to_wine_registry ${add_git_path}
-
-rm -r ${decompress_dir}
 
 clr_green "done"
 clr_green "******************************************************************************************************************"

@@ -7,7 +7,7 @@ function include_dependencies {
     source "${my_dir}/lib_retry.sh"
 }
 
-include_dependencies  # me need to do that via a function to have local scope of my_dir
+include_dependencies  # we need to do that via a function to have local scope of my_dir
 
 
 function fail {
