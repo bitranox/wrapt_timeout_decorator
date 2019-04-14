@@ -1,7 +1,7 @@
 wrapt_timeout_decorator
 =======================
 
-|Build Status| |jupyter| |Pypi Status| |Codecov Status| |Better Code| |snyk security|
+|license| |maintenance| |Build Status| |jupyter| |Pypi Status| |Codecov Status| |Better Code| |snyk security|
 
 there are many timeout decorators out there - that one focuses on correctness if using with Classes, methods,
 
@@ -536,6 +536,9 @@ This software is licensed under the `MIT license <http://en.wikipedia.org/wiki/M
 
 See `License file <https://github.com/bitranox/wrapt_timeout_decorator/blob/master/LICENSE.txt>`_
 
+.. |license| image:: https://img.shields.io/github/license/webcomics/pywine.svg
+   :target: http://en.wikipedia.org/wiki/MIT_License
+.. |maintenance| image:: https://img.shields.io/maintenance/yes/2019.svg
 .. |Build Status| image:: https://travis-ci.org/bitranox/wrapt_timeout_decorator.svg?branch=master
    :target: https://travis-ci.org/bitranox/wrapt_timeout_decorator
 .. for the pypi status link note the dashes, not the underscore !

@@ -13,6 +13,11 @@ function fail {
   exit 1
 }
 
+function nofail {
+  clr_bold clr_red "${1}" >&2
+  exit 0
+}
+
 
 function retry {
   local n=1
@@ -31,6 +36,26 @@ function retry {
     }
   done
 }
+
+
+function retry_nofail {
+  local n=1
+  local max=5
+  local delay=5
+  while true; do
+	my_command="${@}"
+    "$@" && break || {
+      if [[ $n -lt $max ]]; then
+        ((n++))
+        clr_bold clr_red "Command \"${my_command}\" failed. Attempt ${n}/${max}:"
+        sleep $delay;
+      else
+        nofail "The command \"${my_command}\" has failed after ${n} attempts, continue with exit code 0"
+      fi
+    }
+  done
+}
+
 
 
 ## make it possible to call functions without source include
