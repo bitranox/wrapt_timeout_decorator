@@ -1,7 +1,10 @@
 wrapt_timeout_decorator
 =======================
 
-|license| |maintenance| |Build Status| |jupyter| |Pypi Status| |Codecov Status| |Better Code| |snyk security|
+|Pypi Status| |license| |maintenance| |jupyter|
+
+|Build Status| |Codecov Status| |Better Code| |code climate| |snyk security|
+
 
 there are many timeout decorators out there - that one focuses on correctness if using with Classes, methods,
 
@@ -552,3 +555,6 @@ See `License file <https://github.com/bitranox/wrapt_timeout_decorator/blob/mast
    :target: https://snyk.io/test/github/bitranox/wrapt_timeout_decorator
 .. |jupyter| image:: https://mybinder.org/badge.svg
    :target: https://mybinder.org/v2/gh/bitranox/wrapt_timeout_decorator/master?filepath=jupyter_test_wrapt_timeout_decorator.ipynb
+.. |code climate| image:: https://api.codeclimate.com/v1/badges/2b2b6589f80589689c2b/maintainability
+   :target: https://codeclimate.com/github/bitranox/wrapt_timeout_decorator/maintainability
+   :alt: Maintainability
