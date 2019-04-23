@@ -215,7 +215,7 @@ def test_pickle_analyser():
 
 
 def test_hard_timeout_windows_only():
-    @timeout(dec_timeout=0.15, use_signals=use_signals)
+    @timeout(dec_timeout=0.25, use_signals=use_signals)
     def f_test_hard_timeout():
         time.sleep(0.1)
         return 'done'
