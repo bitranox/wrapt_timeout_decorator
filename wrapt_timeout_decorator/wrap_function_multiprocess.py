@@ -1,6 +1,6 @@
 import sys
 from .wrap_helper import raise_exception, is_system_windows
-import multiprocess as multiprocessing
+import multiprocess
 
 
 class Timeout(object):
@@ -29,9 +29,9 @@ class Timeout(object):
         requires that "ready" be intermittently polled. If and when it is
         True, the "value" property may then be checked for returned data.
         """
-        self.__parent_conn, self.__child_conn = multiprocessing.Pipe(duplex=False)
+        self.__parent_conn, self.__child_conn = multiprocess.Pipe(duplex=False)
         args = (self.__child_conn, self.dec_hard_timeout, self.function) + args
-        self.__process = multiprocessing.Process(target=_target, args=args, kwargs=kwargs)
+        self.__process = multiprocess.Process(target=_target, args=args, kwargs=kwargs)
 
         # python 2.7 windows multiprocess does not provide daemonic process in a subthread
         if is_python_27_under_windows():
