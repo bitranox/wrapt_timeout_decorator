@@ -364,7 +364,7 @@ https://stackoverflow.com/questions/45110287/workaround-for-using-name-main-in-p
 
 https://docs.python.org/2/library/multiprocessing.html#windows
 
-under Windows classes and functions in the __main__ context can not be pickled, You need to put the decorated Classes and functions into another module.
+since the wrapt package itself is not pickable, You need to put the decorated Classes and functions into another module.
 In general (especially for windows) , the main() program should not have anything but the main function, the real thing should happen in the modules.
 I am also used to put all settings or configurations in a different file - so all processes or threads can access them (and also to keep them in one place together, not to forget typing hints and name completion in Your favorite editor)
 
