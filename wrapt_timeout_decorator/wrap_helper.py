@@ -4,7 +4,7 @@ import platform
 import signal
 import sys
 import threading
-from typing import Any, Dict
+from typing import Any, Dict, List, Union
 
 logging.basicConfig()
 logger = logging.getLogger('pickle_analyzer')
@@ -95,12 +95,11 @@ def detect_unpickable_objects(object_to_pickle, dill_trace=True, log_warning=Tru
     # type: (Any, bool, bool) -> Dict
     if log_warning:
         logger.warning('always remember that the "object_to_pickle" should not be defined within the main context')
-    dict_result = dict()
+    dict_result = dict()                    # type: Dict[str, Union[str, List[str]]]
     dict_result['object_name'] = ''
     dict_result['bad_items'] = list()
     dict_result['bad_objects'] = list()
     dict_result['bad_types'] = list()
-
     safe_status_of_dill_trace = dill.detect.trace
     # noinspection PyBroadException
     try:

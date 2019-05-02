@@ -8,6 +8,8 @@ import time
 from wrapt_timeout_decorator import *
 from wrapt_timeout_decorator.wrapt_timeout_decorator.wrap_helper import *
 from wrapt_timeout_decorator.wrapt_timeout_decorator.wrap_function_multiprocess import *
+import sys
+
 
 if sys.version_info < (3, 3):             # there is no TimeoutError < Python 3.3
     TimeoutError = AssertionError
