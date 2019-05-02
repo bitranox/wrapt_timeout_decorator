@@ -63,9 +63,9 @@ matrix:
       python: '3.6'
       # we can do that also with env - but we dont want to show it on the travis build overview
       before_install:
-        - export deploy_on_pypi="True"
         - export mypy_static_typecheck="True"
         - export build_docs="True"
+        - export deploy_on_pypi="True"
 
     - os: linux
       language: python
