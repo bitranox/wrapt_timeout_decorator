@@ -183,7 +183,10 @@ def test_not_main_thread(use_signals):
     test_thread.start()
     test_thread.join()
     stop_time = time.time()
-    assert 0.0 < (stop_time - start_time) < 5   # yes, it takes quiet some time to create the thread under windows
+    # it takes quiet some time to create the thread under windows
+    # especially the virtual machine on travis can be very slow.
+    # we experienced a total time up to 3.9 seconds until we get the 0.3s timeout !
+    assert 0.0 < (stop_time - start_time) < 5
 
 
 @timeout(0.1, use_signals=use_signals)
