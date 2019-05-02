@@ -48,6 +48,8 @@ additional dill supports:
 
 save and load python interpreter sessions, save and extract the source code from functions and classes, interactively diagnose pickling errors
 
+To support more types with the decorator, we selected dill as serializer, with the small downside that methods and classes can not be decorated in the __main__ context, but need to reside in a module.
+
 Since spawning under Windows takes some unknown considerable timespan (all imports needs to be done again !), You can specify when the timeout should start, please read the section `hard timeout`_
 
 You can find more information on that here:
