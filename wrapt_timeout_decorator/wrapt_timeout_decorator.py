@@ -107,26 +107,33 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
 
     @wrapt.decorator
     def wrapper(wrapped, instance, args, kwargs):
-        wrap_helper = WrapHelper(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval, dec_hard_timeout)
-        wrap_helper.get_kwargs(kwargs)
-        wrap_helper.set_signals_to_false_if_not_possible()
-        if wrap_helper.should_eval:
-            wrap_helper.dec_timeout = eval(str(wrap_helper.dec_timeout))
-        wrap_helper.format_exception_message(wrapped)
+        wrap_helper = WrapHelper(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval,
+                                 dec_hard_timeout, wrapped, instance, args, kwargs)
         if not wrap_helper.dec_timeout:
-            return wrapped(*args, **kwargs)
+            return wrapped(*wrap_helper.args, **wrap_helper.kwargs)
         else:
-            if wrap_helper.use_signals:
-                try:
-                    wrap_helper.save_old_and_set_new_alarm_handler()
-                    return wrapped(*args, **kwargs)
-                finally:
-                    wrap_helper.restore_old_alarm_handler()
-            else:
-                try:
-                    timeout_wrapper = Timeout(wrapped, wrap_helper.timeout_exception,
-                                              wrap_helper.exception_message, wrap_helper.dec_timeout, wrap_helper.dec_hard_timeout)
-                    return timeout_wrapper(*args, **kwargs)
-                except PicklingError:
-                    detect_unpickable_objects_and_reraise(wrapped)
+            return wrapped_with_timeout(wrap_helper)
     return wrapper
+
+
+def wrapped_with_timeout(wrap_helper):
+    if wrap_helper.use_signals:
+        return wrapped_with_timeout_signals(wrap_helper)
+    else:
+        return wrapped_with_timeout_process(wrap_helper)
+
+
+def wrapped_with_timeout_signals(wrap_helper):
+    try:
+        wrap_helper.save_old_and_set_new_alarm_handler()
+        return wrap_helper.wrapped(*wrap_helper.args, **wrap_helper.kwargs)
+    finally:
+        wrap_helper.restore_old_alarm_handler()
+
+
+def wrapped_with_timeout_process(wrap_helper):
+    try:
+        timeout_wrapper = Timeout(wrap_helper)
+        return timeout_wrapper()
+    except PicklingError:
+        detect_unpickable_objects_and_reraise(wrap_helper.wrapped)

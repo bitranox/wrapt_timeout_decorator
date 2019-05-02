@@ -15,7 +15,8 @@ if sys.version_info < (3, 3):
 
 class WrapHelper(object):
     def __init__(self, dec_timeout=None, use_signals=True, timeout_exception=None,
-                 exception_message=None, dec_allow_eval=False, dec_hard_timeout=False):
+                 exception_message=None, dec_allow_eval=False, dec_hard_timeout=False,
+                 wrapped=None, instance=None, args=None, kwargs=None):
         self.dec_timeout = dec_timeout
         self.use_signals = use_signals
         self.timeout_exception = timeout_exception
@@ -23,12 +24,22 @@ class WrapHelper(object):
         self.dec_allow_eval = dec_allow_eval
         self.dec_hard_timeout = dec_hard_timeout
         self.old_alarm_handler = None
+        self.wrapped = wrapped
+        self.instance = instance
+        self.args = args
+        self.kwargs = kwargs
+        self.child_conn = None
 
-    def get_kwargs(self, kwargs):
-        self.dec_allow_eval = kwargs.pop('dec_allow_eval', self.dec_allow_eval)
-        self.dec_timeout = kwargs.pop('dec_timeout', self.dec_timeout)
-        self.use_signals = kwargs.pop('use_signals', self.use_signals)
-        self.dec_hard_timeout = kwargs.pop('dec_hard_timeout', self.dec_hard_timeout)
+        self.pop_kwargs()
+        self.set_signals_to_false_if_not_possible()
+        self.eval_if_required()
+        self.format_exception_message()
+
+    def pop_kwargs(self):
+        self.dec_allow_eval = self.kwargs.pop('dec_allow_eval', self.dec_allow_eval)
+        self.dec_timeout = self.kwargs.pop('dec_timeout', self.dec_timeout)
+        self.use_signals = self.kwargs.pop('use_signals', self.use_signals)
+        self.dec_hard_timeout = self.kwargs.pop('dec_hard_timeout', self.dec_hard_timeout)
 
     @property
     def should_eval(self):
@@ -37,8 +48,8 @@ class WrapHelper(object):
         else:
             return False
 
-    def format_exception_message(self, wrapped):
-        function_name = wrapped.__name__ or '(unknown name)'
+    def format_exception_message(self):
+        function_name = self.wrapped.__name__ or '(unknown name)'
         if not self.exception_message:
             self.exception_message = 'Function {function_name} timed out after {dec_timeout} seconds'
         self.exception_message = self.exception_message.format(function_name=function_name, dec_timeout=self.dec_timeout)
@@ -57,6 +68,15 @@ class WrapHelper(object):
     def set_signals_to_false_if_not_possible(self):
         if is_system_windows() or not is_in_main_thread():
             self.use_signals = False
+
+    def eval_if_required(self):
+        wrapped = self.wrapped
+        instance = self.instance
+        args = self.args
+        kwargs = self.kwargs
+
+        if self.should_eval:
+            self.dec_timeout = eval(str(self.dec_timeout))
 
 
 def detect_unpickable_objects_and_reraise(object_to_pickle):

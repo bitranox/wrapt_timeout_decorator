@@ -10,28 +10,22 @@ class Timeout(object):
     to be made and termination of execution after a timeout has passed.
     """
 
-    def __init__(self, function, timeout_exception, exception_message, dec_timeout, dec_hard_timeout):
+    def __init__(self, wrap_helper):
         """Initialize instance in preparation for being called."""
-        self.dec_timeout = dec_timeout
-        self.dec_hard_timeout = dec_hard_timeout
-        self.function = function
-        self.timeout_exception = timeout_exception
-        self.exception_message = exception_message
-        self.__name__ = function.__name__
-        self.__doc__ = function.__doc__
+        self.wrap_helper = wrap_helper
+        self.__name__ = self.wrap_helper.wrapped.__name__
+        self.__doc__ = self.wrap_helper.wrapped.__doc__
         self.__process = None
         self.__parent_conn = None
-        self.__child_conn = None
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self):
         """Execute the embedded function object asynchronously.
         The function given to the constructor is transparently called and
         requires that "ready" be intermittently polled. If and when it is
         True, the "value" property may then be checked for returned data.
         """
-        self.__parent_conn, self.__child_conn = multiprocess.Pipe(duplex=False)
-        args = (self.__child_conn, self.dec_hard_timeout, self.function) + args
-        self.__process = multiprocess.Process(target=_target, args=args, kwargs=kwargs)
+        self.__parent_conn, self.wrap_helper.child_conn = multiprocess.Pipe(duplex=False)
+        self.__process = multiprocess.Process(target=_target, args=[self.wrap_helper])
 
         # python 2.7 windows multiprocess does not provide daemonic process in a subthread
         if is_python_27_under_windows():
@@ -40,9 +34,9 @@ class Timeout(object):
             self.__process.daemon = True
 
         self.__process.start()
-        if not self.dec_hard_timeout:
+        if not self.wrap_helper.dec_hard_timeout:
             self.wait_until_process_started()
-        if self.__parent_conn.poll(self.dec_timeout):
+        if self.__parent_conn.poll(self.wrap_helper.dec_timeout):
             return self.value
         else:
             self.cancel()
@@ -53,7 +47,7 @@ class Timeout(object):
             self.__process.terminate()
         self.__process.join(timeout=1.0)
         self.__parent_conn.close()
-        raise_exception(self.timeout_exception, self.exception_message)
+        raise_exception(self.wrap_helper.timeout_exception, self.wrap_helper.exception_message)
 
     def wait_until_process_started(self):
         self.__parent_conn.recv()
@@ -72,7 +66,7 @@ class Timeout(object):
             return result
 
 
-def _target(child_conn, dec_hard_timeout, function, *args, **kwargs):
+def _target(wrap_helper):
     """Run a function with arguments and return output via a pipe.
     This is a helper function for the Process created in Timeout. It runs
     the function with positional arguments and keyword arguments and then
@@ -80,15 +74,15 @@ def _target(child_conn, dec_hard_timeout, function, *args, **kwargs):
     raised, it is returned to Timeout to be raised by the value property.
     """
     try:
-        if not dec_hard_timeout:
-            child_conn.send('started')
+        if not wrap_helper.dec_hard_timeout:
+            wrap_helper.child_conn.send('started')
         exception_occured = False
-        child_conn.send((exception_occured, function(*args, **kwargs)))
+        wrap_helper.child_conn.send((exception_occured, wrap_helper.wrapped(*wrap_helper.args, **wrap_helper.kwargs)))
     except:
         exception_occured = True
-        child_conn.send((exception_occured, sys.exc_info()[1]))
+        wrap_helper.child_conn.send((exception_occured, sys.exc_info()[1]))
     finally:
-        child_conn.close()
+        wrap_helper.child_conn.close()
 
 
 def is_python_27_under_windows():

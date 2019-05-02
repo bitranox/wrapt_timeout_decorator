@@ -199,7 +199,6 @@ can_not_be_pickled(0, dec_timeout=0)
 
 
 def test_pickle_detection_not_implemented_error():
-    wrap_helper = WrapHelper()
     match = r'can not pickle can_not_be_pickled, '
     with pytest.raises(PicklingError, match=match):
         detect_unpickable_objects_and_reraise(can_not_be_pickled)
