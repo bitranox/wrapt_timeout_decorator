@@ -376,9 +376,9 @@ script:
     - if [[ "${setup_py_found}" == "True" ]]; then ${CMDPREFIX} ${pip_command} install ${github_master} --install-option test ; fi
     - if [[ "${setup_py_found}" == "True" ]]; then ${CMDPREFIX} ${python_command} -m pytest --pep8 --cov ; fi
     # mypy static type checking, mypy does not run on pypy 3.5 - we do it only on python 3.6
-    - if [[ "${mypy_static_typecheck}" == "True" ]]; then ${CMDPREFIX} ${python_command} -m mypy -p ${REPOSITORY_NAME} && ./lib_bash/lib_color.sh clr_bold clr_green "static typechecking done" ; fi
+    - if [[ "${mypy_static_typecheck}" == "True" ]]; then ${CMDPREFIX} ${python_command} -m mypy -p ${REPOSITORY_NAME} && ./lib_bash/lib_color.sh clr_bold clr_green "static typechecking done" ; else ./lib_bash/lib_color.sh clr_bold clr_red "static typechecking disabled on this build" ;  fi
     # build documentation check
-    - if [[ -f build_docs.py ]] && [[ "${build_docs}" == "True" ]]; then ${CMDPREFIX} ${python_command} build_docs.py ${TRAVIS_REPO_SLUG} ;  fi
+    - if [[ -f build_docs.py ]] && [[ "${build_docs}" == "True" ]]; then ${CMDPREFIX} ${python_command} build_docs.py ${TRAVIS_REPO_SLUG} ; else ./lib_bash/lib_color.sh clr_bold clr_red "build_docs disabled on this build" ;  fi
 
 after_success:
     - ${CMDPREFIX} coverage report
