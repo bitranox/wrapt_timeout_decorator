@@ -28,8 +28,6 @@ class Timeout(object):
         self.__process = multiprocess.Process(target=_target, args=[self.wrap_helper])
         # daemonic process must not have subprocess - we need that for nested decorators
         self.__process.daemon = False
-
-
         self.__process.start()
         if not self.wrap_helper.dec_hard_timeout:
             self.wait_until_process_started()
