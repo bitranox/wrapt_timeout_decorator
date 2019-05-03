@@ -31,7 +31,7 @@ matrix:
       # this can be a security issue, check that You dont leak secrets here !
       filter_secrets: false
       before_install:
-          - choco install python2
+          - ./lib_bash/lib_retry.sh retry choco install python2
           - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
 
     - os: windows
@@ -43,7 +43,7 @@ matrix:
       # this can be a security issue, check that You dont leak secrets here !
       filter_secrets: false
       before_install:
-        - choco install python3
+        - ./lib_bash/lib_retry.sh retry choco install python3
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
 
     - os: linux

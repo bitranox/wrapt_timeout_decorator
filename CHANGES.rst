@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.3.0
+-----
+2019-05-03: pointing out caveats when using signals, the decorator defaults now to NOT using Signals !
+
 1.2.9
 -----
 2019-05-03: support nested decorators, mypy static type checking

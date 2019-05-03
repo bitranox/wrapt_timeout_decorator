@@ -32,8 +32,16 @@ There is also a powerful eval function, it allows to read the desired timeout va
 
 It is very flexible and can be used from python 2.7 to python 3.x, pypy, pypy3 and probably other dialects.
 
-Due to the lack of signals and forking on Windows, or for threaded functions where signals cant be used, there is an alternate timeout strategy by using multiprocess.
-The decorated function and result needs to be pickable in that case. For that purpose we use "multiprocess" and "dill" instead of "multiprocessing" and "pickle", in order to be able to use this decorator on more sophisticated objects.
+There are two timeout strategies implemented, the ubiquitous method using "Signals" and the second using Multiprocessing.
+Using "Signals" is slick and lean, but there are nasty caveats, please check section `Caveats using Signals`_
+
+The default strategy is therefore using Multiprocessing, but You can also use Signals, You have been warned !
+
+Due to the lack of signals on Windows, or for threaded functions (in a subthread) where signals cant be used, Your only choice is Multiprocessing,
+this is set automatically.
+
+Under Windows the decorated function and results needs to be pickable.
+For that purpose we use "multiprocess" and "dill" instead of "multiprocessing" and "pickle", in order to be able to use this decorator on more sophisticated objects.
 Communication to the subprocess is done via "multiprocess.pipe" instead of "queue", which is faster and might also work on Amazon AWS.
 
 `100% code coverage <https://codecov.io/gh/bitranox/wrapt_timeout_decorator>`_, mypy static type checking, tested under `Linux, OsX, Windows and Wine <https://travis-ci.org/bitranox/wrapt_timeout_decorator>`_, automatic daily builds  and monitoring
@@ -44,6 +52,7 @@ Communication to the subprocess is done via "multiprocess.pipe" instead of "queu
 - `Installation and Upgrade`_
 - `Basic Usage`_
 - `use with Windows`_
+- `Caveats using Signals`_
 - `nested Timeouts`_
 - `Alternative Exception`_
 - `Parameters`_
@@ -281,11 +290,62 @@ here the same example, which will work on Windows:
             print("{} seconds have passed".format(i))
         return i
 
+Caveats using Signals
+---------------------
+
+as ABADGER1999 points out in his blog https://anonbadger.wordpress.com/2018/12/15/python-signal-handlers-and-exceptions/
+using signals and the TimeoutException is probably not the best idea - because it can be catched in the decorated function.
+
+Of course You can use Your own Exception, derived from the Base Exception Class, but the code might still not work as expected -
+see the next example - You may try it out in `jupyter <https://mybinder.org/v2/gh/bitranox/wrapt_timeout_decorator/master?filepath=jupyter_test_wrapt_timeout_decorator.ipynb>`_:
+
+.. code-block:: py
+
+    import time
+    from wrapt_timeout_decorator import *
+
+    # caveats when using signals - the TimeoutError raised by the signal may be catched
+    # inside the decorated function.
+    # So You might use Your own Exception, derived from the base Exception Class.
+    # since the Standard Python 3.7 code contains more then 300 unspecified except statements,
+    # You should use use_signals=False if You want to make sure that the timeout is handled correctly !
+    # therefore the default value for use_signals = False on this decorator !
+
+    @timeout(5, use_signals=True)
+    def mytest(message):
+        try:
+            print(message)
+            for i in range(1,10):
+                time.sleep(1)
+                print('{} seconds have passed - lets assume we read a big file here'.format(i))
+        # TimeoutError is a Subclass of OSError - therefore it is catched here !
+        except OSError:
+            for i in range(1,10):
+                time.sleep(1)
+                print('Whats going on here ? - Ooops the Timeout Exception is catched by the OSError ! {}'.format(i))
+        except Exception:
+            # even worse !
+            pass
+        except:
+            # the worst - and exists more then 300x in actual Python 3.7 Code !
+            # so You never really can rely that You catch the TimeoutError when using Signals !
+            pass
+
+
+    if __name__ == '__main__':
+        try:
+            mytest('starting')
+            print('no Timeout Occured')
+        except TimeoutError():
+            # this will never be printed because the decorated function catches implicitly the TimeoutError !
+            print('Timeout Occured')
+
 nested Timeouts
 ----------------
 
 since there is only ONE ALARM Signal on Unix per process, You need to use use_signals = False for nested timeouts.
-The outmost decorator might use Signals, all nested Decorators needs to use use_signals=False
+The outmost decorator might use Signals, all nested Decorators needs to use use_signals=False (the default)
+You may try it out in `jupyter <https://mybinder.org/v2/gh/bitranox/wrapt_timeout_decorator/master?filepath=jupyter_test_wrapt_timeout_decorator.ipynb>`_:
 
 .. code-block:: py
 
@@ -312,7 +372,7 @@ The outmost decorator might use Signals, all nested Decorators needs to use use_
     def outer():
         inner()
 
-    @timeout(5, use_signals=False)
+    @timeout(5)
     def inner():
         time.sleep(3)
         print("Should never be printed if you call outer()")
@@ -355,13 +415,13 @@ Parameters
                         default: None (no Timeout set)
                         can be overridden by passing the kwarg dec_timeout to the decorated function*
 
-    use_signals         if to use signals (linux, osx) to realize the timeout. The most accurate and preferred method.
+    use_signals         if to use signals (linux, osx) to realize the timeout. The most accurate method but with caveats.
+                        By default the Wrapt Timeout Decorator does NOT use signals !
                         Please note that signals can only be used in the main thread and only on linux. In all other cases
-                        (not the main thread, or under Windows) signals cant be used and will be disabled automatically.
-                        In general You dont need to set use_signals Yourself - Signals are used when possible and disabled
-                        if necessary.
+                        (not the main thread, or under Windows) signals cant be used anyway and will be disabled automatically.
+                        In general You dont need to set use_signals Yourself. Please read the section - `Caveats using Signals`_
                         type: boolean
-                        default: True
+                        default: False
                         can be overridden by passing the kwarg use_signals to the decorated function*
 
     timeout_exception   the Exception that will be raised if a timeout occurs.
@@ -624,6 +684,9 @@ Derived from
 https://github.com/pnpnpn/timeout-decorator
 
 http://www.saltycrane.com/blog/2010/04/using-python-timeout-decorator-uploading-s3/
+
+thanks to abadger1999 for pointing out caveats when using signals, see :
+https://anonbadger.wordpress.com/2018/12/15/python-signal-handlers-and-exceptions/
 
 special thanks to "uncle bob" Robert C. Martin, especially for his books on "clean code" and "clean architecture"
 

@@ -10,8 +10,16 @@ There is also a powerful eval function, it allows to read the desired timeout va
 
 It is very flexible and can be used from python 2.7 to python 3.x, pypy, pypy3 and probably other dialects.
 
-Due to the lack of signals and forking on Windows, or for threaded functions where signals cant be used, there is an alternate timeout strategy by using multiprocess.
-The decorated function and result needs to be pickable in that case. For that purpose we use "multiprocess" and "dill" instead of "multiprocessing" and "pickle", in order to be able to use this decorator on more sophisticated objects.
+There are two timeout strategies implemented, the ubiquitous method using "Signals" and the second using Multiprocessing.
+Using "Signals" is slick and lean, but there are nasty caveats, please check section `Caveats using Signals`_
+
+The default strategy is therefore using Multiprocessing, but You can also use Signals, You have been warned !
+
+Due to the lack of signals on Windows, or for threaded functions (in a subthread) where signals cant be used, Your only choice is Multiprocessing,
+this is set automatically.
+
+Under Windows the decorated function and results needs to be pickable.
+For that purpose we use "multiprocess" and "dill" instead of "multiprocessing" and "pickle", in order to be able to use this decorator on more sophisticated objects.
 Communication to the subprocess is done via "multiprocess.pipe" instead of "queue", which is faster and might also work on Amazon AWS.
 
 .. include:: ./tested_under.rst
@@ -22,6 +30,7 @@ Communication to the subprocess is done via "multiprocess.pipe" instead of "queu
 - `Installation and Upgrade`_
 - `Basic Usage`_
 - `use with Windows`_
+- `Caveats using Signals`_
 - `nested Timeouts`_
 - `Alternative Exception`_
 - `Parameters`_
@@ -61,6 +70,10 @@ Basic Usage
 use with Windows
 ----------------
 .. include:: ./use_with_windows.rst
+
+Caveats using Signals
+---------------------
+.. include:: ./caveats_using_signals.rst
 
 nested Timeouts
 ----------------

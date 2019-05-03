@@ -14,7 +14,7 @@ if sys.version_info < (3, 3):
 
 
 class WrapHelper(object):
-    def __init__(self, dec_timeout=None, use_signals=True, timeout_exception=None,
+    def __init__(self, dec_timeout=None, use_signals=False, timeout_exception=None,
                  exception_message=None, dec_allow_eval=False, dec_hard_timeout=False,
                  wrapped=None, instance=None, args=None, kwargs=None):
         self.dec_timeout = dec_timeout
