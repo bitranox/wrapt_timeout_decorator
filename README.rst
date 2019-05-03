@@ -199,10 +199,10 @@ save and load python interpreter sessions, save and extract the source code from
 
 To support more types with the decorator, we selected dill as serializer, with the small downside that methods and classes can not be decorated in the __main__ context, but need to reside in a module.
 
-Since spawning under Windows takes some unknown considerable timespan (all imports needs to be done again !), You can specify when the timeout should start, please read the section `hard timeout`_
-
 You can find more information on that here:
 https://stackoverflow.com/questions/45616584/serializing-an-object-in-main-with-pickle-or-dill
+
+**Timing :** Since spawning takes some unknown timespan (all imports needs to be done again !), You can specify when the timeout should start, please read the section `hard timeout`_
 
 Please note that for some unknown reason, probably in multiprocess, Class methods can not be decorated at all under Windows with Python 2.7
 
@@ -218,10 +218,10 @@ Here an example that will work on Linux but wont work on Windows (the variable "
 
     name="my_var_name"
 
-
     @timeout(5, use_signals=False)
     def mytest():
         # this example does NOT work on windows, please check the example below !
+        # You need to move this function into a module to be able to run it on windows.
         print("Start ", name)
         for i in range(1,10):
             sleep(1)
@@ -270,6 +270,8 @@ here the same example, which will work on Windows:
     from time import sleep
     from conf_my_program import conf_my_program
 
+    # use_signals = False is not really necessary here, it is set automatically under Windows
+    # but You can force NOT to use Signals under Linux
     @timeout(5, use_signals=False)
     def mytest():
         print("Start ", conf_my_program.name)
@@ -317,9 +319,10 @@ Parameters
                         can be overridden by passing the kwarg dec_timeout to the decorated function*
 
     use_signals         if to use signals (linux, osx) to realize the timeout. The most accurate and preferred method.
-                        Please note that signals can be used only in the main thread and only on linux. In all other cases
-                        (not the main thread, or under Windows) signals will not be used, no matter what You set here,
-                        in that cases use_signals will be disabled automatically.
+                        Please note that signals can only be used in the main thread and only on linux. In all other cases
+                        (not the main thread, or under Windows) signals cant be used and will be disabled automatically.
+                        In general You dont need to set use_signals Yourself - Signals are used when possible and disabled
+                        if necessary.
                         type: boolean
                         default: True
                         can be overridden by passing the kwarg use_signals to the decorated function*

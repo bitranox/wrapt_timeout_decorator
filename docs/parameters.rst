@@ -12,9 +12,10 @@
                         can be overridden by passing the kwarg dec_timeout to the decorated function*
 
     use_signals         if to use signals (linux, osx) to realize the timeout. The most accurate and preferred method.
-                        Please note that signals can be used only in the main thread and only on linux. In all other cases
-                        (not the main thread, or under Windows) signals will not be used, no matter what You set here,
-                        in that cases use_signals will be disabled automatically.
+                        Please note that signals can only be used in the main thread and only on linux. In all other cases
+                        (not the main thread, or under Windows) signals cant be used and will be disabled automatically.
+                        In general You dont need to set use_signals Yourself - Signals are used when possible and disabled
+                        if necessary.
                         type: boolean
                         default: True
                         can be overridden by passing the kwarg use_signals to the decorated function*
