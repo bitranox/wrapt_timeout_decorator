@@ -39,8 +39,6 @@ Communication to the subprocess is done via "multiprocess.pipe" instead of "queu
 - `Code of Conduct <https://github.com/{repository_slug}/blob/master/CODE_OF_CONDUCT.md>`_
 - `License`_
 
-.. include:: ./link_to_issues.rst
-
 ----
 
 Try it Online
