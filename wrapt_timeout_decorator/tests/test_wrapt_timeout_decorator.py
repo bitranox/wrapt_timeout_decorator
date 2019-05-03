@@ -1,18 +1,15 @@
 """Timeout decorator tests."""
 
 from dill import PicklingError
-try:
-    from .lib_test_helper import *
-except ImportError:  # pragma: no cover
-    from lib_test_helper import *
 import pytest
 from threading import Thread
 import time
+import sys
+
 from wrapt_timeout_decorator import *
 from wrapt_timeout_decorator.wrapt_timeout_decorator.wrap_helper import *
 from wrapt_timeout_decorator.wrapt_timeout_decorator.wrap_function_multiprocess import *
-import sys
-
+from .lib_test_helper import *
 
 if sys.version_info < (3, 3):             # there is no TimeoutError < Python 3.3
     TimeoutError = AssertionError
