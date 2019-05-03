@@ -307,7 +307,9 @@ see the next example - You may try it out in `jupyter <https://mybinder.org/v2/g
     # caveats when using signals - the TimeoutError raised by the signal may be catched
     # inside the decorated function.
     # So You might use Your own Exception, derived from the base Exception Class.
-    # since the Standard Python 3.7 code contains more then 300 unspecified except statements,
+    # In Python-3.7.1 stdlib there are over 300 pieces of code that will catch your timeout
+    # if you were to base an exception on Exception. If you base your exception on BaseException,
+    # there are still 231 places that can potentially catch your exception.
     # You should use use_signals=False if You want to make sure that the timeout is handled correctly !
     # therefore the default value for use_signals = False on this decorator !
 
@@ -327,7 +329,7 @@ see the next example - You may try it out in `jupyter <https://mybinder.org/v2/g
             # even worse !
             pass
         except:
-            # the worst - and exists more then 300x in actual Python 3.7 Code !
+            # the worst - and exists more then 300x in actual Python 3.7 stdlib Code !
             # so You never really can rely that You catch the TimeoutError when using Signals !
             pass
 
