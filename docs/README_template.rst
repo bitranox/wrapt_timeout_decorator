@@ -22,6 +22,7 @@ Communication to the subprocess is done via "multiprocess.pipe" instead of "queu
 - `Installation and Upgrade`_
 - `Basic Usage`_
 - `use with Windows`_
+- `nested Timeouts`_
 - `Alternative Exception`_
 - `Parameters`_
 - `Override Parameters`_
@@ -60,6 +61,10 @@ Basic Usage
 use with Windows
 ----------------
 .. include:: ./use_with_windows.rst
+
+nested Timeouts
+----------------
+.. include:: ./nested_timeouts.rst
 
 Alternative Exception
 ---------------------
