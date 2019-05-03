@@ -1,7 +1,10 @@
 """Timeout decorator tests."""
 
 from dill import PicklingError
-from .lib_test_helper import *
+try:
+    from .lib_test_helper import *
+except ImportError:  # pragma: no cover
+    from lib_test_helper import *
 import pytest
 from threading import Thread
 import time
@@ -227,3 +230,23 @@ def test_hard_timeout_windows_only():
         with pytest.raises(TimeoutError, match=r'Function f_test_hard_timeout timed out after 0\.25 seconds'):
             f_test_hard_timeout(dec_hard_timeout=True)
         assert f_test_hard_timeout(dec_hard_timeout=False) == 'done'
+
+
+@timeout(dec_timeout=1, use_signals=use_signals)
+def outer():
+    inner()
+
+
+@timeout(dec_timeout=2, use_signals=use_signals)
+def inner():
+    time.sleep(3)
+    return 'done'
+
+
+def test_nested_decorator():
+    """
+    >>> test_nested_decorator()
+    """
+
+    with pytest.raises(TimeoutError, match=r'Function outer timed out after 1 seconds'):
+        outer()

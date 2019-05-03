@@ -26,12 +26,9 @@ class Timeout(object):
         """
         self.__parent_conn, self.wrap_helper.child_conn = multiprocess.Pipe(duplex=False)
         self.__process = multiprocess.Process(target=_target, args=[self.wrap_helper])
+        # daemonic process must not have subprocess - we need that for nested decorators
+        self.__process.daemon = False
 
-        # python 2.7 windows multiprocess does not provide daemonic process in a subthread
-        if is_python_27_under_windows():
-            self.__process.daemon = False
-        else:
-            self.__process.daemon = True
 
         self.__process.start()
         if not self.wrap_helper.dec_hard_timeout:
