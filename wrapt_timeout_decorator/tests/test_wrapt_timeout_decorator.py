@@ -237,7 +237,7 @@ def outer():
     inner()
 
 
-@timeout(dec_timeout=2, use_signals=use_signals)
+@timeout(dec_timeout=2, use_signals=False)
 def inner():
     time.sleep(3)
     return 'done'
