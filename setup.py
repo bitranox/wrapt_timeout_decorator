@@ -41,7 +41,7 @@ if os.path.exists(changes_filename):
 
 setup(
     name='wrapt_timeout_decorator',
-    version='1.2.8',
+    version='1.2.9',
     description=description,
     long_description=long_description,
     long_description_content_type='text/x-rst',

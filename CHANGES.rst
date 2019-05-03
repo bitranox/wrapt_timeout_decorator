@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.2.9
+-----
+2019-05-03: support nested decorators, mypy static type checking
+
 1.2.8
 -----
 2019-04-23: import multiprocess as multiprocess, not as multiprocessing - that might brake other packages
