@@ -67,7 +67,6 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
                                 out depending on the settings. dec_timeout will always be overridden by a
                                 kwarg passed to the wrapped function, class or class method.
     :param use_signals:         flag indicating whether signals should be used or the multiprocessing
-                                when using multiprocessing, timeout granularity is limited to 10ths of a second.
     :param timeout_exception:   the Exception to be raised when timeout occurs, default = TimeoutException
     :param exception_message:   the Message for the Exception. Default: 'Function {f} timed out after {s} seconds.
     :param dec_allow_eval: *    allows a string in parameter dec_timeout what will be evaluated. Beware this can
