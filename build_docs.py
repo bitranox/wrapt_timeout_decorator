@@ -4,12 +4,6 @@ import logging
 import os
 import sys
 
-if sys.version_info < (3, 5):
-    logging.basicConfig(level=logging.INFO)
-    main_logger = logging.getLogger('init')
-    main_logger.info('only Python Versions from 3.5 are supported, exit with exitcode 0')
-    sys.exit(0)
-
 from rst_include import *
 from rst_include.libs import lib_log
 import subprocess
