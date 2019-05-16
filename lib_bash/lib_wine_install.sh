@@ -25,7 +25,6 @@ function check_wine_version {
         fi
 }
 
-
 function check_wine_prefix {
     ## set wine prefix to ${HOME}/.wine if not given by environment variable
     if [[ -z ${WINEPREFIX} ]]
@@ -67,6 +66,12 @@ function check_headless_xvfb {
             clr_green "we run on normal console, xvfb service is not running"
         fi
 }
+
+
+function export_wine_version_number {
+    export wine_version_number=`wine --version`
+}
+
 
 function prepend_path_to_wine_registry {
     add_pythonpath="${1}"
