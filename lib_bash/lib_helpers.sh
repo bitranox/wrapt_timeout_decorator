@@ -14,7 +14,13 @@ function fail {
 }
 
 function get_linux_codename {
-    export linux_codename=`lsb_release --codename | cut -f2`
+    local linux_codename=`lsb_release --codename | cut -f2`
+    echo "${linux_codename}"
+}
+
+function export_linux_codename {
+    local linux_codename=`lsb_release --codename | cut -f2`
+    export ${linux_codename}
 }
 
 
