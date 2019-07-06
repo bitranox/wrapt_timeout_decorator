@@ -31,6 +31,8 @@ matrix:
       # this can be a security issue, check that You dont leak secrets here !
       filter_secrets: false
       before_install:
+          - chmod -R +x ./*.sh
+          - ./install_lib_bash.sh
           - ./lib_bash/lib_retry.sh retry choco install python2
           - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
 
@@ -43,6 +45,8 @@ matrix:
       # this can be a security issue, check that You dont leak secrets here !
       filter_secrets: false
       before_install:
+        - chmod -R +x ./*.sh
+        - ./install_lib_bash.sh
         - ./lib_bash/lib_retry.sh retry choco install python3
         - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
 
@@ -352,14 +356,15 @@ matrix:
 
 install:
     - chmod -R +x ./*.sh             # make shellscripts executable
-    - chmod -R +x ./lib_bash/*.sh    # make shellscript lib executable
+    - ./install_lib_bash.sh
+    - ./install_lib_bash_wine.sh
     - export REPOSITORY_NAME=${TRAVIS_REPO_SLUG#*/} && ./lib_bash/lib_color.sh clr_bold clr_green "Export Repository Name ${REPOSITORY_NAME}"
     - if [[ ${TRAVIS_OS_NAME} == "linux" ]]; then service xvfb status ; fi
-    - if [[ ${CMDPREFIX} == "wine" ]]; then ./install_wine.sh ; fi
-    - if [[ ${CMDPREFIX} == "wine" ]]; then ./install_wine_machine.sh ; fi
-    - if [[ ${wine_python_version} == "python2" ]]; then ./install_wine_python2_preinstalled.sh ; fi
-    - if [[ ${wine_python_version} == "python3" ]]; then ./install_wine_python3_preinstalled.sh ; fi
-    - if [[ ${CMDPREFIX} == "wine" ]]; then ./install_wine_git_portable.sh ; fi
+    - if [[ ${CMDPREFIX} == "wine" ]]; then ./lib_bash_wine/install_wine.sh ; fi
+    - if [[ ${CMDPREFIX} == "wine" ]]; then ./lib_bash_wine/install_wine_machine.sh ; fi
+    - if [[ ${wine_python_version} == "python2" ]]; then ./lib_bash_wine/install_wine_python2_preinstalled.sh ; fi
+    - if [[ ${wine_python_version} == "python3" ]]; then ./lib_bash_wine/install_wine_python3_preinstalled.sh ; fi
+    - if [[ ${CMDPREFIX} == "wine" ]]; then ./lib_bash_wine/install_wine_git_portable.sh ; fi
 
     - ${CMDPREFIX} ${python_command} -m pip install --upgrade pip
     - if [[ $TRAVIS_PYTHON_VERSION == pypy3.5-6.0 ]]; then ${CMDPREFIX} ${pip_command} install "pytest-cov==2.6.0"; fi
