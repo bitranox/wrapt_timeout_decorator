@@ -16,12 +16,12 @@ function fail {
 }
 
 
-function check_wine_version {
-    if [[ -z ${wine_version} ]]
+function check_wine_release {
+    if [[ -z ${wine_release} ]]
         then
-            clr_bold clr_red "WARNING - no wine_version in environment set - set now to default: devel"
-            echo "available Versions: stable, devel, staging"
-            export wine_version="devel"
+            clr_bold clr_red "WARNING - no wine_release in environment set - set now to default: devel"
+            echo "available Releases: stable, devel, staging"
+            export wine_release="devel"
         fi
 }
 
@@ -68,8 +68,9 @@ function check_headless_xvfb {
 }
 
 
-function export_wine_version_number {
-    export wine_version_number=`wine --version`
+function get_wine_version_number {
+    local wine_version_number=`wine --version`
+    echo "${wine_version_number}"
 }
 
 

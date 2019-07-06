@@ -14,7 +14,7 @@ check_wine_prefix
 check_wine_arch
 check_wine_windows_version
 check_headless_xvfb
-export_wine_version_number
+wine_version_number=$(get_wine_version_number)
 
 clr_bold clr_green "Setup Wine Machine at ${WINEPREFIX}, WINEARCH=${WINEARCH}, wine_windows_version=${wine_windows_version}"
 mkdir -p ${WINEPREFIX}
