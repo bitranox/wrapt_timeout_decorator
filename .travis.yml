@@ -31,9 +31,10 @@ matrix:
       # this can be a security issue, check that You dont leak secrets here !
       filter_secrets: false
       before_install:
-          - chmod -R +x ./*.sh
-          - ./install_lib_bash.sh
-          - ./lib_bash/lib_retry.sh retry choco install python2
+          - git clone https://github.com/bitranox/lib_bash.git /usr/lib/lib_bash
+          - chmod -R 0755 /usr/lib/lib_bash
+          - chmod -R +x /usr/lib/lib_bash/*.sh
+          - /usr/lib/lib_bash/lib_retry.sh retry choco install python2
           - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
 
     - os: windows
@@ -45,10 +46,11 @@ matrix:
       # this can be a security issue, check that You dont leak secrets here !
       filter_secrets: false
       before_install:
-        - chmod -R +x ./*.sh
-        - ./install_lib_bash.sh
-        - ./lib_bash/lib_retry.sh retry choco install python3
-        - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+          - git clone https://github.com/bitranox/lib_bash.git /usr/lib/lib_bash
+          - chmod -R 0755 /usr/lib/lib_bash
+          - chmod -R +x /usr/lib/lib_bash/*.sh
+          - /usr/lib/lib_bash/lib_retry.sh retry choco install python3
+          - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
 
     - os: linux
       language: python
@@ -355,31 +357,42 @@ matrix:
 
 
 install:
-    - chmod -R +x ./*.sh             # make shellscripts executable
-    - ./install_lib_bash.sh
-    - ./install_lib_bash_wine.sh
-    - export REPOSITORY_NAME=${TRAVIS_REPO_SLUG#*/} && ./lib_bash/lib_color.sh clr_bold clr_green "Export Repository Name ${REPOSITORY_NAME}"
-    - if [[ ${TRAVIS_OS_NAME} == "linux" ]]; then service xvfb status ; fi
-    - if [[ ${CMDPREFIX} == "wine" ]]; then ./lib_bash_wine/install_wine.sh ; fi
-    - if [[ ${CMDPREFIX} == "wine" ]]; then ./lib_bash_wine/install_wine_machine.sh ; fi
-    - if [[ ${wine_python_version} == "python2" ]]; then ./lib_bash_wine/install_wine_python2_preinstalled.sh ; fi
-    - if [[ ${wine_python_version} == "python3" ]]; then ./lib_bash_wine/install_wine_python3_preinstalled.sh ; fi
-    - if [[ ${CMDPREFIX} == "wine" ]]; then ./lib_bash_wine/install_wine_git_portable.sh ; fi
+    # install lib_bash_wine - this installs also lib_bash
+    - if [[ -f /usr/bin/sudo ]]; then export sudo_command="sudo"; else export sudo_command=""; fi
+    - ${sudo_command} git clone https://github.com/bitranox/lib_bash_wine.git /usr/lib/lib_bash_wine
+    - ${sudo_command} chmod -R 0755 /usr/lib/lib_bash_wine
+    - ${sudo_command} chmod -R +x /usr/lib/lib_bash_wine/*.sh
+    - ${sudo_command} /usr/lib/lib_bash_wine/install_or_update_lib_bash_wine.sh
+    - export lib_bash_color="/usr/lib/lib_bash/lib_color.sh"
+    - export lib_bash_banner="/usr/lib/lib_bash/lib_helpers.sh banner"
+    - export lib_bash_banner_warning="/usr/lib/lib_bash/lib_helpers.sh banner_warning"
+    - export lib_bash_wine="/usr/lib/lib_bash_wine"
 
+    - export REPOSITORY_NAME=${TRAVIS_REPO_SLUG#*/} && ${lib_bash_color} clr_bold clr_green "Export Repository Name ${REPOSITORY_NAME}"
+    - if [[ ${CMDPREFIX} == "wine" ]]; then ${lib_bash_wine}/001_000_install_wine.sh ; fi
+    - if [[ ${CMDPREFIX} == "wine" ]]; then ${lib_bash_wine}/002_000_install_wine_machine.sh ; fi
+    - if [[ ${wine_python_version} == "python2" ]]; then ${lib_bash_wine}/003_000_install_wine_python2_preinstalled.sh ; fi
+    - if [[ ${wine_python_version} == "python3" ]]; then ${lib_bash_wine}/003_001_install_wine_python3_preinstalled.sh ; fi
+    - if [[ ${CMDPREFIX} == "wine" ]]; then ${lib_bash_wine}/004_001_install_wine_git_portable.sh ; fi
+    # - if [[ ${CMDPREFIX} == "wine" ]]; then ${lib_bash_wine}/005_001_install_wine_powershell_core.sh ; fi
+
+    - ${lib_bash_banner} "upgrading pip"
     - ${CMDPREFIX} ${python_command} -m pip install --upgrade pip
     - if [[ $TRAVIS_PYTHON_VERSION == pypy3.5-6.0 ]]; then ${CMDPREFIX} ${pip_command} install "pytest-cov==2.6.0"; fi
     # mypy does not run on pypy 3.5 - we only do mypy on python 3.6
-    - if [[ "${mypy_static_typecheck}" == "True" ]]; then ${CMDPREFIX} ${pip_command} install mypy; fi
-    - if [[ "${build_docs}" == "True" ]]; then ${CMDPREFIX} ${pip_command} install rst_include; fi
-    - ${CMDPREFIX} ${pip_command} install codecov pytest pytest-pep8 pytest-cov dill
-    - if [[ -f setup.py ]]; then export setup_py_found="True" && ./lib_bash/lib_color.sh clr_bold clr_green "setup.py found" ; else ./lib_bash/lib_color.sh clr_bold clr_red  "*** no setup.py found, nothing to test" ; fi
-    - if [[ "${setup_py_found}" == "True" ]]; then ${CMDPREFIX} ${pip_command} install -e . ; fi
+    - if [[ "${mypy_static_typecheck}" == "True" ]]; then ${lib_bash_banner} "install mypy" && ${CMDPREFIX} ${pip_command} install mypy; fi
+    - if [[ "${build_docs}" == "True" ]]; then ${lib_bash_banner} "install rst_include (Building Docs)" && ${CMDPREFIX} ${pip_command} install rst_include; fi
+    - ${lib_bash_banner} "install codecov" && ${CMDPREFIX} ${pip_command} install codecov
+    - ${lib_bash_banner} "install pytest" && ${CMDPREFIX} ${pip_command} install pytest pytest-pep8 pytest-cov
+    - ${lib_bash_banner} "install dill" && ${CMDPREFIX} ${pip_command} install dill
+    - if [[ -f setup.py ]]; then export setup_py_found="True" && ${lib_bash_banner} "setup.py found" ; else ${lib_bash_banner_warning} "no setup.py found, nothing to test" ; fi
+    - if [[ "${setup_py_found}" == "True" ]]; then ${lib_bash_banner} "Installing Application" && ${CMDPREFIX} ${pip_command} install -e . ; fi
 
 script:
-    - if [[ "${setup_py_found}" == "True" ]]; then ${CMDPREFIX} ${pip_command} install ${github_master} --install-option test ; else ./lib_bash/lib_color.sh clr_bold clr_red  "no setup.py found, nothing to test" ; fi
-    - if [[ "${setup_py_found}" == "True" ]]; then ${CMDPREFIX} ${python_command} -m pytest --pep8 --cov ; else ./lib_bash/lib_color.sh clr_bold clr_red  "no setup.py found, nothing to test" ; fi
-    - if [[ "${mypy_static_typecheck}" == "True" ]]; then ${CMDPREFIX} ${python_command} -m mypy -p ${REPOSITORY_NAME} && ./lib_bash/lib_color.sh clr_bold clr_green "static typechecking done" ; else ./lib_bash/lib_color.sh clr_bold clr_red "static typechecking disabled on this build" ;  fi
-    - if [[ -f build_docs.py ]] && [[ "${build_docs}" == "True" ]]; then ${CMDPREFIX} ${python_command} build_docs.py ${TRAVIS_REPO_SLUG} && ./lib_bash/lib_color.sh clr_bold clr_green "build_docs done" ; else ./lib_bash/lib_color.sh clr_bold clr_red "build_docs disabled on this build" ;  fi
+    - if [[ "${setup_py_found}" == "True" ]]; then ${lib_bash_banner} "running setup.py --install-option test" && ${CMDPREFIX} ${pip_command} install ${github_master} --install-option test ; else ${lib_bash_banner_warning} "no setup.py found, no setup.py --install-option test" ; fi
+    - if [[ "${setup_py_found}" == "True" ]]; then ${lib_bash_banner} "running pytest" && ${CMDPREFIX} ${python_command} -m pytest --pep8 --cov ; else ${lib_bash_banner_warning} "no setup.py found, no pytest" ; fi
+    - if [[ "${mypy_static_typecheck}" == "True" ]]; then ${lib_bash_banner} "running mypy static typechecks" && ${CMDPREFIX} ${python_command} -m mypy -p ${REPOSITORY_NAME}; else ${lib_bash_banner_warning} "static typechecking disabled on this build" ;  fi
+    - if [[ -f build_docs.py ]] && [[ "${build_docs}" == "True" ]]; then ${lib_bash_banner} "Building Docs" && ${CMDPREFIX} ${python_command} build_docs.py ${TRAVIS_REPO_SLUG}; else ${lib_bash_banner_warning} "Builing Docs disabled on this build" ;  fi
 
 after_success:
     - ${CMDPREFIX} coverage report
