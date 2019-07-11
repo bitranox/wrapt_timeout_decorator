@@ -361,7 +361,7 @@ install:
     - $(which sudo) git clone https://github.com/bitranox/lib_bash_wine.git /usr/local/lib_bash_wine
     - $(which sudo) chmod -R 0755 /usr/local/lib_bash_wine
     - $(which sudo) chmod -R +x /usr/local/lib_bash_wine/*.sh
-    - $(which sudo) /usr/local/lib_bash_wine/install_or_update_lib_bash_wine.sh
+    - $(which sudo) /usr/local/lib_bash_wine/install_or_update.sh
     - export lib_bash_color="/usr/local/lib_bash/lib_color.sh"
     - export lib_bash_banner="/usr/local/lib_bash/lib_helpers.sh banner"
     - export lib_bash_banner_warning="/usr/local/lib_bash/lib_helpers.sh banner_warning"
