@@ -31,10 +31,10 @@ matrix:
       # this can be a security issue, check that You dont leak secrets here !
       filter_secrets: false
       before_install:
-          - git clone https://github.com/bitranox/lib_bash.git /usr/lib/lib_bash
-          - chmod -R 0755 /usr/lib/lib_bash
-          - chmod -R +x /usr/lib/lib_bash/*.sh
-          - /usr/lib/lib_bash/lib_retry.sh retry choco install python2
+          - git clone https://github.com/bitranox/lib_bash.git /usr/local/lib_bash
+          - chmod -R 0755 /usr/local/lib_bash
+          - chmod -R +x /usr/local/lib_bash/*.sh
+          - /usr/local/lib_bash/lib_retry.sh retry choco install python2
           - export PATH="/c/Python27:/c/Python27/Scripts:$PATH"
 
     - os: windows
@@ -46,10 +46,10 @@ matrix:
       # this can be a security issue, check that You dont leak secrets here !
       filter_secrets: false
       before_install:
-          - git clone https://github.com/bitranox/lib_bash.git /usr/lib/lib_bash
-          - chmod -R 0755 /usr/lib/lib_bash
-          - chmod -R +x /usr/lib/lib_bash/*.sh
-          - /usr/lib/lib_bash/lib_retry.sh retry choco install python3
+          - git clone https://github.com/bitranox/lib_bash.git /usr/local/lib_bash
+          - chmod -R 0755 /usr/local/lib_bash
+          - chmod -R +x /usr/local/lib_bash/*.sh
+          - /usr/local/lib_bash/lib_retry.sh retry choco install python3
           - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
 
     - os: linux
@@ -358,15 +358,14 @@ matrix:
 
 install:
     # install lib_bash_wine - this installs also lib_bash
-    - if [[ -f /usr/bin/sudo ]]; then export sudo_command="sudo"; else export sudo_command=""; fi
-    - ${sudo_command} git clone https://github.com/bitranox/lib_bash_wine.git /usr/lib/lib_bash_wine
-    - ${sudo_command} chmod -R 0755 /usr/lib/lib_bash_wine
-    - ${sudo_command} chmod -R +x /usr/lib/lib_bash_wine/*.sh
-    - ${sudo_command} /usr/lib/lib_bash_wine/install_or_update_lib_bash_wine.sh
-    - export lib_bash_color="/usr/lib/lib_bash/lib_color.sh"
-    - export lib_bash_banner="/usr/lib/lib_bash/lib_helpers.sh banner"
-    - export lib_bash_banner_warning="/usr/lib/lib_bash/lib_helpers.sh banner_warning"
-    - export lib_bash_wine="/usr/lib/lib_bash_wine"
+    - $(which sudo) git clone https://github.com/bitranox/lib_bash_wine.git /usr/local/lib_bash_wine
+    - $(which sudo) chmod -R 0755 /usr/local/lib_bash_wine
+    - $(which sudo) chmod -R +x /usr/local/lib_bash_wine/*.sh
+    - $(which sudo) /usr/local/lib_bash_wine/install_or_update_lib_bash_wine.sh
+    - export lib_bash_color="/usr/local/lib_bash/lib_color.sh"
+    - export lib_bash_banner="/usr/local/lib_bash/lib_helpers.sh banner"
+    - export lib_bash_banner_warning="/usr/local/lib_bash/lib_helpers.sh banner_warning"
+    - export lib_bash_wine="/usr/local/lib_bash_wine"
 
     - export REPOSITORY_NAME=${TRAVIS_REPO_SLUG#*/} && ${lib_bash_color} clr_bold clr_green "Export Repository Name ${REPOSITORY_NAME}"
     - if [[ ${CMDPREFIX} == "wine" ]]; then ${lib_bash_wine}/001_000_install_wine.sh ; fi
