@@ -373,7 +373,7 @@ install:
     - if [[ ${CMDPREFIX} == "wine" ]]; then ${lib_bash_wine}/002_000_install_wine_machine.sh ; fi
     - if [[ ${wine_python_version} == "python2" ]]; then ${lib_bash_wine}/003_000_install_wine_python2_preinstalled.sh ; fi
     - if [[ ${wine_python_version} == "python3" ]]; then ${lib_bash_wine}/003_001_install_wine_python3_preinstalled.sh ; fi
-    - if [[ ${CMDPREFIX} == "wine" ]]; then ${lib_bash_wine}/004_001_install_wine_git_portable.sh ; fi
+    - if [[ ${CMDPREFIX} == "wine" ]]; then ${lib_bash_wine}/004_000_install_wine_git_portable.sh ; fi
     # - if [[ ${CMDPREFIX} == "wine" ]]; then ${lib_bash_wine}/005_001_install_wine_powershell_core.sh ; fi
 
     - ${lib_bash_banner} "upgrading pip"
