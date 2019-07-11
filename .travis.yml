@@ -392,7 +392,7 @@ script:
     - if [[ "${setup_py_found}" == "True" ]]; then ${lib_bash_banner} "running setup.py --install-option test" && ${CMDPREFIX} ${pip_command} install ${github_master} --install-option test ; else ${lib_bash_banner_warning} "no setup.py found, no setup.py --install-option test" ; fi
     - if [[ "${setup_py_found}" == "True" ]]; then ${lib_bash_banner} "running pytest" && ${CMDPREFIX} ${python_command} -m pytest --pep8 --cov ; else ${lib_bash_banner_warning} "no setup.py found, no pytest" ; fi
     - if [[ "${mypy_static_typecheck}" == "True" ]]; then ${lib_bash_banner} "running mypy static typechecks" && ${CMDPREFIX} ${python_command} -m mypy -p ${REPOSITORY_NAME}; else ${lib_bash_banner_warning} "static typechecking disabled on this build" ;  fi
-    - if [[ -f build_docs.py ]] && [[ "${build_docs}" == "True" ]]; then ${lib_bash_banner} "Building Docs" && ${CMDPREFIX} ${python_command} build_docs.py ${TRAVIS_REPO_SLUG}; else ${lib_bash_banner_warning} "Builing Docs disabled on this build" ;  fi
+    - if [[ -f build_docs.py ]] && [[ "${build_docs}" == "True" ]]; then ${lib_bash_banner} "Building Docs" && ${CMDPREFIX} ${python_command} build_docs.py ${TRAVIS_REPO_SLUG}; else ${lib_bash_banner_warning} "Building Docs disabled on this build" ;  fi
 
 after_success:
     - ${CMDPREFIX} coverage report
