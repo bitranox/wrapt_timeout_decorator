@@ -55,8 +55,6 @@ https://stackoverflow.com/questions/45616584/serializing-an-object-in-main-with-
 
 **Timing :** Since spawning takes some unknown timespan (all imports needs to be done again !), You can specify when the timeout should start, please read the section `hard timeout`_
 
-Please note that for some unknown reason, probably in multiprocess, Class methods can not be decorated at all under Windows with Python 2.7
-
 Here an example that will work on Linux but wont work on Windows (the variable "name" and the function "sleep" wont be found in the spawned process :
 
 

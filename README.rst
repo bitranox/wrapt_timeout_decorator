@@ -30,7 +30,7 @@ class methods, static methods and so on, preserving also the traceback informati
 
 There is also a powerful eval function, it allows to read the desired timeout value even from Class attributes.
 
-It is very flexible and can be used from python 2.7 to python 3.x, pypy, pypy3 and probably other dialects.
+It is very flexible and can be used with python 3.x, pypy, pypy3 and probably other dialects.
 
 There are two timeout strategies implemented, the ubiquitous method using "Signals" and the second using Multiprocessing.
 Using "Signals" is slick and lean, but there are nasty caveats, please check section `Caveats using Signals`_
@@ -213,8 +213,6 @@ You can find more information on that here:
 https://stackoverflow.com/questions/45616584/serializing-an-object-in-main-with-pickle-or-dill
 
 **Timing :** Since spawning takes some unknown timespan (all imports needs to be done again !), You can specify when the timeout should start, please read the section `hard timeout`_
-
-Please note that for some unknown reason, probably in multiprocess, Class methods can not be decorated at all under Windows with Python 2.7
 
 Here an example that will work on Linux but wont work on Windows (the variable "name" and the function "sleep" wont be found in the spawned process :
 
