@@ -106,6 +106,7 @@ ENV/
 
 # rotek specific
 docs/
+.docs/
 lib_bash/
 !*.py
 
