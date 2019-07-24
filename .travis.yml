@@ -224,52 +224,47 @@ install:
 
     - ${lib_bash_banner} "upgrading pip"
     - ${CMDPREFIX} ${python_command} -m pip install --upgrade pip
-    - if [[ $TRAVIS_PYTHON_VERSION == pypy3.5-6.0 ]]; then ${CMDPREFIX} ${pip_command} install "pytest-cov==2.6.0"; fi
-    # mypy does not run on pypy 3.5 - we only do mypy on python 3.6
     - if [[ "${mypy_static_typecheck}" == "True" ]]; then ${lib_bash_banner} "install mypy" && ${CMDPREFIX} ${pip_command} install mypy; fi
     - if [[ "${build_docs}" == "True" ]]; then ${lib_bash_banner} "install rst_include (Building Docs)" && ${CMDPREFIX} ${pip_command} install rst_include; fi
     - ${lib_bash_banner} "install codecov" && ${CMDPREFIX} ${pip_command} install codecov
     - ${lib_bash_banner} "install pytest" && ${CMDPREFIX} ${pip_command} install pytest pytest-pep8 pytest-cov
     - ${lib_bash_banner} "install dill" && ${CMDPREFIX} ${pip_command} install dill
-    - if [[ -f setup.py ]]; then export setup_py_found="True" && ${lib_bash_banner} "setup.py found" ; else ${lib_bash_banner_warning} "no setup.py found, nothing to test" ; fi
-    - if [[ "${setup_py_found}" == "True" ]]; then ${lib_bash_banner} "Installing Application" && ${CMDPREFIX} ${pip_command} install -e . ; fi
+    - if [[ -f ./setup.py ]]; then ${lib_bash_banner} "setup.py found" ; else ${lib_bash_banner_warning} "no setup.py found, nothing to test" ; fi
+    - if [[ -f ./setup.py ]]; then ${lib_bash_banner} "Installing Application" && ${CMDPREFIX} ${pip_command} install -e . ; fi
 
 script:
-    - if [[ "${setup_py_found}" == "True" ]]; then ${lib_bash_banner} "running setup.py --install-option test" && ${CMDPREFIX} ${pip_command} install ${github_master} --install-option test ; else ${lib_bash_banner_warning} "no setup.py found, no setup.py --install-option test" ; fi
-    - if [[ "${setup_py_found}" == "True" ]]; then ${lib_bash_banner} "running pytest" && ${CMDPREFIX} ${python_command} -m pytest --pep8 --cov ; else ${lib_bash_banner_warning} "no setup.py found, no pytest" ; fi
-    - if [[ "${mypy_static_typecheck}" == "True" ]]; then ${lib_bash_banner} "running mypy static typechecks" && ${CMDPREFIX} ${python_command} -m mypy -p ${REPOSITORY_NAME}; else ${lib_bash_banner_warning} "static typechecking disabled on this build" ;  fi
+    - if [[ -f ./setup.py ]]; then ${lib_bash_banner} "running setup.py --install-option test" && ${CMDPREFIX} ${pip_command} install ${github_master} --install-option test ; else ${lib_bash_banner_warning} "no setup.py found, no setup.py --install-option test" ; fi
+    - if [[ -f ./setup.py ]]; then ${lib_bash_banner} "running pytest" && ${CMDPREFIX} ${python_command} -m pytest --pep8 --cov ; else ${lib_bash_banner_warning} "no setup.py found, no pytest" ; fi
+    - if [[ "${mypy_static_typecheck}" == "True" ]]; then ${lib_bash_banner} "running mypy static typechecks" && ${CMDPREFIX} ${python_command} -m mypy -p ${REPOSITORY_NAME} --strict --no-warn-unused-ignores; else ${lib_bash_banner_warning} "static typechecking disabled on this build" ;  fi
     - if [[ -f build_docs.py ]] && [[ "${build_docs}" == "True" ]]; then ${lib_bash_banner} "Building Docs" && ${CMDPREFIX} ${python_command} build_docs.py ${TRAVIS_REPO_SLUG}; else ${lib_bash_banner_warning} "Building Docs disabled on this build" ;  fi
+    # only for non tagged builds if doctest is enabled, to check before we deploy on pypi
+    - if [[ -f setup.py ]] && [[ -z ${TRAVIS_TAG} ]] && [[ -f build_docs.py ]] && [[ "${build_docs}" == "True" ]]; then export check_build="True" ; fi
+    - if [[ "${check_build}" == "True" ]]; then ${CMDPREFIX} ${pip_command} install readme_renderer > /dev/null 2>&1 ; fi     # to check if long_description (Readme) can be rendered, otherwise PyPy will not accept it
+    - if [[ "${check_build}" == "True" ]]; then ${CMDPREFIX} ${pip_command} install --upgrade twine > /dev/null 2>&1 ; fi
+    - if [[ "${check_build}" == "True" ]]; then ${CMDPREFIX} ${pip_command} install wheel > /dev/null 2>&1 ; fi
+    - if [[ "${check_build}" == "True" ]]; then ${lib_bash_banner} "Building Wheels" && ${CMDPREFIX} ${python_command} setup.py sdist bdist_wheel || ${lib_bash_banner_warning} "Building Wheels failed" 1>&2 ; fi
+    - if [[ "${check_build}" == "True" ]]; then ${lib_bash_banner} "Testing PyPi Deployment" && ${CMDPREFIX} twine check dist/* && ${lib_bash_color} clr_bold clr_green "PyPi Deployment would be OK" || ${lib_bash_banner_warning} "PyPi Deployment would fail" 1>&2 ; fi
 
 after_success:
     - ${CMDPREFIX} coverage report
     - ${CMDPREFIX} codecov
 
-    # This works for sure - but might expose the secure password within the matrix,
-    # because windows builds need filter_secrets: false at the Moment (2019-04-12)
-    # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} ${pip_command} install -U twine ; fi
-    # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} ${pip_command} install wheel ; fi
-    # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} ${python_command} setup.py sdist bdist_wheel ; fi
-    # - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then ${CMDPREFIX} twine upload --repository-url https://upload.pypi.org/legacy/ -u bitranox -p ${pypi_password} dist/* ; fi
+    # This works for sure - the Travis deploy is somehow buggy.
+    # create the secret :
+    # cd /<repository>
+    # travis encrypt pypi_password=*****
+    # and put it under :
+    # env:
+    #   global:
+    #     -secure: *******
+    - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then export deploy_tagged_commit_on_pypy="True" ; fi
+    - if [[ ${deploy_tagged_commit_on_pypy} == "True" ]]; then ${CMDPREFIX} ${pip_command} install readme_renderer ; fi           # to check if long_description (Readme) can be rendered, otherwise PyPy will not accept it
+    - if [[ ${deploy_tagged_commit_on_pypy} == "True" ]]; then ${CMDPREFIX} ${pip_command} install --upgrade twine ; fi
+    - if [[ ${deploy_tagged_commit_on_pypy} == "True" ]]; then ${CMDPREFIX} ${pip_command} install wheel ; fi
+    - if [[ ${deploy_tagged_commit_on_pypy} == "True" ]]; then ${CMDPREFIX} ${python_command} setup.py sdist bdist_wheel ; fi
+    - if [[ ${deploy_tagged_commit_on_pypy} == "True" ]]; then ${CMDPREFIX} twine check dist/* ; fi                               # check distribution before uploading it
+    - if [[ ${deploy_tagged_commit_on_pypy} == "True" ]]; then ${CMDPREFIX} twine upload --repository-url https://upload.pypi.org/legacy/ -u bitranox -p ${pypi_password} dist/* ; fi
 
-
-# the password needs to be encrypted pointing to ${deploy.password}
-# make a backup before adding secrets by travis gem, all comments in the yml files get lost !
-# password needs to be created from the project directory for every repository with ruby gem travis:   travis encrypt "*******" --add deploy.password --org
-# option --org for travis.org, --com for travis.com
-
-# secure password for wrapt_timeout_decorator !
-deploy:
-  provider: pypi
-  user: bitranox
-  password:
-    secure: frMslRFZ5dX5mwyZ9z/wgqwHlH1Bc6S1QMVl89ZMnZJZ781LQFyOwEpfh6bEiRLdqtf88OdAaDi78xbBv12SESLY7jMyUCLCYZFZplg8Foutb0qsO1HOijKuIVIF2J0p8VS2E7F7gs3/GOoK1cOUk9u48aEqY52yxvSDSWjimrsWeYiNU937Ds5HQWbagrucfhYwKTo2fJ2eZnqTMgZmJS4uXw7tUvRQpovxaBRGrysM1h7aGY1dvZnI4HHubTfqLCw101YnOdjyXP0+mtlGieZDxYNlCixBwtaQIfUGXx105l5E4sXZbB1i+mzdXrlHZazy15lpxY4aAlAV5rBQet9UlxSgyORAKzRwfOWU7KhIQGiVn8Iu/cEHZPYZ2n9ZZKJClwUQ/cyIDoS37kV+m0Q/jkBwSIaupON/QxugIp0bNY80FQO65wnz5GLS0e9rdUpPP7fN1lQRPfcpNmzF3g99/BairfQmqEYY3ZgMvpz+hpyI2/KPxaMAkN28zcpMI2RUN+8IGSunusaqDhPCvDvmH8Ir4/X4tQdKWijwzfkla+sXUHUrkVjgpH3HBtwLJT5pEnMu73JCE3t7JK5hHm7Zdd+k+D+wzFU7T2VWVIYcemiDYoMkLwxAtQRO58MY8HOsQEn3dmREYvtEwr40tloItLd8pCDfY5QILp2JCq4=
-  distributions: "sdist bdist_wheel"
-  on:
-    tags: true
-    # python: 3.6
-    # we need this, because on projects with windows builds only, we can not build on windows, because of
-    # the filter_secure issue. So we build on WINE, but need somehow to address the matrix include on which to build
-    condition: ${deploy_on_pypi} = "True"
 
 notifications:
   email:
