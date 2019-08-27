@@ -22,11 +22,11 @@ via pip latest Development Version:
 .. code-block:: bash
 
     # upgrade all dependencies regardless of version number (PREFERRED)
-    pip install --upgrade https://github.com/{repository_slug}/archive/master.zip --upgrade-strategy eager
+    pip install --upgrade git+https://github.com/{repository_slug}.git --upgrade-strategy eager
     # normal install
-    pip install --upgrade https://github.com/{repository_slug}/archive/master.zip
+    pip install --upgrade git+https://github.com/{repository_slug}.git
     # test without installing
-    pip install https://github.com/{repository_slug}/archive/master.zip --install-option test
+    pip install git+https://github.com/{repository_slug}.git --install-option test
 
 via requirements.txt:
 
@@ -36,7 +36,7 @@ via requirements.txt:
     # for the latest Release:
     {repository}
     # for the latest Development Version :
-    https://github.com/{repository_slug}/archive/master.zip
+    git+https://github.com/{repository_slug}.git
 
     # to install and upgrade all modules mentioned in requirements.txt:
     pip install --upgrade -r /<path>/requirements.txt
@@ -49,4 +49,4 @@ via python:
     python -m pip install upgrade {repository}
 
     # for the latest Development Version
-    python -m pip install upgrade https://github.com/{repository_slug}/archive/master.zip
+    python -m pip install upgrade git+https://github.com/{repository_slug}.git

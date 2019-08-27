@@ -57,33 +57,30 @@ def main(args):
     """
 
     logger.info('include the include blocks')
-    rst_inc(source='./docs/README_template.rst',
-            target='./docs/README_template_included.rst')
+    rst_inc(source='./.docs/README_template.rst',
+            target='./README.rst')
 
     logger.info('replace repository related strings')
-    rst_str_replace(source='./docs/README_template_included.rst',
-                    target='./docs/README_template_repo_replaced.rst',
+    rst_str_replace(source='./README.rst',
+                    target='',
                     old='{repository_slug}',
-                    new=travis_repo_slug)
-    rst_str_replace(source='./docs/README_template_repo_replaced.rst',
-                    target='./docs/README_template_repo_replaced2.rst',
+                    new=travis_repo_slug,
+                    inplace=True)
+    rst_str_replace(source='./README.rst',
+                    target='',
                     old='{repository}',
-                    new=repository)
-    rst_str_replace(source='./docs/README_template_repo_replaced2.rst',
-                    target='./docs/README_template_repo_replaced3.rst',
+                    new=repository,
+                    inplace=True)
+    rst_str_replace(source='./README.rst',
+                    target='',
                     old='{repository_dashed}',
-                    new=repository_dashed)
-
-    rst_str_replace(source='./docs/README_template_repo_replaced3.rst',
-                    target='./README.rst',
+                    new=repository_dashed,
+                    inplace=True)
+    rst_str_replace(source='./README.rst',
+                    target='',
                     old='{codeclimate_link_hash}',
-                    new=codeclimate_link_hash)
-
-    logger.info('cleanup')
-    os.remove('./docs/README_template_included.rst')
-    os.remove('./docs/README_template_repo_replaced.rst')
-    os.remove('./docs/README_template_repo_replaced2.rst')
-    os.remove('./docs/README_template_repo_replaced3.rst')
+                    new=codeclimate_link_hash,
+                    inplace=True)
 
     logger.info('done')
     sys.exit(0)
