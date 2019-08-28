@@ -1,6 +1,10 @@
+# STDLIB
 import sys
-from .wrap_helper import raise_exception, is_system_windows
-import multiprocess
+import multiprocess     # type: ignore
+from typing import Any
+
+# OWN
+from .wrap_helper import WrapHelper, raise_exception
 
 
 class Timeout(object):
@@ -10,15 +14,15 @@ class Timeout(object):
     to be made and termination of execution after a timeout has passed.
     """
 
-    def __init__(self, wrap_helper):
+    def __init__(self, wrap_helper: WrapHelper) -> None:
         """Initialize instance in preparation for being called."""
         self.wrap_helper = wrap_helper
         self.__name__ = self.wrap_helper.wrapped.__name__
         self.__doc__ = self.wrap_helper.wrapped.__doc__
-        self.__process = None
-        self.__parent_conn = None
+        self.__process: multiprocess.Process = None
+        self.__parent_conn: multiprocess.Pipe = None
 
-    def __call__(self):
+    def __call__(self) -> Any:
         """Execute the embedded function object asynchronously.
         The function given to the constructor is transparently called and
         requires that "ready" be intermittently polled. If and when it is
@@ -31,12 +35,12 @@ class Timeout(object):
         self.__process.start()
         if not self.wrap_helper.dec_hard_timeout:
             self.wait_until_process_started()
-        if self.__parent_conn.poll(self.wrap_helper.dec_timeout):
+        if self.__parent_conn.poll(self.wrap_helper.dec_timeout_float):
             return self.value
         else:
             self.cancel()
 
-    def cancel(self):
+    def cancel(self) -> None:
         """Terminate any possible execution of the embedded function."""
         if self.__process.is_alive():
             self.__process.terminate()
@@ -44,11 +48,11 @@ class Timeout(object):
         self.__parent_conn.close()
         raise_exception(self.wrap_helper.timeout_exception, self.wrap_helper.exception_message)
 
-    def wait_until_process_started(self):
+    def wait_until_process_started(self) -> None:
         self.__parent_conn.recv()
 
     @property
-    def value(self):
+    def value(self) -> Any:
         exception_occured, result = self.__parent_conn.recv()
         # when self.__parent_conn.recv() exits, maybe __process is still alive,
         # then it might zombie the process. so join it explicitly
@@ -61,7 +65,7 @@ class Timeout(object):
             return result
 
 
-def _target(wrap_helper):
+def _target(wrap_helper: WrapHelper) -> None:
     """Run a function with arguments and return output via a pipe.
     This is a helper function for the Process created in Timeout. It runs
     the function with positional arguments and keyword arguments and then
@@ -79,10 +83,3 @@ def _target(wrap_helper):
         wrap_helper.child_conn.send((exception_occured, sys.exc_info()[1]))
     finally:
         wrap_helper.child_conn.close()
-
-
-def is_python_27_under_windows():
-    if is_system_windows() and sys.version_info < (3, 0):
-        return True
-    else:
-        return False

@@ -4,23 +4,32 @@ Timeout decorator.
     :license: MIT, see LICENSE for more details.
 """
 
-from dill import PicklingError
-from typing import Union, Callable
-import wrapt
+# STDLIB
+from typing import Any, Callable, Type, Union, cast
+
+# EXT
+from dill import PicklingError          # type: ignore
+import wrapt                            # type: ignore
+
+# OWN
 from .wrap_helper import WrapHelper, detect_unpickable_objects_and_reraise
-from.wrap_function_multiprocess import Timeout
+from .wrap_function_multiprocess import Timeout
 
 
-def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exception_message=None,
-            dec_allow_eval=False, dec_hard_timeout=False):
-
-    # type: (Union[None, float, str], bool, Exception, str, bool, bool) -> Callable
+def timeout(dec_timeout: Union[None, float, str] = None,
+            use_signals: bool = True,
+            timeout_exception: Type[BaseException] = TimeoutError,
+            exception_message: str = '',
+            dec_allow_eval: bool = False,
+            dec_hard_timeout: bool = False) -> Any:
 
     """Add a timeout parameter to a function and return it.
 
-    ToDo :   Traceback information when use_signals=False (see https://pypi.python.org/pypi/tblib)
-             connect the Logger of the Subprocess to the main logger when use_signals=False
-             makes life easier on Windows
+    ToDo :   not clear how to type a decorator factory,
+             tried:   ->  Callable[..., Any]
+                ...
+             return cast(Callable[..., Any], wrapped)
+             without success - so we stuck with any at the moment
 
     Windows remark : dont use the decorator on classes in the main.py because of Windows multiprocessing limitations
                      read the README
@@ -104,25 +113,25 @@ def timeout(dec_timeout=None, use_signals=True, timeout_exception=None, exceptio
     The function is wrapped and returned to the caller.
     """
 
-    @wrapt.decorator
-    def wrapper(wrapped, instance, args, kwargs):
+    @wrapt.decorator    # type: ignore
+    def wrapper(wrapped: Callable[..., Any], instance: object, args: Any, kwargs: Any) -> Any:
         wrap_helper = WrapHelper(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval,
                                  dec_hard_timeout, wrapped, instance, args, kwargs)
-        if not wrap_helper.dec_timeout:
+        if not wrap_helper.dec_timeout_float:
             return wrapped(*wrap_helper.args, **wrap_helper.kwargs)
         else:
             return wrapped_with_timeout(wrap_helper)
     return wrapper
 
 
-def wrapped_with_timeout(wrap_helper):
+def wrapped_with_timeout(wrap_helper: WrapHelper) -> Any:
     if wrap_helper.use_signals:
         return wrapped_with_timeout_signals(wrap_helper)
     else:
         return wrapped_with_timeout_process(wrap_helper)
 
 
-def wrapped_with_timeout_signals(wrap_helper):
+def wrapped_with_timeout_signals(wrap_helper: WrapHelper) -> Any:
     try:
         wrap_helper.save_old_and_set_new_alarm_handler()
         return wrap_helper.wrapped(*wrap_helper.args, **wrap_helper.kwargs)
@@ -130,7 +139,7 @@ def wrapped_with_timeout_signals(wrap_helper):
         wrap_helper.restore_old_alarm_handler()
 
 
-def wrapped_with_timeout_process(wrap_helper):
+def wrapped_with_timeout_process(wrap_helper: WrapHelper) -> Any:
     try:
         timeout_wrapper = Timeout(wrap_helper)
         return timeout_wrapper()

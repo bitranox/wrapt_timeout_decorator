@@ -1,75 +1,98 @@
-import dill
+# STDLIB
 import logging
 import platform
 import signal
 import sys
 import threading
-from typing import Any, Dict, List, Union
+from types import FrameType, FunctionType
+from typing import Any, Callable, Dict, List, Type, Union
+
+# EXT
+import dill             # type: ignore
+import multiprocess     # type: ignore
 
 logging.basicConfig()
 logger = logging.getLogger('pickle_analyzer')
 
-if sys.version_info < (3, 3):
-    TimeoutError = AssertionError  # there is no TimeoutError below Python 3.3
-
 
 class WrapHelper(object):
-    def __init__(self, dec_timeout=None, use_signals=False, timeout_exception=None,
-                 exception_message=None, dec_allow_eval=False, dec_hard_timeout=False,
-                 wrapped=None, instance=None, args=None, kwargs=None):
+    def __init__(self,
+                 dec_timeout: Union[None, float, str],
+                 use_signals: bool,
+                 timeout_exception: Type[BaseException],
+                 exception_message: str,
+                 dec_allow_eval: bool,
+                 dec_hard_timeout: bool,
+                 wrapped: Callable[..., Any],
+                 instance: object,
+                 args: Any,
+                 kwargs: Any) -> None:
         self.dec_timeout = dec_timeout
         self.use_signals = use_signals
         self.timeout_exception = timeout_exception
         self.exception_message = exception_message
         self.dec_allow_eval = dec_allow_eval
         self.dec_hard_timeout = dec_hard_timeout
-        self.old_alarm_handler = None
         self.wrapped = wrapped
         self.instance = instance
         self.args = args
         self.kwargs = kwargs
-        self.child_conn = None
+
+        self.dec_timeout_float: float = 0.0
+        self.old_alarm_handler: Union[Callable[[signal.Signals, FrameType], None], int, signal.Handlers, None] = None
+        self.child_conn: multiprocess.Pipe = None
 
         self.pop_kwargs()
         self.set_signals_to_false_if_not_possible()
         self.eval_if_required()
+        self.convert_timeout_given_to_float()
         self.format_exception_message()
 
-    def pop_kwargs(self):
+    def convert_timeout_given_to_float(self) -> None:
+        if self.dec_timeout is None:
+            self.dec_timeout_float = 0.0
+        else:
+            try:
+                self.dec_timeout_float = float(self.dec_timeout)
+            except ValueError:
+                raise ValueError('the given or evaluated value for the timeout can not be converted to float : "{dec_timeout}"'
+                                 .format(dec_timeout=self.dec_timeout))
+
+    def pop_kwargs(self) -> None:
         self.dec_allow_eval = self.kwargs.pop('dec_allow_eval', self.dec_allow_eval)
         self.dec_timeout = self.kwargs.pop('dec_timeout', self.dec_timeout)
         self.use_signals = self.kwargs.pop('use_signals', self.use_signals)
         self.dec_hard_timeout = self.kwargs.pop('dec_hard_timeout', self.dec_hard_timeout)
 
     @property
-    def should_eval(self):
+    def should_eval(self) -> bool:
         if self.dec_allow_eval and isinstance(self.dec_timeout, str):
             return True
         else:
             return False
 
-    def format_exception_message(self):
+    def format_exception_message(self) -> None:
         function_name = self.wrapped.__name__ or '(unknown name)'
         if not self.exception_message:
-            self.exception_message = 'Function {function_name} timed out after {dec_timeout} seconds'
-        self.exception_message = self.exception_message.format(function_name=function_name, dec_timeout=self.dec_timeout)
+            self.exception_message = 'Function {function_name} timed out after {dec_timeout_float} seconds'
+        self.exception_message = self.exception_message.format(function_name=function_name, dec_timeout_float=self.dec_timeout_float)
 
-    def new_alarm_handler(self, signum, frame):
+    def new_alarm_handler(self, signum: signal.Signals, frame: FrameType) -> None:
         raise_exception(self.timeout_exception, self.exception_message)
 
-    def save_old_and_set_new_alarm_handler(self):
+    def save_old_and_set_new_alarm_handler(self) -> None:
         self.old_alarm_handler = signal.signal(signal.SIGALRM, self.new_alarm_handler)
-        signal.setitimer(signal.ITIMER_REAL, self.dec_timeout)
+        signal.setitimer(signal.ITIMER_REAL, self.dec_timeout_float)
 
-    def restore_old_alarm_handler(self):
+    def restore_old_alarm_handler(self) -> None:
         signal.setitimer(signal.ITIMER_REAL, 0)
         signal.signal(signal.SIGALRM, self.old_alarm_handler)
 
-    def set_signals_to_false_if_not_possible(self):
+    def set_signals_to_false_if_not_possible(self) -> None:
         if is_system_windows() or not is_in_main_thread():
             self.use_signals = False
 
-    def eval_if_required(self):
+    def eval_if_required(self) -> None:
         wrapped = self.wrapped
         instance = self.instance
         args = self.args
@@ -79,7 +102,7 @@ class WrapHelper(object):
             self.dec_timeout = eval(str(self.dec_timeout))
 
 
-def detect_unpickable_objects_and_reraise(object_to_pickle):
+def detect_unpickable_objects_and_reraise(object_to_pickle: Any) -> None:
     # sometimes the detection detects unpickable objects but actually
     # they can be pickled - so we just try to start the thread and report
     # the unpickable objects if that fails
@@ -91,11 +114,10 @@ def detect_unpickable_objects_and_reraise(object_to_pickle):
     raise dill.PicklingError(s_err)
 
 
-def detect_unpickable_objects(object_to_pickle, dill_trace=True, log_warning=True):
-    # type: (Any, bool, bool) -> Dict
+def detect_unpickable_objects(object_to_pickle: Any, dill_trace: bool = True, log_warning: bool = True) -> Dict[str, Union[str, List[Any]]]:
     if log_warning:
         logger.warning('always remember that the "object_to_pickle" should not be defined within the main context')
-    dict_result = dict()                    # type: Dict[str, Union[str, List[str]]]
+    dict_result: Dict[str, Union[str, List[Any]]] = dict()
     dict_result['object_name'] = ''
     dict_result['bad_items'] = list()
     dict_result['bad_objects'] = list()
@@ -108,7 +130,7 @@ def detect_unpickable_objects(object_to_pickle, dill_trace=True, log_warning=Tru
         pickled_object = dill.dumps(object_to_pickle)
         dill.loads(pickled_object)
     except Exception:
-        dict_result['object_name'] = object_to_pickle.__name__ or 'object'
+        dict_result['object_name'] = get_object_name(object_to_pickle)
         dict_result['bad_objects'] = get_bad_pickling_objects(object_to_pickle)
         dict_result['bad_types'] = get_bad_pickling_types(object_to_pickle)
     finally:
@@ -116,8 +138,16 @@ def detect_unpickable_objects(object_to_pickle, dill_trace=True, log_warning=Tru
         return dict_result
 
 
-def get_bad_pickling_types(object_to_pickle):
-    bad_types = list()
+def get_object_name(object_to_pickle: object) -> str:
+    object_name = 'object'
+    if hasattr(object_to_pickle, '__name__'):
+        if object_to_pickle.__name__:                   # type: ignore
+            object_name = object_to_pickle.__name__     # type: ignore
+    return object_name
+
+
+def get_bad_pickling_types(object_to_pickle: object) -> List[Any]:
+    bad_types: List[Any] = list()
     # noinspection PyBroadException
     try:
         bad_types = dill.detect.badtypes(object_to_pickle)
@@ -127,8 +157,8 @@ def get_bad_pickling_types(object_to_pickle):
         return bad_types
 
 
-def get_bad_pickling_objects(object_to_pickle):
-    bad_objects = list()
+def get_bad_pickling_objects(object_to_pickle: Any) -> Any:
+    bad_objects: List[object] = list()
     # noinspection PyBroadException
     try:
         bad_objects = dill.detect.badobjects(object_to_pickle)
@@ -138,7 +168,7 @@ def get_bad_pickling_objects(object_to_pickle):
         return bad_objects
 
 
-def raise_exception(exception, exception_message):
+def raise_exception(exception: Type[BaseException], exception_message: str) -> None:
     """ This function checks if a exception message is given.
     If there is no exception message, the default behaviour is maintained.
     If there is an exception message, the message is passed to the exception.
@@ -148,30 +178,14 @@ def raise_exception(exception, exception_message):
     raise exception(exception_message)
 
 
-def is_in_main_thread():
-    if sys.version_info < (3, 4):
-        return is_in_main_thread_pre_python_3_4()
-    else:
-        return is_in_main_thread_from_python_3_4_up()
-
-
-def is_in_main_thread_pre_python_3_4():
-    # old python versions below 3.4
-    if isinstance(threading.current_thread(), threading._MainThread):
-        return True
-    else:
-        return False
-
-
-def is_in_main_thread_from_python_3_4_up():
-    # python versions from 3.4 up
+def is_in_main_thread() -> bool:
     if threading.current_thread() == threading.main_thread():
         return True
     else:
         return False
 
 
-def is_system_windows():
+def is_system_windows() -> bool:
     if platform.system().lower().startswith('win'):
         return True
     else:

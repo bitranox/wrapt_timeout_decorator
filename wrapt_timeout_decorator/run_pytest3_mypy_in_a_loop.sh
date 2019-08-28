@@ -39,7 +39,7 @@ function pytest_loop {
     my_dir="$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )"
     while true; do
         clr_green "*** PYTEST **************************************************************************************"
-        python3 -m pytest "${my_dir}" --pep8 --disable-warnings
+        python3 -m pytest "${my_dir}" --disable-warnings
         # shellcheck disable=SC2181  # Check Exit Code directly
         if [[ "${?}" -gt 0 ]]; then
             clr_red "PYTEST Error"

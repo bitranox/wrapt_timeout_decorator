@@ -1,108 +1,101 @@
 """Timeout decorator tests."""
-
-from dill import PicklingError
-import pytest
+# STDLIB
+import sys
 from threading import Thread
 import time
-import sys
+from typing import Any
 
+# EXT
+from dill import PicklingError      # type: ignore
+import pytest                       # type: ignore
+
+# OWN
 from wrapt_timeout_decorator import *
 from wrapt_timeout_decorator.wrapt_timeout_decorator.wrap_helper import *
 from wrapt_timeout_decorator.wrapt_timeout_decorator.wrap_function_multiprocess import *
 from .lib_test_helper import *
 
-if sys.version_info < (3, 3):             # there is no TimeoutError < Python 3.3
-    TimeoutError = AssertionError
 
-
-@pytest.fixture(params=[False, True])
-def use_signals(request):
+@pytest.fixture(params=[False, True])   # type: ignore
+def use_signals(request: Any) -> Any:
     """Use signals for timing out or not."""
     return request.param
 
 
-def test_timeout_decorator_arg(use_signals):
-    @timeout(0.1, use_signals=use_signals)
-    def f():
+def test_timeout_decorator_arg(use_signals: bool) -> None:
+    @timeout(0.1, use_signals=use_signals)      # type: ignore
+    def f() -> None:
         time.sleep(0.2)
     with pytest.raises(TimeoutError):
         f()
 
 
-def test_timeout_class_method(use_signals):
+def test_timeout_class_method(use_signals: bool) -> None:
     with pytest.raises(TimeoutError, match=r'Function f timed out after 0\.1 seconds'):
         ClassTest1().f(use_signals=use_signals)
-    if not is_python_27_under_windows():
         assert ClassTest1().f(dec_timeout='instance.x', dec_allow_eval=True, use_signals=use_signals) is None
-    else:
-        with pytest.raises(Exception):
-            ClassTest1().f(dec_timeout='instance.x', dec_allow_eval=True, use_signals=use_signals)
 
 
-def test_timeout_class_method_can_pickle(use_signals):
+def test_timeout_class_method_can_pickle(use_signals: bool) -> None:
     my_object = ClassTest2(0.1)
-    if not is_python_27_under_windows():
-        with pytest.raises(TimeoutError, match=r'Function test_method timed out after 0\.1 seconds'):
-            my_object.test_method(use_signals=use_signals)
-        my_object = ClassTest2(1.0)
-        assert my_object.test_method(use_signals=use_signals) == 'done'
-    else:
-        with pytest.raises(Exception):
-            my_object.test_method(use_signals=use_signals)
+    with pytest.raises(TimeoutError, match=r'Function test_method timed out after 0\.1 seconds'):
+        my_object.test_method(use_signals=use_signals)
+    my_object = ClassTest2(1.0)
+    assert my_object.test_method(use_signals=use_signals) == 'done'
 
 
-def test_timeout_kwargs(use_signals):
-    @timeout(1, use_signals=use_signals)
-    def f():
+def test_timeout_kwargs(use_signals: bool) -> None:
+    @timeout(1, use_signals=use_signals)        # type: ignore
+    def f() -> None:
         time.sleep(0.2)
     with pytest.raises(TimeoutError, match=r'Function f timed out after 0\.1 seconds'):
         f(dec_timeout=0.1)
 
 
-def test_timeout_alternate_exception(use_signals):
-    @timeout(0.1, use_signals=use_signals, timeout_exception=StopIteration)
-    def f():
+def test_timeout_alternate_exception(use_signals: bool) -> None:
+    @timeout(0.1, use_signals=use_signals, timeout_exception=StopIteration)     # type: ignore
+    def f() -> None:
         time.sleep(0.2)
     with pytest.raises(StopIteration, match=r'Function f timed out after 0\.1 seconds'):
         f()
 
 
-def test_no_timeout_given(use_signals):
-    @timeout(use_signals=use_signals)
-    def f():
+def test_no_timeout_given(use_signals: bool) -> None:
+    @timeout(use_signals=use_signals)       # type: ignore
+    def f() -> None:
         time.sleep(0.1)
     f()
 
 
-def test_timeout_ok_timeout_as_kwarg(use_signals):
-    @timeout(dec_timeout=0.2, use_signals=use_signals)
-    def f_test_timeout_ok_timeout_as_kwarg():
+def test_timeout_ok_timeout_as_kwarg(use_signals: bool) -> None:
+    @timeout(dec_timeout=0.2, use_signals=use_signals)  # type: ignore
+    def f_test_timeout_ok_timeout_as_kwarg() -> None:
         time.sleep(0.1)
 
     f_test_timeout_ok_timeout_as_kwarg()
 
 
-def test_timeout_ok_timeout_as_arg(use_signals):
-    @timeout(2, use_signals=use_signals)
-    def f():
+def test_timeout_ok_timeout_as_arg(use_signals: bool) -> None:
+    @timeout(2, use_signals=use_signals)    # type: ignore
+    def f() -> None:
         time.sleep(0.5)
     f()
 
 
-def test_function_name(use_signals):
-    @timeout(dec_timeout=2, use_signals=use_signals)
-    def func_name():
+def test_function_name(use_signals: bool) -> None:
+    @timeout(dec_timeout=2, use_signals=use_signals)    # type: ignore
+    def func_name() -> None:
         pass
 
     func_name()
     assert func_name.__name__ == 'func_name'
 
 
-def test_timeout_pickle_error():
+def test_timeout_pickle_error() -> None:
     """Test that when a pickle error occurs a pickling error is raised"""
     # codecov start ignore
-    @timeout(dec_timeout=1, use_signals=False)
-    def f():
+    @timeout(dec_timeout=1, use_signals=False)  # type: ignore
+    def f() -> object:
         time.sleep(0.1)
 
         class Test(object):
@@ -113,26 +106,26 @@ def test_timeout_pickle_error():
         f()
 
 
-def test_timeout_custom_exception_message():
-    @timeout(dec_timeout=1, exception_message="Custom fail message")
-    def f():
+def test_timeout_custom_exception_message() -> None:
+    @timeout(dec_timeout=1, exception_message="Custom fail message")    # type: ignore
+    def f() -> None:
         time.sleep(2)
     with pytest.raises(TimeoutError, match="Custom fail message"):
         f()
 
 
-def test_timeout_default_exception_message():
-    @timeout(dec_timeout=1)
-    def f():
+def test_timeout_default_exception_message() -> None:
+    @timeout(dec_timeout=1)     # type: ignore
+    def f() -> None:
         time.sleep(2)
-    with pytest.raises(TimeoutError, match="Function f timed out after 1 seconds"):
+    with pytest.raises(TimeoutError, match=r"Function f timed out after 1.0 seconds"):
         f()
 
 
-def test_timeout_eval(use_signals):
+def test_timeout_eval(use_signals: bool) -> None:
     """ Test Eval """
-    @timeout(dec_timeout='args[0] * 2', use_signals=use_signals, dec_allow_eval=True)
-    def f(x):
+    @timeout(dec_timeout='args[0] * 2', use_signals=use_signals, dec_allow_eval=True)   # type: ignore
+    def f(x: float) -> None:
         time.sleep(0.4)
 
     assert f(0.6) is None
@@ -140,19 +133,19 @@ def test_timeout_eval(use_signals):
         f(0.1)
 
 
-def test_exception(use_signals):
+def test_exception(use_signals: bool) -> None:
     """ Test Exception """
-    @timeout(1.0, use_signals=use_signals)
-    def f():
+    @timeout(1.0, use_signals=use_signals)      # type: ignore
+    def f() -> None:
         raise AssertionError('test')
 
     with pytest.raises(AssertionError, match='test'):
         f()
 
 
-def test_no_function_name(use_signals):
-    @timeout(0.1, use_signals=use_signals)
-    def f():
+def test_no_function_name(use_signals: bool) -> None:
+    @timeout(0.1, use_signals=use_signals)      # type: ignore
+    def f() -> None:
         time.sleep(1)
 
     with pytest.raises(TimeoutError, match=r'Function \(unknown name\) timed out after 0.1 seconds'):
@@ -160,17 +153,17 @@ def test_no_function_name(use_signals):
         f()
 
 
-def test_custom_exception(use_signals):
-    @timeout(0.1, use_signals=use_signals, timeout_exception=ValueError, exception_message='custom exception message')
-    def f():
+def test_custom_exception(use_signals: bool) -> None:
+    @timeout(0.1, use_signals=use_signals, timeout_exception=ValueError, exception_message='custom exception message')      # type: ignore
+    def f() -> None:
         time.sleep(1)
     with pytest.raises(ValueError, match='custom exception message'):
         f()
 
 
-def test_not_main_thread(use_signals):
-    @timeout(0.3, use_signals=use_signals)
-    def f(x):
+def test_not_main_thread(use_signals: bool) -> None:
+    @timeout(0.3, use_signals=use_signals)      # type: ignore
+    def f(x: float) -> None:
         time.sleep(x)
 
     # get rid of not covered because in thread
@@ -179,7 +172,7 @@ def test_not_main_thread(use_signals):
     # we would need to set up a queue to communicate.
     # but we can check if the timeout occured
     test_thread = Thread(target=f, args=(10, ))
-    test_thread.name = None
+    test_thread.name = ''
     test_thread.daemon = True
     start_time = time.time()
     test_thread.start()
@@ -191,8 +184,8 @@ def test_not_main_thread(use_signals):
     assert 0.0 < (stop_time - start_time) < 9
 
 
-@timeout(0.1, use_signals=use_signals)
-def can_not_be_pickled(x):
+@timeout(0.1, use_signals=use_signals)      # type: ignore
+def can_not_be_pickled(x: float) -> None:
     time.sleep(x)
 
 
@@ -200,13 +193,13 @@ def can_not_be_pickled(x):
 can_not_be_pickled(0, dec_timeout=0)
 
 
-def test_pickle_detection_not_implemented_error():
+def test_pickle_detection_not_implemented_error() -> None:
     match = r'can not pickle can_not_be_pickled, '
     with pytest.raises(PicklingError, match=match):
         detect_unpickable_objects_and_reraise(can_not_be_pickled)
 
 
-def test_pickle_analyser():
+def test_pickle_analyser() -> None:
     result = detect_unpickable_objects(can_not_be_pickled, dill_trace=True)
 
     assert str(result['bad_objects']) == '[NotImplementedError(\'object proxy must define __reduce_ex__()\')]' or \
@@ -218,9 +211,9 @@ def test_pickle_analyser():
     assert result['object_name'] == 'can_not_be_pickled'
 
 
-def test_hard_timeout_windows_only():
-    @timeout(dec_timeout=0.25, use_signals=use_signals)
-    def f_test_hard_timeout():
+def test_hard_timeout_windows_only() -> None:
+    @timeout(dec_timeout=0.25, use_signals=use_signals)     # type: ignore
+    def f_test_hard_timeout() -> str:
         time.sleep(0.1)
         return 'done'
     if is_system_windows():
@@ -229,21 +222,21 @@ def test_hard_timeout_windows_only():
         assert f_test_hard_timeout(dec_hard_timeout=False) == 'done'
 
 
-@timeout(dec_timeout=1, use_signals=use_signals)
-def outer():
+@timeout(dec_timeout=1, use_signals=use_signals)    # type: ignore
+def outer() -> None:
     inner()
 
 
-@timeout(dec_timeout=2, use_signals=False)
-def inner():
+@timeout(dec_timeout=2, use_signals=False)      # type: ignore
+def inner() -> str:
     time.sleep(3)
     return 'done'
 
 
-def test_nested_decorator():
+def test_nested_decorator() -> None:
     """
     >>> test_nested_decorator()
     """
 
-    with pytest.raises(TimeoutError, match=r'Function outer timed out after 1 seconds'):
+    with pytest.raises(TimeoutError, match=r'Function outer timed out after 1.0 seconds'):
         outer()
