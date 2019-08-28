@@ -14,8 +14,9 @@ required_for_tests = list()                     # type: List    # required for p
 entry_points = dict()                           # type: Dict    # required for python 3.4
 
 
+# python 3.4 Version
 def get_version(dist_directory: str) -> str:
-    with open(pathlib.Path(__file__).parent / '{dist_directory}/version.txt'.format(dist_directory=dist_directory), mode='r') as version_file:
+    with open(str(pathlib.Path(__file__).parent / '{dist_directory}/version.txt'.format(dist_directory=dist_directory)), mode='r') as version_file:
         version = version_file.readline()
     return version
 
