@@ -36,7 +36,7 @@ matrix:
           - chmod -R 0755 /usr/local/lib_bash
           - chmod -R +x /usr/local/lib_bash/*.sh
           - /usr/local/lib_bash/lib_retry.sh retry choco install python3
-            export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
+          - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
           # ${CMDPREFIX} ${python_command} ./setup.py test    schlägt bei wrapt_timeout_decorator fehl,
           # wenn nicht vorher installiert wird !
           - ${CMDPREFIX} ${python_command} ./setup.py install
