@@ -9,7 +9,7 @@ except ImportError:
     from distutils.core import setup
 
 package_name = 'wrapt_timeout_decorator'
-required: List = list()
+required: List = ['dill', 'multiprocess', 'wrapt']
 required_for_tests: List = list()
 entry_points: Dict = dict()
 
