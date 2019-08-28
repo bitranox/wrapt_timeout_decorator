@@ -30,7 +30,7 @@ class methods, static methods and so on, preserving also the traceback informati
 
 There is also a powerful eval function, it allows to read the desired timeout value even from Class attributes.
 
-It is very flexible and can be used with python >= 3.4, pypy3 and probably other dialects.
+It is very flexible and can be used with python >= 3.5, pypy3 and probably other dialects.
 
 There are two timeout strategies implemented, the ubiquitous method using "Signals" and the second using Multiprocessing.
 Using "Signals" is slick and lean, but there are nasty caveats, please check section `Caveats using Signals`_
