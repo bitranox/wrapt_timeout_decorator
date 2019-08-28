@@ -9,9 +9,9 @@ except ImportError:
     from distutils.core import setup
 
 package_name = 'wrapt_timeout_decorator'
-required: List = ['dill', 'multiprocess', 'wrapt']
-required_for_tests: List = list()
-entry_points: Dict = dict()
+required = ['dill', 'multiprocess', 'wrapt']    # type: List    # required for python 3.4
+required_for_tests = list()                     # type: List    # required for python 3.4
+entry_points = dict()                           # type: Dict    # required for python 3.4
 
 
 def get_version(dist_directory: str) -> str:
