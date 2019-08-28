@@ -239,8 +239,6 @@ install:
 
 script:
     - if [[ -f ./setup.py ]]; then
-          ${lib_bash_banner} "running setup.py test";
-          ${CMDPREFIX} ${python_command} ./setup.py test;
 
           ${lib_bash_banner} "running pip install --upgrade";
           ${CMDPREFIX} ${pip_command} install ${github_master} --upgrade;
