@@ -1,7 +1,6 @@
 """Setuptools entry point."""
 import codecs
 import pathlib
-from typing import Dict, List
 
 try:
     from setuptools import setup
@@ -9,12 +8,12 @@ except ImportError:
     from distutils.core import setup
 
 package_name = 'wrapt_timeout_decorator'
-required = ['dill', 'multiprocess', 'wrapt']    # type: List    # required for python 3.4
-required_for_tests = list()                     # type: List    # required for python 3.4
-entry_points = dict()                           # type: Dict    # required for python 3.4
+required = ['dill', 'multiprocess', 'wrapt']    # type: ignore  # required for python 3.4
+required_for_tests = list()                     # type: ignore  # required for python 3.4
+entry_points = dict()                           # type: ignore  # required for python 3.4
 
 
-# python 3.4 Version
+# python 3.4 Version needs str type for open
 def get_version(dist_directory: str) -> str:
     with open(str(pathlib.Path(__file__).parent / '{dist_directory}/version.txt'.format(dist_directory=dist_directory)), mode='r') as version_file:
         version = version_file.readline()
@@ -54,7 +53,7 @@ setup(name=package_name,
       classifiers=CLASSIFIERS,
       entry_points=entry_points,
       # minimally needs to run tests - no project requirements here
-      tests_require=['typing',
+      tests_require=['typing ; python_version < "3.5"',
                      'pathlib',
                      'mypy ; platform_python_implementation != "PyPy" and python_version >= "3.5"',
                      'pytest',
@@ -64,9 +63,10 @@ setup(name=package_name,
                      ] + required_for_tests,
 
       # specify what a project minimally needs to run correctly
-      install_requires=['typing', 'pathlib'] + required + required_for_tests,
+      install_requires=['typing ; python_version < "3.5"',
+                        'pathlib'] + required + required_for_tests,
       # minimally needs to run the setup script, dependencies needs also to put here for setup.py install test
-      setup_requires=['typing',
+      setup_requires=['typing ; python_version < "3.5"',
                       'pathlib',
                       'pytest-runner'] + required
       )
