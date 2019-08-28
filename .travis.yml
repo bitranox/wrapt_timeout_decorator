@@ -39,7 +39,8 @@ matrix:
           - export PATH="/c/Python37:/c/Python37/Scripts:$PATH"
           # ${CMDPREFIX} ${python_command} ./setup.py test    schlägt bei wrapt_timeout_decorator fehl,
           # wenn nicht vorher installiert wird !
-          - ${CMDPREFIX} ${python_command} ./setup.py install
+          # - ${CMDPREFIX} ${python_command} ./setup.py install
+          - ${CMDPREFIX} ${pip_command} install ${github_master} --upgrade;
 
     - os: linux
       language: python
