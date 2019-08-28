@@ -68,12 +68,13 @@ def _target(wrap_helper):
     returns the function's output by way of a queue. If an exception gets
     raised, it is returned to Timeout to be raised by the value property.
     """
+    # noinspection PyBroadException
     try:
         if not wrap_helper.dec_hard_timeout:
             wrap_helper.child_conn.send('started')
         exception_occured = False
         wrap_helper.child_conn.send((exception_occured, wrap_helper.wrapped(*wrap_helper.args, **wrap_helper.kwargs)))
-    except:
+    except Exception:
         exception_occured = True
         wrap_helper.child_conn.send((exception_occured, sys.exc_info()[1]))
     finally:
