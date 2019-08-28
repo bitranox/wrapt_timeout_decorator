@@ -57,7 +57,7 @@ matrix:
 
     - os: linux
       language: python
-      python: '3.7.1'
+      python: '3.7'
 
     - os: linux
       language: python
@@ -65,7 +65,12 @@ matrix:
 
     - os: linux
       language: python
-      python: 'pypy3.5-6.0'
+      python: '3.8-dev'
+
+    - os: linux
+      language: python
+      python: 'pypy3'
+      # python: 'pypy3.5-6.0'
 
     - os: linux
       language: python
@@ -197,7 +202,7 @@ matrix:
       language: sh
       name: "osX Python 3.7"
       python: "3.7"
-      osx_image: xcode10.2  # Python 3.7.2 running on macOS 10.14.3
+      osx_image: xcode11
       env:
         # on osx pip and python points to python 2.7 - therefore we have to use pip3 and python3 here
         - pip_command="pip3"
@@ -221,33 +226,102 @@ install:
     - if [[ ${wine_python_version} == "python3" ]]; then ${lib_bash_wine}/003_000_install_wine_python3_preinstalled.sh ; fi
     - if [[ ${CMDPREFIX} == "wine" ]]; then ${lib_bash_wine}/004_000_install_wine_git_portable.sh ; fi
     - if [[ ${CMDPREFIX} == "wine" ]]; then ${lib_bash_wine}/005_000_install_wine_powershell_core.sh ; fi
-    - ${lib_bash_banner} "upgrading pip"
 
-    - ${CMDPREFIX} ${python_command} -m pip install --upgrade pip
-    - if [[ ${mypy_static_typecheck} == "True" ]]; then ${lib_bash_banner} "install mypy" && ${CMDPREFIX} ${pip_command} install git+https://github.com/python/mypy.git; fi
-    - if [[ ${build_docs} == "True" ]]; then ${lib_bash_banner} "install rst_include (Building Docs)" && ${CMDPREFIX} ${pip_command} install rst_include; fi
-    - ${lib_bash_banner} "install codecov" && ${CMDPREFIX} ${pip_command} install codecov
-    - ${lib_bash_banner} "install pytest" && ${CMDPREFIX} ${pip_command} install pytest git+https://github.com/PyCQA/pycodestyle.git git+https://github.com/henry0312/pytest-codestyle.git pytest-cov
-    - ${lib_bash_banner} "install dill" && ${CMDPREFIX} ${pip_command} install dill
-    - if [[ -f ./setup.py ]]; then ${lib_bash_banner} "setup.py found" ; else ${lib_bash_banner_warning} "no setup.py found, nothing to test" ; fi
-    - if [[ -f ./setup.py ]]; then ${lib_bash_banner} "Installing Application" && ${CMDPREFIX} ${pip_command} install -e . ; fi
+    - ${lib_bash_banner} "upgrading pip"; ${CMDPREFIX} ${python_command} -m pip install --upgrade pip
+
+    - if [[ ${build_docs} == "True" ]]; then
+          ${lib_bash_banner} "install rst_include (Building Docs)";
+          ${CMDPREFIX} ${pip_command} install rst_include;
+      fi
+
+    - if [[ -f ./setup.py ]]; then
+          ${lib_bash_banner} "setup.py found, Installing Application";
+          ${CMDPREFIX} ${pip_command} install -e . ;
+      else
+          ${lib_bash_banner_warning} "no setup.py found, skipping Installation";
+      fi
 
 script:
-    - if [[ -f ./setup.py ]]; then ${lib_bash_banner} "running setup.py --install-option test" && ${CMDPREFIX} ${pip_command} install ${github_master} --install-option test ; else ${lib_bash_banner_warning} "no setup.py found, no setup.py --install-option test" ; fi
-    - if [[ -f ./setup.py ]]; then ${lib_bash_banner} "running pytest" && ${CMDPREFIX} ${python_command} -m pytest --codestyle --cov ; else ${lib_bash_banner_warning} "no setup.py found, no pytest" ; fi
-    - if [[ ${mypy_static_typecheck} == "True" ]]; then ${lib_bash_banner} "running mypy static typechecks" && ${CMDPREFIX} ${python_command} -m mypy -p ${REPOSITORY_NAME} --strict --no-warn-unused-ignores; else ${lib_bash_banner_warning} "static typechecking disabled on this build" ;  fi
-    - if [[ -f build_docs.py ]] && [[ "${build_docs}" == "True" ]]; then ${lib_bash_banner} "Building Docs" && ${CMDPREFIX} ${python_command} build_docs.py ${TRAVIS_REPO_SLUG}; else ${lib_bash_banner_warning} "Building Docs disabled on this build" ;  fi
-    # only for non tagged builds if doctest is enabled, to check before we deploy on pypi
-    - if [[ -f setup.py ]] && [[ -z ${TRAVIS_TAG} ]] && [[ -f build_docs.py ]] && [[ ${build_docs} == "True" ]]; then export check_build="True" ; fi
-    - if [[ ${check_build} == "True" ]]; then ${lib_bash_banner} "Building Wheels" ; else ${lib_bash_banner_warning} "Building Wheels disabled on this build" ; fi
-    - if [[ ${check_build} == "True" ]]; then ${CMDPREFIX} ${pip_command} install readme_renderer > /dev/null 2>&1 ; fi     # to check if long_description (Readme) can be rendered, otherwise PyPy will not accept it
-    - if [[ ${check_build} == "True" ]]; then ${CMDPREFIX} ${pip_command} install --upgrade twine > /dev/null 2>&1 ; fi
-    - if [[ ${check_build} == "True" ]]; then ${CMDPREFIX} ${pip_command} install wheel > /dev/null 2>&1 ; fi
-    - if [[ ${check_build} == "True" ]]; then ${CMDPREFIX} ${python_command} setup.py sdist bdist_wheel || ${lib_bash_banner_warning} "Building Wheels failed" 1>&2 ; fi
-    - if [[ ${check_build} == "True" ]]; then ${lib_bash_banner} "Testing PyPi Deployment" && ${CMDPREFIX} twine check dist/* && export pypy_deploy_would_pass="True" || export pypy_deploy_would_pass="False" ; fi
-    - if [[ ${check_build} == "True" ]] && [[ ${pypy_deploy_would_pass} == "True" ]]; then ${lib_bash_color} clr_bold clr_green "PyPi Deployment would be OK"; fi
-    - if [[ ${check_build} == "True" ]] && [[ ${pypy_deploy_would_pass} == "False" ]]; then ${lib_bash_banner_warning} "PyPi Deployment would fail" ; fi
-    - if [[ ${check_build} == "True" ]] && [[ ${pypy_deploy_would_pass} == "False" ]]; then exit 1 ; fi
+    - if [[ -f ./setup.py ]]; then
+          ${lib_bash_banner} "running setup.py test";
+          ${CMDPREFIX} ${python_command} ./setup.py test;
+
+          ${lib_bash_banner} "running pip install --upgrade";
+          ${CMDPREFIX} ${pip_command} install ${github_master} --upgrade;
+
+          ${lib_bash_banner} "Installing Pytest requirements";
+          ${CMDPREFIX} ${pip_command} install -r ./requirements.txt;
+          ${CMDPREFIX} ${pip_command} install codecov;
+          ${CMDPREFIX} ${pip_command} install pytest-cov;
+
+          ${lib_bash_banner} "running pytest";
+          ${CMDPREFIX} ${python_command} -m pytest --cov;
+
+          if [[ ${mypy_static_typecheck} == "True" ]]; then
+              ${lib_bash_banner} "running mypy static typechecks --strict";
+              ${CMDPREFIX} ${python_command} -m mypy -p ${REPOSITORY_NAME} --strict --no-warn-unused-ignores;
+              if [[ $? -eq 0 ]]; then
+                  ${lib_bash_banner} "mypy static typechecks --strict OK";
+              else
+                  ${lib_bash_banner_warning} "mypy static typechecks --strict FAILED";
+                  exit 1;
+              fi
+          else
+              ${lib_bash_banner_warning} "static typechecking disabled on this build";
+          fi
+
+          if [[ ! -z ${commandline_registration_check} ]]; then
+              ${lib_bash_banner} "Testing Commandline Registration";
+              "${commandline_registration_check}";
+              if [[ $? -eq 0 ]]; then
+                  ${lib_bash_banner} "Commandline Registration OK";
+              else
+                  ${lib_bash_banner_warning} "Commandline Registration FAILED";
+                  exit 1;
+              fi
+          else
+              ${lib_bash_banner_warning} "Commandline Registration Check disabled on this build";
+          fi
+
+      else
+          ${lib_bash_banner_warning} "no setup.py found, skipping pip install with --install-option test";
+          ${lib_bash_banner_warning} "no setup.py found, skipping pip install";
+          ${lib_bash_banner_warning} "no setup.py found, skipping install pytest requirements";
+          ${lib_bash_banner_warning} "no setup.py found, skipping pytest";
+          ${lib_bash_banner_warning} "no setup.py found, skipping static typechecking";
+      fi
+
+    # Bild Docs
+    - if [[ -f build_docs.py ]] && [[ "${build_docs}" == "True" ]]; then
+          ${lib_bash_banner} "Building Docs";
+          ${CMDPREFIX} ${python_command} build_docs.py ${TRAVIS_REPO_SLUG};
+          if [[ $? -eq 0 ]]; then
+              ${lib_bash_banner} "Building Docs OK";
+          else
+              ${lib_bash_banner_warning} "Building Docs FAILED";
+              exit 1;
+          fi
+      else
+          ${lib_bash_banner_warning} "Building Docs disabled on this build" ;
+      fi
+
+    # Check if Deployment would work on non-tagged builds
+    - if [[ -f setup.py ]] && [[ -z ${TRAVIS_TAG} ]] && [[ -f build_docs.py ]] && [[ ${build_docs} == "True" ]]; then
+          ${lib_bash_banner} "Testing PyPi Deployment";
+          ${CMDPREFIX} ${pip_command} install readme_renderer > /dev/null 2>&1;
+          ${CMDPREFIX} ${pip_command} install --upgrade twine > /dev/null 2>&1;
+          ${CMDPREFIX} ${pip_command} install wheel > /dev/null 2>&1;
+          ${CMDPREFIX} ${python_command} setup.py sdist bdist_wheel || ${lib_bash_banner_warning} "Building Wheels failed" 1>&2;
+          ${CMDPREFIX} twine check dist/*;
+          if [[ $? -eq 0 ]]; then
+              ${lib_bash_banner} "PyPi Deployment would be OK";
+          else
+              ${lib_bash_banner_warning} "PyPi Deployment would fail";
+              exit 1;
+          fi
+      else
+          ${lib_bash_banner_warning} "Check PyPi Deployment disabled on this build" ;
+      fi
 
 after_success:
     - ${CMDPREFIX} coverage report
@@ -261,13 +335,15 @@ after_success:
     # env:
     #   global:
     #     -secure: *******
-    - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then export deploy_tagged_commit_on_pypy="True" ; fi
-    - if [[ ${deploy_tagged_commit_on_pypy} == "True" ]]; then ${CMDPREFIX} ${pip_command} install readme_renderer ; fi           # to check if long_description (Readme) can be rendered, otherwise PyPy will not accept it
-    - if [[ ${deploy_tagged_commit_on_pypy} == "True" ]]; then ${CMDPREFIX} ${pip_command} install --upgrade twine ; fi
-    - if [[ ${deploy_tagged_commit_on_pypy} == "True" ]]; then ${CMDPREFIX} ${pip_command} install wheel ; fi
-    - if [[ ${deploy_tagged_commit_on_pypy} == "True" ]]; then ${CMDPREFIX} ${python_command} setup.py sdist bdist_wheel ; fi
-    - if [[ ${deploy_tagged_commit_on_pypy} == "True" ]]; then ${CMDPREFIX} twine check dist/* ; fi                               # check distribution before uploading it
-    - if [[ ${deploy_tagged_commit_on_pypy} == "True" ]]; then ${CMDPREFIX} twine upload --repository-url https://upload.pypi.org/legacy/ -u bitranox -p ${pypi_password} dist/* ; fi
+    - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then
+          ${lib_bash_banner} "Deploy on PyPi";
+          ${CMDPREFIX} ${pip_command} install readme_renderer;
+          ${CMDPREFIX} ${pip_command} install --upgrade twine;
+          ${CMDPREFIX} ${pip_command} install wheel;
+          ${CMDPREFIX} ${python_command} setup.py sdist bdist_wheel;
+          ${CMDPREFIX} twine check dist/*;
+          ${CMDPREFIX} twine upload --repository-url https://upload.pypi.org/legacy/ -u bitranox -p ${pypi_password} dist/*;
+      fi
 
 
 notifications:
