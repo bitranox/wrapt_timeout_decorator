@@ -1,11 +1,23 @@
 """Setuptools entry point."""
 import codecs
-import os
+import pathlib
+from typing import Dict, List
 
 try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
+
+package_name = 'wrapt_timeout_decorator'
+required: List = list()
+required_for_tests: List = list()
+entry_points: Dict = dict()
+
+
+def get_version(dist_directory: str) -> str:
+    with open(pathlib.Path(__file__).parent / '{dist_directory}/version.txt'.format(dist_directory=dist_directory), mode='r') as version_file:
+        version = version_file.readline()
+    return version
 
 
 CLASSIFIERS = [
@@ -18,38 +30,42 @@ CLASSIFIERS = [
     'Topic :: Software Development :: Libraries :: Python Modules'
 ]
 
-description = 'Timeout decorator'
-
-dirname = os.path.dirname(__file__)
-readme_filename = os.path.join(dirname, 'README.rst')
-changes_filename = os.path.join(dirname, 'CHANGES.rst')
-
-long_description = description
-if os.path.exists(readme_filename):
+path_readme = pathlib.Path(__file__).parent / 'README.rst'
+long_description = package_name
+if path_readme.exists():
+    # noinspection PyBroadException
     try:
-        readme_content = codecs.open(readme_filename, encoding='utf-8').read()
+        readme_content = codecs.open(str(path_readme), encoding='utf-8').read()
         long_description = readme_content
     except Exception:
         pass
 
-if os.path.exists(changes_filename):
-    try:
-        changes_content = codecs.open(changes_filename, encoding='utf-8').read()
-        long_description = '\n'.join((long_description, changes_content))
-    except Exception:
-        pass
 
-setup(
-    name='wrapt_timeout_decorator',
-    version='1.3.0',
-    description=description,
-    long_description=long_description,
-    long_description_content_type='text/x-rst',
-    author='Robert Nowotny',
-    author_email='rnowotny1966@gmail.com',
-    url='https://github.com/bitranox/wrapt_timeout_decorator',
-    packages=['wrapt_timeout_decorator'],
-    install_requires=['dill', 'multiprocess', 'wrapt', 'pytest', 'typing'],
-    classifiers=CLASSIFIERS,
-    setup_requires=['pytest-runner'],
-    tests_require=['pytest'])
+setup(name=package_name,
+      version=get_version(package_name),
+      url='https://github.com/bitranox/{package_name}'.format(package_name=package_name),
+      packages=[package_name],
+      description=package_name,
+      long_description=long_description,
+      long_description_content_type='text/x-rst',
+      author='Robert Nowotny',
+      author_email='rnowotny1966@gmail.com',
+      classifiers=CLASSIFIERS,
+      entry_points=entry_points,
+      # minimally needs to run tests - no project requirements here
+      tests_require=['typing',
+                     'pathlib',
+                     'mypy ; platform_python_implementation != "PyPy" and python_version >= "3.5"',
+                     'pytest',
+                     'pytest-pep8 ; python_version < "3.5"',
+                     'pytest-codestyle ; python_version >= "3.5"',
+                     'pytest-mypy ; platform_python_implementation != "PyPy" and python_version >= "3.5"'
+                     ] + required_for_tests,
+
+      # specify what a project minimally needs to run correctly
+      install_requires=['typing', 'pathlib'] + required + required_for_tests,
+      # minimally needs to run the setup script, dependencies needs also to put here for setup.py install test
+      setup_requires=['typing',
+                      'pathlib',
+                      'pytest-runner'] + required
+      )
