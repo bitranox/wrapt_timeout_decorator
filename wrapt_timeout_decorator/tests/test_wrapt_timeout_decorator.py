@@ -196,11 +196,11 @@ can_not_be_pickled(0, dec_timeout=0)
 def test_pickle_detection_not_implemented_error() -> None:
     match = r'can not pickle can_not_be_pickled, '
     with pytest.raises(PicklingError, match=match):
-        detect_unpickable_objects_and_reraise(can_not_be_pickled)
+        detect_unpickable_objects_and_reraise(can_not_be_pickled)   # type: ignore
 
 
 def test_pickle_analyser() -> None:
-    result = detect_unpickable_objects(can_not_be_pickled, dill_trace=True)
+    result = detect_unpickable_objects(can_not_be_pickled, dill_trace=True)        # type: ignore
 
     assert str(result['bad_objects']) == '[NotImplementedError(\'object proxy must define __reduce_ex__()\')]' or \
                                          '[NotImplementedError(\'object proxy must define __reduce_ex__()\',)]'
@@ -216,7 +216,7 @@ def test_hard_timeout_windows_only() -> None:
     def f_test_hard_timeout() -> str:
         time.sleep(0.1)
         return 'done'
-    if is_system_windows():
+    if is_system_windows():                                 # type: ignore
         with pytest.raises(TimeoutError, match=r'Function f_test_hard_timeout timed out after 0\.25 seconds'):
             f_test_hard_timeout(dec_hard_timeout=True)
         assert f_test_hard_timeout(dec_hard_timeout=False) == 'done'
@@ -267,8 +267,8 @@ def test_exception_is_none() -> None:
 
 def test_get_object_name() -> None:
     my_object = ClassTest1()
-    assert get_object_name(my_object) == 'object'
+    assert get_object_name(my_object) == 'object'   # type: ignore
     my_object.__name__ = 'test'                     # type: ignore
-    assert get_object_name(my_object) == 'test'
-    my_object.__name__ = ''                        # type: ignore
-    assert get_object_name(my_object) == 'object'
+    assert get_object_name(my_object) == 'test'     # type: ignore
+    my_object.__name__ = ''                         # type: ignore
+    assert get_object_name(my_object) == 'object'   # type: ignore
