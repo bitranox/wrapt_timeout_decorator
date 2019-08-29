@@ -217,8 +217,12 @@ def test_hard_timeout_windows_only() -> None:
         time.sleep(0.1)
         return 'done'
     if is_system_windows():                                 # type: ignore
+        # test hard timeout - timeout
         with pytest.raises(TimeoutError, match=r'Function f_test_hard_timeout timed out after 0\.25 seconds'):
             f_test_hard_timeout(dec_hard_timeout=True)
+        # test hard timeout - passed
+        assert f_test_hard_timeout(dec_timeout=10, dec_hard_timeout=True) == 'done'
+        # test without hard timeout
         assert f_test_hard_timeout(dec_hard_timeout=False) == 'done'
 
 
