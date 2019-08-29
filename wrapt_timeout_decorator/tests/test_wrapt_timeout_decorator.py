@@ -270,3 +270,5 @@ def test_get_object_name() -> None:
     assert get_object_name(my_object) == 'object'
     my_object.__name__ = 'test'                     # type: ignore
     assert get_object_name(my_object) == 'test'
+    my_object.__name__ = ''                        # type: ignore
+    assert get_object_name(my_object) == 'object'

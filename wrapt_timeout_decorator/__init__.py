@@ -1,6 +1,10 @@
 import pathlib
-from .wrapt_timeout_decorator import timeout
-from .wrap_helper import detect_unpickable_objects
+try:
+    from .wrapt_timeout_decorator import timeout
+    from .wrap_helper import detect_unpickable_objects
+except ImportError:
+    from wrapt_timeout_decorator import timeout         # type: ignore
+    from wrap_helper import detect_unpickable_objects   # type: ignore
 
 
 def get_version() -> str:

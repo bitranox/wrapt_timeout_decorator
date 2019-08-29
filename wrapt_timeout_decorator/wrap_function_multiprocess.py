@@ -42,7 +42,7 @@ class Timeout(object):
 
     def cancel(self) -> None:
         """Terminate any possible execution of the embedded function."""
-        if self.__process.is_alive():
+        if self.__process.is_alive():   # pragma: no cover      # we can not produce that state - its just a security measure
             self.__process.terminate()
         self.__process.join(timeout=1.0)
         self.__parent_conn.close()
