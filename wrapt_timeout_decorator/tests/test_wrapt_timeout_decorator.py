@@ -33,7 +33,7 @@ def test_timeout_decorator_arg(use_signals: bool) -> None:
 def test_timeout_class_method(use_signals: bool) -> None:
     with pytest.raises(TimeoutError, match=r'Function f timed out after 0\.1 seconds'):
         ClassTest1().f(use_signals=use_signals)
-        assert ClassTest1().f(dec_timeout='instance.x', dec_allow_eval=True, use_signals=use_signals) is None
+    assert ClassTest1().f(dec_timeout='instance.x', dec_allow_eval=True, use_signals=use_signals) is None
 
 
 def test_timeout_class_method_can_pickle(use_signals: bool) -> None:
