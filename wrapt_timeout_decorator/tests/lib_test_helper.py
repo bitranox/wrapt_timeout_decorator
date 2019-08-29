@@ -1,4 +1,4 @@
-from wrapt_timeout_decorator import timeout     # type ignore
+from wrapt_timeout_decorator import timeout     # type: ignore
 import time
 
 # classes must NOT be defined in the main module, because of windows multiprocessing spawn - there is no fork,
