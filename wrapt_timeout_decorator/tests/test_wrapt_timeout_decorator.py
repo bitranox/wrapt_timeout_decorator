@@ -252,7 +252,7 @@ def test_dec_timeout_is_none() -> None:
 def test_dec_timeout_is_invalid() -> None:
     @timeout(dec_timeout='invalid', use_signals=use_signals)  # type: ignore
     def f() -> None:
-        time.sleep(0.1)
+        time.sleep(0.1)                                       # pragma: no cover
     with pytest.raises(ValueError, match=r'the given or evaluated value for the timeout can not be converted to float : "invalid"'):
         f()
 
