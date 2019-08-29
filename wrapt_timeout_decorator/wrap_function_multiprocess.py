@@ -1,7 +1,9 @@
 # STDLIB
 import sys
-import multiprocess     # type: ignore
 from typing import Any
+
+# EXT
+import multiprocess     # type: ignore
 
 # OWN
 from .wrap_helper import WrapHelper, raise_exception
