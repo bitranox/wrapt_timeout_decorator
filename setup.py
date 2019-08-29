@@ -68,5 +68,5 @@ setup(name=package_name,
       # minimally needs to run the setup script, dependencies needs also to put here for setup.py install test
       setup_requires=['typing ; python_version < "3.5"',
                       'pathlib',
-                      'pytest-runner'] + required
+                      'pytest-runner']
       )
