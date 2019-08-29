@@ -4,7 +4,7 @@ import platform
 import signal
 import sys
 import threading
-from types import FrameType, FunctionType
+from types import FrameType
 from typing import Any, Callable, Dict, List, Type, Union
 
 # EXT

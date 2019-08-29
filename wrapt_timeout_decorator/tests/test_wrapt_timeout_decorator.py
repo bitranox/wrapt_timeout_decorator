@@ -255,3 +255,18 @@ def test_dec_timeout_is_invalid() -> None:
         time.sleep(0.1)
     with pytest.raises(ValueError, match=r'the given or evaluated value for the timeout can not be converted to float : "invalid"'):
         f()
+
+
+def test_exception_is_none() -> None:
+    @timeout(dec_timeout=0.1, use_signals=use_signals, timeout_exception=None)  # type: ignore
+    def f() -> None:
+        time.sleep(3)
+    with pytest.raises(TimeoutError, match=r'Function f timed out after 0.1 seconds'):
+        f()
+
+
+def test_get_object_name() -> None:
+    my_object = ClassTest1()
+    assert get_object_name(my_object) == 'object'
+    my_object.__name__ = 'test'                     # type: ignore
+    assert get_object_name(my_object) == 'test'
