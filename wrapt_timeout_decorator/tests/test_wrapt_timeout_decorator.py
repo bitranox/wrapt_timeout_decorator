@@ -240,3 +240,18 @@ def test_nested_decorator() -> None:
 
     with pytest.raises(TimeoutError, match=r'Function outer timed out after 1.0 seconds'):
         outer()
+
+
+def test_dec_timeout_is_none() -> None:
+    @timeout(dec_timeout=None, use_signals=use_signals)  # type: ignore
+    def f() -> None:
+        time.sleep(0.1)
+    f()
+
+
+def test_dec_timeout_is_invalid() -> None:
+    @timeout(dec_timeout='invalid', use_signals=use_signals)  # type: ignore
+    def f() -> None:
+        time.sleep(0.1)
+    with pytest.raises(ValueError, match=r'the given or evaluated value for the timeout can not be converted to float : "invalid"'):
+        f()
