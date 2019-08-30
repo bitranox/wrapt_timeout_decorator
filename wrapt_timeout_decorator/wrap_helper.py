@@ -117,7 +117,7 @@ def detect_unpickable_objects_and_reraise(object_to_pickle: Any) -> None:
 def detect_unpickable_objects(object_to_pickle: Any, dill_trace: bool = True, log_warning: bool = True) -> Dict[str, Union[str, List[Any]]]:
     if log_warning:
         logger.warning('always remember that the "object_to_pickle" should not be defined within the main context')
-    dict_result: Dict[str, Union[str, List[Any]]] = dict()
+    dict_result = dict()                # type: Dict[str, Union[str, List[Any]]]
     dict_result['object_name'] = ''
     dict_result['bad_items'] = list()
     dict_result['bad_objects'] = list()
@@ -147,7 +147,7 @@ def get_object_name(object_to_pickle: object) -> str:
 
 
 def get_bad_pickling_types(object_to_pickle: object) -> List[Any]:
-    bad_types: List[Any] = list()
+    bad_types = list()                                  # type: List[Any]
     # noinspection PyBroadException
     try:
         bad_types = dill.detect.badtypes(object_to_pickle)
