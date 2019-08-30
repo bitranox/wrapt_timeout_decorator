@@ -204,7 +204,7 @@ matrix:
         - pip_command="pip3"
         - python_command="python3"
 
-
+# SPEZIELLE VERSION FÜR WRAPT_TIMEOUT_DECORATOR !!!! SIEHE SCRIPT setup.py test
 install:
     # install lib_bash_wine - this installs also lib_bash
     - $(command -v sudo 2>/dev/null) git clone https://github.com/bitranox/lib_bash_wine.git /usr/local/lib_bash_wine
@@ -244,6 +244,7 @@ install:
           ${lib_bash_banner_warning} "no setup.py found, skipping Installation";
       fi
 
+# SPEZIELLE VERSION FÜR WRAPT_TIMEOUT_DECORATOR !!!! SIEHE SCRIPT setup.py test
 script:
     # special handling for wrapt_timeout-decorator: setup.py test fails under windows
     - if [[ -f ./setup.py ]]; then
