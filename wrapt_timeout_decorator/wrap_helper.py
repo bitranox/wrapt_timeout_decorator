@@ -158,7 +158,7 @@ def get_bad_pickling_types(object_to_pickle: object) -> List[Any]:
 
 
 def get_bad_pickling_objects(object_to_pickle: Any) -> Any:
-    bad_objects: List[object] = list()
+    bad_objects = list()                                # type: List[object]
     # noinspection PyBroadException
     try:
         bad_objects = dill.detect.badobjects(object_to_pickle)
