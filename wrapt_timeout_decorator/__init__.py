@@ -7,7 +7,7 @@ from .wrap_helper import detect_unpickable_objects
 
 
 def get_version() -> str:
-    with open(pathlib.Path(__file__).parent / 'version.txt', mode='r') as version_file:
+    with open(str(pathlib.Path(__file__).parent / 'version.txt'), mode='r') as version_file:
         version = version_file.readline()
     return version
 
