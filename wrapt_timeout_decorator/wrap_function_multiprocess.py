@@ -21,8 +21,8 @@ class Timeout(object):
         self.wrap_helper = wrap_helper
         self.__name__ = self.wrap_helper.wrapped.__name__
         self.__doc__ = self.wrap_helper.wrapped.__doc__
-        self.__process: multiprocess.Process = None
-        self.__parent_conn: multiprocess.Pipe = None
+        self.__process = None       # type: multiprocess.Process
+        self.__parent_conn = None   # type: multiprocess.Pipe
 
     def __call__(self) -> Any:
         """Execute the embedded function object asynchronously.
