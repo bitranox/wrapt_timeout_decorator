@@ -38,9 +38,9 @@ class WrapHelper(object):
         self.args = args
         self.kwargs = kwargs
 
-        self.dec_timeout_float: float = 0.0
-        self.old_alarm_handler: Union[Callable[[signal.Signals, FrameType], None], int, signal.Handlers, None] = None
-        self.child_conn: multiprocess.Pipe = None
+        self.dec_timeout_float = 0.0                # type: float
+        self.old_alarm_handler = None               # type: Union[Callable[[signal.Signals, FrameType], None], int, signal.Handlers, None]
+        self.child_conn = None                      # type: multiprocess.Pipe
 
         self.pop_kwargs()
         self.set_signals_to_false_if_not_possible()
