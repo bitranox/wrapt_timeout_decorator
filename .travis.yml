@@ -247,7 +247,7 @@ install:
 script:
     # special handling for wrapt_timeout-decorator: setup.py test fails under windows
     - if [[ -f ./setup.py ]]; then
-          if [[ ${TRAVIS_OS_NAME} != 'windows']]; then
+          if [[ ${TRAVIS_OS_NAME} != "windows" ]]; then
               ${lib_bash_banner} "running setup.py test";
               ${CMDPREFIX} ${python_command} ./setup.py test;
                   if [[ $? -eq 0 ]]; then
