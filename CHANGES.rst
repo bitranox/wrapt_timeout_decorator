@@ -1,6 +1,10 @@
 Changelog
 =========
 
+1.3.1
+-----
+2019-09-02: strict mypy static type checking, housekeeping
+
 1.3.0
 -----
 2019-05-03: pointing out caveats when using signals, the decorator defaults now to NOT using Signals !

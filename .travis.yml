@@ -9,6 +9,14 @@ env:
         - pip_command="pip"
         - python_command="python"
         - WINEDEBUG=fixme-all       # switch off wine fix me messages
+        # pypi_password for wrapt_timeout_decorator
+        # This works for sure - the Travis deploy is somehow buggy.
+        # create the secret :
+        # cd /<repository>
+        # travis encrypt -r bitranox/wrapt_timeout_decorator pypi_password=*****
+        # copy and paste the encrypted password here
+        - secure: "pWhlOU6X9EIYgQiBMluz6CMM54QXsGnxA4OoPfv+I5N+86HaP3TF0lmcAhF9NzFvEtBU3tNqeGPhTmP0UvmZlf0+vjFNbVKhkMr1HYJZ2wGjRsw/93x1SBXayvaUSwwvoLPn1ssVIQNMvFj5dY9VPYHn2EWfeyQxtsEStYhOLoTCBaLKm1BduRWAIj4WK6NpnKO+b1wex06fZ/qqomu0oK/+zYdAwAZelR6TWYPLmV6diTHmm1Rk2HTE/rrUamNHTBSvpEB76wFq2PeDsTtZfIM0ZA493Cmvsc945M25lzoNMY6NWF4e8gwRKl5XYUPA7uCoT2aYCJcHAqY+bHHyUTOek8UkJRxs7LGbw+/jLi03hfSjJ6V7JBIvGvsEH9Qzvc0OfutPRe0oAbY77DLkOOJUVnWIIrYrjKfCLtF4y+v11PqFkCF9B1pckaV4Csr5oukm1VQ8XRUeksqw2qdIaAWM2U+ztiPsM2TzHN3uflkjw6zGymlI+gZyu6yiDn625wniBaX3cbpsNhFs9cPNnX9QHwHgoQ4SBty4bLBqBWhUVSNMk1KE52oV1F4gAayxhgtqrWRy0AJhvKybZUjOVwstg2pplvTl/NGDL+cf3n8OsId5kj5ngAgBJffSZPw9CjRaE9tNNhwj9FetsuV3/bT1yU/79IAL/6HveixU0fk="
+
 
 addons:
     apt:
