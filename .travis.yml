@@ -227,7 +227,7 @@ install:
 
     - if [[ ${build_docs} == "True" ]]; then
           ${lib_bash_banner} "install rst_include (Building Docs)";
-          ${CMDPREFIX} ${pip_command} install rst_include;
+          ${CMDPREFIX} ${pip_command} install git+https://github.com/bitranox/rst_include.git;
       fi
 
     - if [[ -f ./setup.py ]]; then
@@ -244,9 +244,7 @@ install:
           ${lib_bash_banner_warning} "no setup.py found, skipping Installation";
       fi
 
-# special version for WRAPT_TIMEOUT_DECORATOR !!!! setup.py test fails under windows !!!
 script:
-    # special handling for wrapt_timeout-decorator: setup.py test fails under windows
     - if [[ -f ./setup.py ]]; then
           ${lib_bash_banner} "Installing Pytest requirements";
           ${CMDPREFIX} ${pip_command} install -r ./requirements_pytest.txt;
@@ -265,7 +263,6 @@ script:
           else
               ${lib_bash_banner_warning} "setup.py test - SKIPPED - would fail under Windows";
           fi
-
 
           ${lib_bash_banner} "running pip install --upgrade";
           ${CMDPREFIX} ${pip_command} install ${github_master} --upgrade;
@@ -297,26 +294,26 @@ script:
           else
               ${lib_bash_banner_warning} "static typechecking disabled on this build";
           fi
-
-          if [[ ! -z ${commandline_registration_check} ]]; then
-              ${lib_bash_banner} "Testing Commandline Registration";
-              "${commandline_registration_check}";
-              if [[ $? -eq 0 ]]; then
-                  ${lib_bash_banner} "Commandline Registration - OK";
-              else
-                  ${lib_bash_banner_warning} "Commandline Registration - FAILED";
-                  exit 1;
-              fi
-          else
-              ${lib_bash_banner_warning} "Commandline Registration Check disabled on this build";
-          fi
-
       else
           ${lib_bash_banner_warning} "no setup.py found, skipping pip install with --install-option test";
           ${lib_bash_banner_warning} "no setup.py found, skipping pip install";
           ${lib_bash_banner_warning} "no setup.py found, skipping install pytest requirements";
           ${lib_bash_banner_warning} "no setup.py found, skipping pytest";
           ${lib_bash_banner_warning} "no setup.py found, skipping static typechecking";
+      fi
+
+    # Check Commandline Registration
+    - if [[ ! -z ${commandline_registration_check} ]]; then
+          ${lib_bash_banner} "Testing Commandline Registration";
+          bash -c "${commandline_registration_check}";
+          if [[ $? -eq 0 ]]; then
+              ${lib_bash_banner} "Commandline Registration - OK";
+          else
+              ${lib_bash_banner_warning} "Commandline Registration - FAILED";
+              exit 1;
+          fi
+      else
+          ${lib_bash_banner_warning} "Commandline Registration Check disabled on this build";
       fi
 
     # Bild Docs
