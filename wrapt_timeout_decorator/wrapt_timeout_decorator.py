@@ -17,7 +17,7 @@ from .wrap_function_multiprocess import Timeout
 
 
 def timeout(dec_timeout: Union[None, float, str] = None,
-            use_signals: bool = True,
+            use_signals: bool = False,
             timeout_exception: Type[BaseException] = TimeoutError,
             exception_message: str = '',
             dec_allow_eval: bool = False,
