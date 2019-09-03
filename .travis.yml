@@ -370,6 +370,7 @@ after_success:
     #     -secure: *******
     - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then
           ${lib_bash_banner} "Deploy on PyPi";
+          export travis_deploy="True";
           ${CMDPREFIX} ${pip_command} install readme_renderer;
           ${CMDPREFIX} ${pip_command} install --upgrade twine;
           ${CMDPREFIX} ${pip_command} install wheel;
