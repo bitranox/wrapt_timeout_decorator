@@ -5,7 +5,7 @@ Timeout decorator.
 """
 
 # STDLIB
-from typing import Any, Callable, Type, Union, cast
+from typing import Any, Callable, Type, Union
 
 # EXT
 from dill import PicklingError          # type: ignore
