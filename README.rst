@@ -679,7 +679,7 @@ following modules will be automatically installed :
     mypy ; platform_python_implementation != "PyPy" and python_version >= "3.5"
     pytest
     pytest-pep8 ; python_version < "3.5"
-    pytest-codestyle ; python_version >= "3.5"
+    pytest-pycodestyle ; python_version >= "3.5"
     pytest-mypy ; platform_python_implementation != "PyPy" and python_version >= "3.5"
     pytest-runner
 
