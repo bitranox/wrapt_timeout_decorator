@@ -38,4 +38,5 @@ about: Template for Bug Reports, Feature Requests, Support Requests
 
 
 
-* **Other information** (e.g. detailed explanation, stacktraces, related issues, suggestions how to fix, links for us to have context, eg. stackoverflow, gitter, etc)
+* **Other information** (e.g. detailed explanation, stack traces, related issues, suggestions how to fix, links for us to have context, eg. stackoverflow
+, gitter, etc)

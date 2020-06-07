@@ -15,7 +15,8 @@
                         By default the Wrapt Timeout Decorator does NOT use signals !
                         Please note that signals can only be used in the main thread and only on linux. In all other cases
                         (not the main thread, or under Windows) signals cant be used anyway and will be disabled automatically.
-                        In general You dont need to set use_signals Yourself. Please read the section - `Caveats using Signals`_
+                        In general You dont need to set use_signals Yourself.
+                        Please read the sections - `Caveats using Signals` and `Caveats using Multiprocessing`
                         type: boolean
                         default: False
                         can be overridden by passing the kwarg use_signals to the decorated function*

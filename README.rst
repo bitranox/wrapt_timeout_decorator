@@ -7,7 +7,7 @@ wrapt_timeout_decorator
 
 .. |license| image:: https://img.shields.io/github/license/webcomics/pywine.svg
    :target: http://en.wikipedia.org/wiki/MIT_License
-.. |maintenance| image:: https://img.shields.io/maintenance/yes/{last_update_yyyy}.svg
+.. |maintenance| image:: https://img.shields.io/maintenance/yes/2021.svg
 .. |Build Status| image:: https://travis-ci.org/bitranox/wrapt_timeout_decorator.svg?branch=master
    :target: https://travis-ci.org/bitranox/wrapt_timeout_decorator
 .. for the pypi status link note the dashes, not the underscore !
@@ -51,8 +51,10 @@ Communication to the subprocess is done via "multiprocess.pipe" instead of "queu
 - `Try it Online`_
 - `Installation and Upgrade`_
 - `Basic Usage`_
+- `General Recommendations`_
 - `use with Windows`_
 - `Caveats using Signals`_
+- `Caveats using Multiprocessing`_
 - `nested Timeouts`_
 - `Alternative Exception`_
 - `Parameters`_
@@ -154,6 +156,65 @@ Basic Usage
 
     if __name__ == '__main__':
         mytest('starting')
+
+General Recommendations
+-----------------------
+dont sprincle Your code with timeouts. Just use it were absolutely necessary, for instance when reading or writing a file. And do that on the lowest
+abstraction level possible to avoid unwanted side effects (Exceptions caught by some other code, non pickable functions or arguments, and so on, but not TOO
+low. Remember that forking the program takes some time (when use multiprocessing).
+
+Most functions and libraries You call, they HAVE already some timeouts. use those. This Timeout Decorator should be only the last ressort, if everything else
+fails.
+
+    BAD EXAMPLE (Pseudocode) - lets assume the write to the database fails sometimes for unknown reasons, and "hangs"
+
+    .. code-block:: py
+
+        # module file_analyzer
+        import time
+        from wrapt_timeout_decorator import *
+
+        def read_the_file(filename):
+            ...
+
+        def analyze_the_file(filename):
+            ...
+
+        def write_to_database(file_content):
+            ...
+
+
+        @timeout(5)  # try to minimize the scope of the timeout
+        def import_file(filename):
+            file_content = read_the_file(filename)
+            structured_data = analyze_the_file(file_content)
+            write_to_database(structured_data)
+
+
+    BETTER EXAMPLE (Pseudocode)
+
+    .. code-block:: py
+
+        # module file_analyzer
+        import time
+        from wrapt_timeout_decorator import *
+
+        def read_the_file(filename):
+            ...
+
+        def analyze_the_file(filename):
+            ...
+
+        @timeout(5)     # better, because smaller scope
+        def write_to_database(file_content):
+            ...
+
+        def import_file(filename):
+            file_content = read_the_file(filename)
+            structured_data = analyze_the_file(file_content)
+            write_to_database(structured_data)
+
+
 
 use with Windows
 ----------------
@@ -341,6 +402,28 @@ see the next example - You may try it out in `jupyter <https://mybinder.org/v2/g
             # this will never be printed because the decorated function catches implicitly the TimeoutError !
             print('Timeout Occured')
 
+Caveats using Multiprocessing
+-----------------------------
+
+by default we use multiprocessing to archive the timeout function.
+
+Basically this is done like that :
+
+- the program is forked
+    - on Windows hat might take a long time
+    - the __main__ context needs to be guarded (see section usage with windows)
+    - on windows the function code itself and all arguments need to be pickable (we use dill to offer more types here)
+    - function parameters and function results needs to be pickable
+    - Bear in mind that if code run in a child process tries to access a global variable,
+      then the value it sees (if any) may not be the same as the value in
+      the parent process at the time that process was called.
+      However, global variables which are just module level constants cause no problems.
+
+- the forked function is run in a subprocess
+- parameters and results are passed via pipe (pickled, we use dill here)
+- if there is no result within the timeout period, the forked process will be terminated with SIGTERM
+    - the subprocess needs to be able to terminate, so You must not disable the SIGTERM Handler
+
 nested Timeouts
 ----------------
 
@@ -420,7 +503,8 @@ Parameters
                         By default the Wrapt Timeout Decorator does NOT use signals !
                         Please note that signals can only be used in the main thread and only on linux. In all other cases
                         (not the main thread, or under Windows) signals cant be used anyway and will be disabled automatically.
-                        In general You dont need to set use_signals Yourself. Please read the section - `Caveats using Signals`_
+                        In general You dont need to set use_signals Yourself.
+                        Please read the sections - `Caveats using Signals` and `Caveats using Multiprocessing`
                         type: boolean
                         default: False
                         can be overridden by passing the kwarg use_signals to the decorated function*
@@ -559,7 +643,7 @@ be evaluated if its type is string.
 You can access :
 
 - "wrapped"
-   (the decorated function and his attributes)
+   (the decorated function and its attributes)
 
 - "instance"
    Example: 'instance.x' - an attribute of the instance of the class instance
@@ -579,30 +663,38 @@ You can access :
 
     # this example does NOT work on windows, please check the section
     # "use with Windows" in the README.rst
-    def class ClassTest4(object):
+    def class FunnyMemes(object):
         def __init__(self,x):
             self.x=x
 
         @timeout('instance.x', dec_allow_eval=True)
-        def test_method(self):
-            print('swallow')
+        def swallow(self):
+            while True:
+                time.sleep(0.5)
+                print('swallow')
 
         @timeout(1)
-        def foo3(self):
-            print('parrot')
+        def parrot(self):
+            while True:
+                time.sleep(0.5)
+                print('parrot')
 
         @timeout(dec_timeout='args[0] + kwargs.pop("more_time",0)', dec_allow_eval=True)
-        def foo4(self,base_delay):
-            time.sleep(base_delay)
-            print('knight')
+        def knight(self,base_delay):
+            while True:
+                time.sleep(base_delay)
+                print('knight')
 
+
+    def main():
+        my_memes = FunnyMemes(2)
+        my_memes.swallow()                                                      # this will time out after 2 seconds
+        my_memes.swallow(dec_timeout='instance.x * 2 + 1')                      # this will time out after 5 seconds
+        my_memes.parrot(dec_timeout='instance.x * 2 + 1', dec_allow_eval=True)  # this will time out after 5 seconds
+        my_memes.knight(1,more_time=4)                                          # this will time out after 5 seconds
 
     if __name__ == '__main__':
-        # or override via kwarg :
-        my_foo = ClassTest4(3)
-        my_foo.test_method(dec_timeout='instance.x * 2.5 +1')
-        my_foo.foo3(dec_timeout='instance.x * 2.5 +1', dec_allow_eval=True)
-        my_foo.foo4(1,more_time=3)  # this will time out in 4 seconds
+        main()
 
 detect pickle errors
 --------------------

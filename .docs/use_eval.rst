@@ -8,7 +8,7 @@ be evaluated if its type is string.
 You can access :
 
 - "wrapped"
-   (the decorated function and his attributes)
+   (the decorated function and its attributes)
 
 - "instance"
    Example: 'instance.x' - an attribute of the instance of the class instance
@@ -28,27 +28,35 @@ You can access :
 
     # this example does NOT work on windows, please check the section
     # "use with Windows" in the README.rst
-    def class ClassTest4(object):
+    def class FunnyMemes(object):
         def __init__(self,x):
             self.x=x
 
         @timeout('instance.x', dec_allow_eval=True)
-        def test_method(self):
-            print('swallow')
+        def swallow(self):
+            while True:
+                time.sleep(0.5)
+                print('swallow')
 
         @timeout(1)
-        def foo3(self):
-            print('parrot')
+        def parrot(self):
+            while True:
+                time.sleep(0.5)
+                print('parrot')
 
         @timeout(dec_timeout='args[0] + kwargs.pop("more_time",0)', dec_allow_eval=True)
-        def foo4(self,base_delay):
-            time.sleep(base_delay)
-            print('knight')
+        def knight(self,base_delay):
+            while True:
+                time.sleep(base_delay)
+                print('knight')
 
+
+    def main():
+        my_memes = FunnyMemes(2)
+        my_memes.swallow()                                                      # this will time out after 2 seconds
+        my_memes.swallow(dec_timeout='instance.x * 2 + 1')                      # this will time out after 5 seconds
+        my_memes.parrot(dec_timeout='instance.x * 2 + 1', dec_allow_eval=True)  # this will time out after 5 seconds
+        my_memes.knight(1,more_time=4)                                          # this will time out after 5 seconds
 
     if __name__ == '__main__':
-        # or override via kwarg :
-        my_foo = ClassTest4(3)
-        my_foo.test_method(dec_timeout='instance.x * 2.5 +1')
-        my_foo.foo3(dec_timeout='instance.x * 2.5 +1', dec_allow_eval=True)
-        my_foo.foo4(1,more_time=3)  # this will time out in 4 seconds
+        main()
