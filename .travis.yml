@@ -1,22 +1,21 @@
 language: python
 group: travis_latest
-dist: xenial
+dist: bionic
 sudo: true
 
 env:
     global:
-        - github_master="https://github.com/${TRAVIS_REPO_SLUG}/archive/master.zip"
-        - pip_command="pip"
         - python_command="python"
+        - pip_command="python -m pip"
         - WINEDEBUG=fixme-all       # switch off wine fix me messages
-        # pypi_password for wrapt_timeout_decorator
+        - CC_TEST_REPORTER_ID=""
+        # pypi_password for lib_parameter
         # This works for sure - the Travis deploy is somehow buggy.
         # create the secret :
         # cd /<repository>
-        # travis encrypt -r bitranox/wrapt_timeout_decorator pypi_password=*****
-        # copy and paste the encrypted password here
+        # travis encrypt -r bitranox/lib_parameter pypi_password=*****
+        # copy and paste the encrypted password in the project_conf.py
         - secure: "pWhlOU6X9EIYgQiBMluz6CMM54QXsGnxA4OoPfv+I5N+86HaP3TF0lmcAhF9NzFvEtBU3tNqeGPhTmP0UvmZlf0+vjFNbVKhkMr1HYJZ2wGjRsw/93x1SBXayvaUSwwvoLPn1ssVIQNMvFj5dY9VPYHn2EWfeyQxtsEStYhOLoTCBaLKm1BduRWAIj4WK6NpnKO+b1wex06fZ/qqomu0oK/+zYdAwAZelR6TWYPLmV6diTHmm1Rk2HTE/rrUamNHTBSvpEB76wFq2PeDsTtZfIM0ZA493Cmvsc945M25lzoNMY6NWF4e8gwRKl5XYUPA7uCoT2aYCJcHAqY+bHHyUTOek8UkJRxs7LGbw+/jLi03hfSjJ6V7JBIvGvsEH9Qzvc0OfutPRe0oAbY77DLkOOJUVnWIIrYrjKfCLtF4y+v11PqFkCF9B1pckaV4Csr5oukm1VQ8XRUeksqw2qdIaAWM2U+ztiPsM2TzHN3uflkjw6zGymlI+gZyu6yiDn625wniBaX3cbpsNhFs9cPNnX9QHwHgoQ4SBty4bLBqBWhUVSNMk1KE52oV1F4gAayxhgtqrWRy0AJhvKybZUjOVwstg2pplvTl/NGDL+cf3n8OsId5kj5ngAgBJffSZPw9CjRaE9tNNhwj9FetsuV3/bT1yU/79IAL/6HveixU0fk="
-
 
 addons:
     apt:
@@ -46,18 +45,10 @@ matrix:
           - /usr/local/lib_bash/lib_retry.sh retry choco install python3
           - export PATH="/c/Python38:/c/Python38/Scripts:$PATH"
 
-    - os: linux
-      language: python
-      python: '3.5'
 
     - os: linux
       language: python
       python: '3.6'
-      # we can do that also with env - but we dont want to show it on the travis build overview
-      before_install:
-        - export mypy_static_typecheck="True"
-        - export build_docs="True"
-        - export deploy_on_pypi="True"
 
     - os: linux
       language: python
@@ -66,153 +57,34 @@ matrix:
     - os: linux
       language: python
       python: '3.8'
+      before_install:
+          - export mypy_strict_typecheck="True"
+          - export build_docs="True"
+          - export deploy_on_pypi="True"
 
     - os: linux
       language: python
       python: '3.8-dev'
 
+
     - os: linux
       language: python
       python: 'pypy3'
-      # python: 'pypy3.5-6.0'
 
-    - os: linux
-      language: python
-      name: "WINE stable 32 Bit Python 3.7.3, Windows XP"
-      env:
-          - WINEARCH="win32"
-          - WINEPREFIX="${HOME}/wine/wine32"
-          - CMDPREFIX="wine"
-          - winetricks_windows_version="winxp"
-          - wine_release="stable"
-          - wine_python_version="python3"
-
-    - os: linux
-      language: python
-      name: "WINE stable 64 Bit Python 3.7.3, Windows XP"
-      env:
-          - WINEPREFIX="${HOME}/wine/wine64"
-          - CMDPREFIX="wine"
-          - winetricks_windows_version="winxp"
-          - wine_release="stable"
-          - wine_python_version="python3"
-
-    - os: linux
-      language: python
-      name: "WINE stable 32 Bit Python 3.7.3, Windows 10"
-      env:
-          - WINEARCH="win32"
-          - WINEPREFIX="${HOME}/wine/wine32"
-          - CMDPREFIX="wine"
-          - winetricks_windows_version="win10"
-          - wine_release="stable"
-          - wine_python_version="python3"
-
-    - os: linux
-      language: python
-      name: "WINE stable 64 Bit Python 3.7.3, Windows 10"
-      env:
-          - WINEPREFIX="${HOME}/wine/wine64"
-          - CMDPREFIX="wine"
-          - winetricks_windows_version="win10"
-          - wine_release="stable"
-          - wine_python_version="python3"
-
-    - os: linux
-      language: python
-      name: "WINE devel 32 Bit Python 3.7.3, Windows XP"
-      env:
-          - WINEARCH="win32"
-          - WINEPREFIX="${HOME}/wine/wine32"
-          - CMDPREFIX="wine"
-          - winetricks_windows_version="winxp"
-          - wine_release="devel"
-          - wine_python_version="python3"
-
-    - os: linux
-      language: python
-      name: "WINE devel 64 Bit Python 3.7.3, Windows XP"
-      env:
-          - WINEPREFIX="${HOME}/wine/wine64"
-          - CMDPREFIX="wine"
-          - winetricks_windows_version="winxp"
-          - wine_release="devel"
-          - wine_python_version="python3"
-
-    - os: linux
-      language: python
-      name: "WINE devel 32 Bit Python 3.7.3, Windows 10"
-      env:
-          - WINEARCH="win32"
-          - WINEPREFIX="${HOME}/wine/wine32"
-          - CMDPREFIX="wine"
-          - winetricks_windows_version="win10"
-          - wine_release="devel"
-          - wine_python_version="python3"
-
-    - os: linux
-      language: python
-      name: "WINE devel 64 Bit Python 3.7.3, Windows 10"
-      env:
-          - WINEPREFIX="${HOME}/wine/wine64"
-          - CMDPREFIX="wine"
-          - winetricks_windows_version="win10"
-          - wine_release="devel"
-          - wine_python_version="python3"
-
-    - os: linux
-      language: python
-      name: "WINE staging 32 Bit Python 3.7.3, Windows XP"
-      env:
-          - WINEARCH="win32"
-          - WINEPREFIX="${HOME}/wine/wine32"
-          - CMDPREFIX="wine"
-          - winetricks_windows_version="winxp"
-          - wine_release="staging"
-          - wine_python_version="python3"
-
-    - os: linux
-      language: python
-      name: "WINE staging 64 Bit Python 3.7.3, Windows XP"
-      env:
-          - WINEPREFIX="${HOME}/wine/wine64"
-          - CMDPREFIX="wine"
-          - winetricks_windows_version="winxp"
-          - wine_release="staging"
-          - wine_python_version="python3"
-
-    - os: linux
-      language: python
-      name: "WINE staging 32 Bit Python 3.7.3, Windows 10"
-      env:
-          - WINEARCH="win32"
-          - WINEPREFIX="${HOME}/wine/wine32"
-          - CMDPREFIX="wine"
-          - winetricks_windows_version="win10"
-          - wine_release="staging"
-          - wine_python_version="python3"
-
-    - os: linux
-      language: python
-      name: "WINE staging 64 Bit Python 3.7.3, Windows 10"
-      env:
-          - WINEPREFIX="${HOME}/wine/wine64"
-          - CMDPREFIX="wine"
-          - winetricks_windows_version="win10"
-          - wine_release="staging"
-          - wine_python_version="python3"
 
     - os: osx
       language: sh
-      name: "osX Python 3.8"
+      name: "macOS 10.15.4"
       python: "3.8"
-      osx_image: xcode11
+      osx_image: xcode11.5
       env:
         # on osx pip and python points to python 2.7 - therefore we have to use pip3 and python3 here
-        - pip_command="pip3"
         - python_command="python3"
+        - pip_command="python3 -m pip"
 
-# SPEZIELLE VERSION FÜR WRAPT_TIMEOUT_DECORATOR !!!! SIEHE SCRIPT setup.py test
+
+
+
 install:
     # install lib_bash_wine - this installs also lib_bash
     - $(command -v sudo 2>/dev/null) git clone https://github.com/bitranox/lib_bash_wine.git /usr/local/lib_bash_wine
@@ -223,135 +95,83 @@ install:
     - export lib_bash_banner="/usr/local/lib_bash/lib_helpers.sh banner"
     - export lib_bash_banner_warning="/usr/local/lib_bash/lib_helpers.sh banner_warning"
     - export lib_bash_wine="/usr/local/lib_bash_wine"
+    - ${lib_bash_banner} "upgrading pip"; ${CMDPREFIX} ${python_command} -m pip install --upgrade pip;
+    - ${lib_bash_banner} "upgrading setuptools"; ${CMDPREFIX} ${python_command} -m pip install --upgrade setuptools;
+    - ${lib_bash_banner} "upgrading wheel"; ${CMDPREFIX} ${python_command} -m pip install --upgrade wheel;
+    - ${lib_bash_banner} "upgrading pytest-pycodestyle"; ${CMDPREFIX} ${python_command} -m pip install --upgrade "pytest-pycodestyle; python_version >= \"3.5\"";
+    - ${lib_bash_banner} "installing lib_log_utils"; ${CMDPREFIX} ${python_command} -m pip install git+https://github.com/bitranox/lib_log_utils.git;
+    - if [[ ${build_docs} == "True" ]]; then
+          ${lib_bash_banner} "installing rst_include"; ${CMDPREFIX} ${python_command} -m pip install git+https://github.com/bitranox/rst_include.git;
+      fi
 
-    - export REPOSITORY_NAME=${TRAVIS_REPO_SLUG#*/} && ${lib_bash_color} clr_bold clr_green "Export Repository Name ${REPOSITORY_NAME}"
     - if [[ ${CMDPREFIX} == "wine" ]]; then ${lib_bash_wine}/001_000_install_wine.sh ; fi
     - if [[ ${CMDPREFIX} == "wine" ]]; then ${lib_bash_wine}/002_000_install_wine_machine.sh ; fi
     - if [[ ${wine_python_version} == "python3" ]]; then ${lib_bash_wine}/003_000_install_wine_python3_preinstalled.sh ; fi
     - if [[ ${CMDPREFIX} == "wine" ]]; then ${lib_bash_wine}/004_000_install_wine_git_portable.sh ; fi
     - if [[ ${CMDPREFIX} == "wine" ]]; then ${lib_bash_wine}/005_000_install_wine_powershell_core.sh ; fi
 
-    - ${lib_bash_banner} "upgrading pip"; ${CMDPREFIX} ${python_command} -m pip install --upgrade pip
-
-    - if [[ ${build_docs} == "True" ]]; then
-          ${lib_bash_banner} "install rst_include (Building Docs)";
-          ${CMDPREFIX} ${pip_command} install git+https://github.com/bitranox/rst_include.git;
-      fi
-
-    - if [[ -f ./setup.py ]]; then
-          ${lib_bash_banner} "setup.py found, Installing Application via pip install -e";
-          ${CMDPREFIX} ${pip_command} install -e . ;
-              if [[ $? -eq 0 ]]; then
-                  ${lib_bash_banner} "pip install -e - OK";
-              else
-                  ${lib_bash_banner_warning} "pip install -e - FAILED";
-                  exit 1;
-              fi
-
-      else
-          ${lib_bash_banner_warning} "no setup.py found, skipping Installation";
-      fi
-
 script:
-    - if [[ -f ./setup.py ]]; then
-          ${lib_bash_banner} "Installing Pytest requirements";
-          ${CMDPREFIX} ${pip_command} install -r ./requirements_pytest.txt;
-          ${CMDPREFIX} ${pip_command} install codecov;
-          ${CMDPREFIX} ${pip_command} install pytest-cov;
 
-          if [[ ${TRAVIS_OS_NAME} != "windows" ]]; then
-              ${lib_bash_banner} "running setup.py test";
-              ${CMDPREFIX} ${python_command} ./setup.py test;
-                  if [[ $? -eq 0 ]]; then
-                      ${lib_bash_banner} "setup.py test - OK";
-                  else
-                      ${lib_bash_banner_warning} "setup.py test - FAILED";
-                      exit 1;
-                  fi
-          else
-              ${lib_bash_banner_warning} "setup.py test - SKIPPED - would fail under Windows";
-          fi
+    # setup.py test
+    - COMMAND="${CMDPREFIX} ${python_command} ./setup.py test"
+    - ${lib_bash_banner} "running '${COMMAND}'";
+    - if ${COMMAND}; then ${lib_bash_banner} "'${COMMAND}' - OK"; else ${lib_bash_banner_warning} "'${COMMAND}' - FAILED" && exit 1; fi
 
-          ${lib_bash_banner} "running pip install --upgrade";
-          ${CMDPREFIX} ${pip_command} install ${github_master} --upgrade;
-              if [[ $? -eq 0 ]]; then
-                  ${lib_bash_banner} "pip install --upgrade - OK";
-              else
-                  ${lib_bash_banner_warning} "pip install --upgrade - FAILED";
-                  exit 1;
-              fi
+    # pip install git+https://github.com/bitranox/wrapt_timeout_decorator.git --install-option test
+    - COMMAND="${CMDPREFIX} ${python_command} -m pip install git+https://github.com/bitranox/wrapt_timeout_decorator.git --install-option test"
+    - ${lib_bash_banner} "running '${COMMAND}'";
+    - if ${COMMAND}; then ${lib_bash_banner} "'${COMMAND}' - OK"; else ${lib_bash_banner_warning} "'${COMMAND}' - FAILED" && exit 1; fi
 
-          ${lib_bash_banner} "running pytest";
-          ${CMDPREFIX} ${python_command} -m pytest --cov;
-              if [[ $? -eq 0 ]]; then
-                  ${lib_bash_banner} "pytest - OK";
-              else
-                  ${lib_bash_banner_warning} "pytest - FAILED";
-                  exit 1;
-              fi
+    # pip install git+https://github.com/bitranox/wrapt_timeout_decorator.git
+    - COMMAND="${CMDPREFIX} ${python_command} -m pip install git+https://github.com/bitranox/wrapt_timeout_decorator.git"
+    - ${lib_bash_banner} "running '${COMMAND}'";
+    - if ${COMMAND}; then ${lib_bash_banner} "'${COMMAND}' - OK"; else ${lib_bash_banner_warning} "'${COMMAND}' - FAILED" && exit 1; fi
 
-          if [[ ${mypy_static_typecheck} == "True" ]]; then
-              ${lib_bash_banner} "running mypy static typechecks --strict";
-              ${CMDPREFIX} ${python_command} -m mypy -p ${REPOSITORY_NAME} --strict --no-warn-unused-ignores;
-                  if [[ $? -eq 0 ]]; then
-                      ${lib_bash_banner} "mypy static typechecks --strict OK";
-                  else
-                      ${lib_bash_banner_warning} "mypy static typechecks --strict FAILED";
-                      exit 1;
-                  fi
-          else
-              ${lib_bash_banner_warning} "static typechecking disabled on this build";
-          fi
+    # commandline registration check
+    - CMDLINE_COMMAND=$(${CMDPREFIX} ${python_command} ./project_update.py --get_registered_shell_command)
+    - COMMAND="${CMDPREFIX} ${CMDLINE_COMMAND} -v"
+    - ${lib_bash_banner} "running '${COMMAND}' (check commandline registration)";
+    - if ${COMMAND}; then ${lib_bash_banner} "'${COMMAND}' - OK"; else ${lib_bash_banner_warning} "'${COMMAND}' - FAILED" && exit 1; fi
+
+    # pytest codecov only
+    - COMMAND="${CMDPREFIX} ${python_command} -m pytest --cov=wrapt_timeout_decorator"
+    - ${lib_bash_banner} "running '${COMMAND}' - (coverage only)";
+    - ${CMDPREFIX} ${python_command} -m pip install --upgrade -r ./requirements_test.txt > /dev/null 2>&1;
+    - ${CMDPREFIX} ${python_command} -m pip install --upgrade codecov > /dev/null 2>&1;
+    - ${CMDPREFIX} ${python_command} -m pip install --upgrade pytest-cov > /dev/null 2>&1;
+    - if ${COMMAND}; then ${lib_bash_banner} "'${COMMAND}' - OK"; else ${lib_bash_banner_warning} "'${COMMAND}' - FAILED" && exit 1; fi
+
+    # mypy typecheck strict
+    - if [[ ${mypy_strict_typecheck} == "True" ]]; then
+          COMMAND="${CMDPREFIX} ${python_command} -m mypy -p wrapt_timeout_decorator --strict --no-warn-unused-ignores"
+          ${lib_bash_banner} "running '${COMMAND}'";
+          if ${COMMAND}; then ${lib_bash_banner} "'${COMMAND}' - OK"; else ${lib_bash_banner_warning} "'${COMMAND}' - FAILED" && exit 1; fi
       else
-          ${lib_bash_banner_warning} "no setup.py found, skipping pip install with --install-option test";
-          ${lib_bash_banner_warning} "no setup.py found, skipping pip install";
-          ${lib_bash_banner_warning} "no setup.py found, skipping install pytest requirements";
-          ${lib_bash_banner_warning} "no setup.py found, skipping pytest";
-          ${lib_bash_banner_warning} "no setup.py found, skipping static typechecking";
-      fi
-
-    # Check Commandline Registration
-    - if [[ ! -z ${commandline_registration_check} ]]; then
-          ${lib_bash_banner} "Testing Commandline Registration";
-          bash -c "${commandline_registration_check}";
-          if [[ $? -eq 0 ]]; then
-              ${lib_bash_banner} "Commandline Registration - OK";
-          else
-              ${lib_bash_banner_warning} "Commandline Registration - FAILED";
-              exit 1;
-          fi
-      else
-          ${lib_bash_banner_warning} "Commandline Registration Check disabled on this build";
+          ${lib_bash_banner_warning} "mypy typecheck --strict disabled on this build";
       fi
 
     # Bild Docs
     - if [[ -f build_docs.py ]] && [[ "${build_docs}" == "True" ]]; then
-          ${lib_bash_banner} "Building Docs";
-          ${CMDPREFIX} ${python_command} build_docs.py ${TRAVIS_REPO_SLUG};
-          if [[ $? -eq 0 ]]; then
-              ${lib_bash_banner} "Building Docs OK";
-          else
-              ${lib_bash_banner_warning} "Building Docs FAILED";
-              exit 1;
-          fi
+          COMMAND="${CMDPREFIX} ${python_command} build_docs.py bitranox/wrapt_timeout_decorator"
+          ${lib_bash_banner} "running '${COMMAND}' - rebuild README.rst";
+          if ${COMMAND}; then ${lib_bash_banner} "'${COMMAND}' - OK"; else ${lib_bash_banner_warning} "'${COMMAND}' - FAILED" && exit 1; fi
       else
-          ${lib_bash_banner_warning} "Building Docs disabled on this build" ;
+          ${lib_bash_banner_warning} "rebuild README.rst disabled on this build" ;
       fi
 
     # Check if Deployment would work on non-tagged builds
     - if [[ -f setup.py ]] && [[ -z ${TRAVIS_TAG} ]] && [[ -f build_docs.py ]] && [[ ${build_docs} == "True" ]]; then
           ${lib_bash_banner} "Testing PyPi Deployment";
-          ${CMDPREFIX} ${pip_command} install readme_renderer > /dev/null 2>&1;
-          ${CMDPREFIX} ${pip_command} install --upgrade twine > /dev/null 2>&1;
-          ${CMDPREFIX} ${pip_command} install wheel > /dev/null 2>&1;
+          ${CMDPREFIX} ${python_command} -m pip install readme_renderer > /dev/null 2>&1;
+          ${CMDPREFIX} ${python_command} -m pip install --upgrade twine > /dev/null 2>&1;
+          ${CMDPREFIX} ${python_command} -m pip install wheel > /dev/null 2>&1;
           ${CMDPREFIX} ${python_command} setup.py sdist bdist_wheel || ${lib_bash_banner_warning} "Building Wheels failed" 1>&2;
-          ${CMDPREFIX} twine check dist/*;
-              if [[ $? -eq 0 ]]; then
-                  ${lib_bash_banner} "PyPi Deployment would be OK";
-              else
-                  ${lib_bash_banner_warning} "PyPi Deployment would fail";
-                  exit 1;
-              fi
+          if ${CMDPREFIX} twine check dist/*; then
+              ${lib_bash_banner} "PyPi Deployment would be OK";
+          else
+              ${lib_bash_banner_warning} "PyPi Deployment would fail";
+              exit 1;
+          fi
       else
           ${lib_bash_banner_warning} "Check PyPi Deployment disabled on this build" ;
       fi
@@ -359,26 +179,26 @@ script:
 after_success:
     - ${CMDPREFIX} coverage report
     - ${CMDPREFIX} codecov
+    # codeclimate coverage upload
+    - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+    - chmod +x ./cc-test-reporter
+    - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 
     # This works for sure - the Travis deploy is somehow buggy.
     # create the secret :
     # cd /<repository>
     # travis encrypt pypi_password=*****
-    # and put it under :
-    # env:
-    #   global:
-    #     -secure: *******
+    # copy and paste the encrypted password in the project_conf.py
     - if [[ ${deploy_on_pypi} == "True" ]] && [[ -n ${TRAVIS_TAG} ]]; then
           ${lib_bash_banner} "Deploy on PyPi";
           export travis_deploy="True";
-          ${CMDPREFIX} ${pip_command} install readme_renderer;
-          ${CMDPREFIX} ${pip_command} install --upgrade twine;
-          ${CMDPREFIX} ${pip_command} install wheel;
+          ${CMDPREFIX} ${python_command} -m pip install readme_renderer;
+          ${CMDPREFIX} ${python_command} -m pip install --upgrade twine;
+          ${CMDPREFIX} ${python_command} -m pip install wheel;
           ${CMDPREFIX} ${python_command} setup.py sdist bdist_wheel;
           ${CMDPREFIX} twine check dist/*;
           ${CMDPREFIX} twine upload --repository-url https://upload.pypi.org/legacy/ -u bitranox -p ${pypi_password} dist/*;
       fi
-
 
 notifications:
   email:
@@ -386,3 +206,4 @@ notifications:
         - rnowotny@rotek.at
     on_success: never # default: change
     on_failure: always # default: always
+

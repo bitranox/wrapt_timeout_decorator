@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# test the shellscripts in the current directory
+
 # --exclude=CODE1,CODE2..  Exclude types of warnings
 
 function shell_check {
@@ -12,13 +14,6 @@ function shell_check {
         --exclude=SC1091 \
         --exclude=SC1090 \
          ./*.sh
-
-    # check the thing
-    shellcheck --shell=bash --color=always \
-        --exclude=SC1091 \
-        --exclude=SC1090 \
-         ../*.sh
-
 
 }
 

@@ -1,10 +1,11 @@
 import platform
 import sys
+from typing import List
 
-collect_ignore = ['build_docs.py', '__main__.py']
+collect_ignore = ['templates/*', 'build_docs.py', 'project_update.py']
 
 
-def pytest_cmdline_preparse(args):
+def pytest_cmdline_preparse(args: List[str]) -> None:
     """
     # run tests on multiple processes if pytest-xdist plugin is available
     # unfortunately it does not work with codecov
@@ -19,7 +20,7 @@ def pytest_cmdline_preparse(args):
     # add mypy option if not pypy - so mypy will be called with setup.py install test
     # add mypy only on 3.x versions
     # mypy does not find some functions on python 3.6
-    if platform.python_implementation() != "PyPy" and sys.version_info >= (3, 5) and sys.version_info != (3, 6):
+    if platform.python_implementation() != "PyPy" and sys.version_info >= (3, 5) and sys.version_info != (3, 6):  # type: ignore
         args[:] = ["--mypy"] + args
 
     # for python 3.x use --pycodestyle, for python 2.7 use --pep8

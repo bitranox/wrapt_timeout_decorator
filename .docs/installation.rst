@@ -1,52 +1,90 @@
-From source code:
+Before You start, its highly recommended to update pip and setup tools:
+
 
 .. code-block:: bash
 
-    # normal install
-    python setup.py install
-    # test without installing
-    python setup.py test
+    python3 -m pip --upgrade pip
+    python3 -m pip --upgrade setuptools
+    python3 -m pip --upgrade wheel
 
-via pip latest Release:
 
-.. code-block:: bash
-
-    # latest Release from pypi
-    pip install {repository}
-
-    # test without installing
-    pip install {repository} --install-option test
-
-via pip latest Development Version:
+install latest version with pip (recommended):
 
 .. code-block:: bash
 
     # upgrade all dependencies regardless of version number (PREFERRED)
-    pip install --upgrade git+https://github.com/{repository_slug}.git --upgrade-strategy eager
-    # normal install
-    pip install --upgrade git+https://github.com/{repository_slug}.git
-    # test without installing
-    pip install git+https://github.com/{repository_slug}.git --install-option test
+    python3 -m pip install --upgrade git+https://github.com/{repository_slug}.git --upgrade-strategy eager
 
-via requirements.txt:
+    # test without installing (can be skipped)
+    python3 -m pip install git+https://github.com/{repository_slug}.git --install-option test
+
+    # normal install
+    python3 -m pip install --upgrade git+https://github.com/{repository_slug}.git
+
+
+install latest pypi Release (if there is any):
+
+.. code-block:: bash
+
+    # latest Release from pypi
+    python3 -m pip install --upgrade {repository}
+
+    # test without installing (can be skipped)
+    python3 -m pip install {repository} --install-option test
+
+    # normal install
+    python3 -m pip install --upgrade {repository}
+
+
+
+include it into Your requirements.txt:
 
 .. code-block:: bash
 
     # Insert following line in Your requirements.txt:
-    # for the latest Release:
+    # for the latest Release on pypi (if any):
     {repository}
     # for the latest Development Version :
-    git+https://github.com/{repository_slug}.git
+    {repository} @ git+https://github.com/{repository_slug}.git
 
     # to install and upgrade all modules mentioned in requirements.txt:
-    pip install --upgrade -r /<path>/requirements.txt
+    python3 -m pip install --upgrade -r /<path>/requirements.txt
 
-via python:
 
-.. code-block:: python
+Install from source code:
 
-    # for the latest Release
-    python -m pip install upgrade {repository}
+.. code-block:: bash
 
-    # for the latest Development Version
-    python -m pip install upgrade git+https://github.com/{repository_slug}.git
+    # cd ~
+    $ git clone https://github.com/{repository_slug}.git
+    $ cd {repository}
+
+    # test without installing (can be skipped)
+    python3 setup.py test
+
+    # normal install
+    python3 setup.py install
+
+
+via makefile:
+
+if You are on linux, makefiles are a very convenient way to install. Here we can do much more, like installing virtual environment, clean caches and so on.
+This is still in development and not recommended / working at the moment:
+
+.. code-block:: shell
+
+    # from Your shell's homedirectory:
+    $ git clone https://github.com/{repository_slug}.git
+    $ cd {repository}
+
+    # to run the tests:
+    $ make test
+
+    # to install the package
+    $ make install
+
+    # to clean the package
+    $ make clean
+
+    # uninstall the package
+    $ make uninstall

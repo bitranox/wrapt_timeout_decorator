@@ -1,10 +1,5 @@
-Derived from
-
-https://github.com/pnpnpn/timeout-decorator
-
-http://www.saltycrane.com/blog/2010/04/using-python-timeout-decorator-uploading-s3/
-
-thanks to abadger1999 for pointing out caveats when using signals, see :
-https://anonbadger.wordpress.com/2018/12/15/python-signal-handlers-and-exceptions/
-
-special thanks to "uncle bob" Robert C. Martin, especially for his books on "clean code" and "clean architecture"
+- derived from `pnp timeout decorator <https://github.com/pnpnpn/timeout-decorator>`_
+- inspiration from `salty cranes blog <http://www.saltycrane.com/blog/2010/04/using-python-timeout-decorator-uploading-s3/>`_
+- thanks to abadger1999 for `pointing out caveats when using signals <https://anonbadger.wordpress.com/2018/12/15/python-signal-handlers-and-exceptions/>`_
+- thanks to Marco Aurélio da Costa for pointing out that `the decorated function needs to be terminable with SIGTERM <https://github.com/bitranox/wrapt_timeout_decorator/issues/18>`_
+- special thanks to "uncle bob" Robert C. Martin, especially for his books on "clean code" and "clean architecture"

@@ -11,8 +11,7 @@ import pytest                       # type: ignore
 
 # OWN
 from wrapt_timeout_decorator import *
-from wrapt_timeout_decorator.wrapt_timeout_decorator.wrap_helper import *
-from wrapt_timeout_decorator.wrapt_timeout_decorator.wrap_function_multiprocess import *
+from wrapt_timeout_decorator.wrap_helper import *
 from .lib_test_helper import *
 
 

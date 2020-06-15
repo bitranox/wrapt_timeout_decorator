@@ -1,6 +1,8 @@
+# see: https://coverage.readthedocs.io/en/v4.5.x/config.html
+
 [run]
-source  = wrapt_timeout_decorator
-include = wrapt_timeout_decorator/*
+
+# see: https://coverage.readthedocs.io/en/v4.5.x/source.html#source
 
 # (boolean, default False): whether to measure branch coverage in addition to statement coverage
 branch  = True
@@ -26,3 +28,10 @@ exclude_lines=
     if __name__ == .__main__.:
 
 ignore_errors = True
+
+omit =
+    venv/*
+    tests/*
+    setup.py
+    project_conf.py
+    project_conf_module.py

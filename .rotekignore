@@ -104,13 +104,12 @@ ENV/
 .pytest_cache/
 
 
-# rotek specific
+# exclude rotek specific
 docs/
 .docs/
-!*.py
-!**/version.txt
-
+tests/
 build_docs.py
 conftest.py
-
-**/tests/
+project_conf.py
+project_conf_module.py
+setup.py

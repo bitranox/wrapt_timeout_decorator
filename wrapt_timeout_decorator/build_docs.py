@@ -53,10 +53,9 @@ def main(args: Dict[str, str]) -> None:
     """
 
     if project_conf.badges_with_jupiter:
-        rst_include.rst_str_replace(source='./.docs/README_template.rst', target='', old='{try_in_jupyter}',
-                                    new='.. include:: ./try_in_jupyter.rst', inplace=True)
+        rst_include.rst_str_replace(source='./README.rst', target='', old='{try_in_jupyter}', new='.. include:: ./try_in_jupyter.rst', inplace=True)
     else:
-        rst_include.rst_str_replace(source='./.docs/README_template.rst', target='', old='{try_in_jupyter}', new='', inplace=True)
+        rst_include.rst_str_replace(source='./README.rst', target='', old='{try_in_jupyter}', new='', inplace=True)
 
     logger.info('include the include blocks')
     rst_include.rst_inc(source='./.docs/README_template.rst',
