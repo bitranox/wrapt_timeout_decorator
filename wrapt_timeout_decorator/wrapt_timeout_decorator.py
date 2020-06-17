@@ -30,6 +30,7 @@ def timeout(dec_timeout: Union[None, float, str] = None,
                 ...
              return cast(Callable[..., Any], wrapped)
              without success - so we stuck with any at the moment
+             ** see example on bottom of that file for correct annotation of a generic decorator
 
     Windows remark : dont use the decorator on classes in the main.py because of Windows multiprocessing limitations
                      read the README
@@ -145,3 +146,23 @@ def wrapped_with_timeout_process(wrap_helper: WrapHelper) -> Any:
         return timeout_wrapper()
     except PicklingError:
         detect_unpickable_objects_and_reraise(wrap_helper.wrapped)
+
+
+"""
+
+# Example for generic decorator with does not destroy the signature of the wrapped function for mypy 
+
+from typing import Any, Callable, TypeVar, cast
+
+F = TypeVar('F', bound=Callable[..., Any])
+
+
+def check_for_kwargs(f: F) -> F:
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        if kwargs:
+            keys = ', '.join([key for key in kwargs.keys()])
+            raise TypeError("{fn}() got some positional-only arguments passed as keyword arguments: '{keys}'".format(fn=f.__name__, keys=keys))
+        return f(*args, **kwargs)
+    return cast(F, wrapper)
+
+"""

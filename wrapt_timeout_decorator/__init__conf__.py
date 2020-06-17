@@ -3,7 +3,7 @@ title = 'there are many timeout decorators out there - that one focuses on corre
 version = '1.4.0'
 url = 'https://github.com/bitranox/wrapt_timeout_decorator'
 author = 'Robert Nowotny'
-author_email = 'rnowotny1966@gmail.com'
+author_email = 'bitranox@gmail.com'
 shell_command = 'wrapt_timeout_decorator'
 
 
@@ -19,4 +19,4 @@ def print_info() -> None:
           Version      : 1.4.0
           url          : https://github.com/bitranox/wrapt_timeout_decorator
           author       : Robert Nowotny
-          author_email : rnowotny1966@gmail.com""")
+          author_email : bitranox@gmail.com""")
