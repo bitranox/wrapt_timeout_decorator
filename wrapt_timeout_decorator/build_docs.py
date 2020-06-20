@@ -53,21 +53,21 @@ def main(args: Dict[str, str]) -> None:
     """
 
     if project_conf.badges_with_jupiter:
-        rst_include.rst_str_replace(source='./README.rst', target='', old='{try_in_jupyter}', new='.. include:: ./try_in_jupyter.rst', inplace=True)
+        rst_include.rst_str_replace(source='./README.rst', target='', str_pattern='{try_in_jupyter}', str_replace='.. include:: ./try_in_jupyter.rst', inplace=True)
     else:
-        rst_include.rst_str_replace(source='./README.rst', target='', old='{try_in_jupyter}', new='', inplace=True)
+        rst_include.rst_str_replace(source='./README.rst', target='', str_pattern='{try_in_jupyter}', str_replace='', inplace=True)
 
     logger.info('include the include blocks')
     rst_include.rst_inc(source='./.docs/README_template.rst',
                         target='./README.rst')
 
     logger.info('replace repository related strings')
-    rst_include.rst_str_replace(source='./README.rst', target='', old='{repository_slug}', new=travis_repo_slug, inplace=True)
-    rst_include.rst_str_replace(source='./README.rst', target='', old='{repository}', new=repository, inplace=True)
-    rst_include.rst_str_replace(source='./README.rst', target='', old='{double_underline_repository}', new='=' * len(repository), inplace=True)
-    rst_include.rst_str_replace(source='./README.rst', target='', old='{repository_dashed}', new=repository_dashed, inplace=True)
-    rst_include.rst_str_replace(source='./README.rst', target='', old='{last_update_yyyy}', new=str(datetime.date.today().year + 1), inplace=True)
-    rst_include.rst_str_replace(source='./README.rst', target='', old='{codeclimate_link_hash}', new=project_conf.codeclimate_link_hash, inplace=True)
+    rst_include.rst_str_replace(source='./README.rst', target='', str_pattern='{repository_slug}', str_replace=travis_repo_slug, inplace=True)
+    rst_include.rst_str_replace(source='./README.rst', target='', str_pattern='{repository}', str_replace=repository, inplace=True)
+    rst_include.rst_str_replace(source='./README.rst', target='', str_pattern='{double_underline_repository}', str_replace='=' * len(repository), inplace=True)
+    rst_include.rst_str_replace(source='./README.rst', target='', str_pattern='{repository_dashed}', str_replace=repository_dashed, inplace=True)
+    rst_include.rst_str_replace(source='./README.rst', target='', str_pattern='{last_update_yyyy}', str_replace=str(datetime.date.today().year + 1), inplace=True)
+    rst_include.rst_str_replace(source='./README.rst', target='', str_pattern='{codeclimate_link_hash}', str_replace=project_conf.codeclimate_link_hash, inplace=True)
 
     logger.info('done')
     sys.exit(0)
