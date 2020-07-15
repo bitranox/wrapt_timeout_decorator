@@ -79,7 +79,7 @@ if __name__ == '__main__':
         lib_log_utils.log_error('only Python Versions from 3.6 are supported')
         sys.exit(1)
 
-    lib_log_utils.log_handlers.add_stream_handler()          # type: ignore      # in order to pass mypy in the lib_log_utils package
+    lib_log_utils.log_handlers.set_stream_handler()          # type: ignore      # in order to pass mypy in the lib_log_utils package
     main_logger = logging.getLogger('main')
     try:
         _args = docopt(__doc__)
