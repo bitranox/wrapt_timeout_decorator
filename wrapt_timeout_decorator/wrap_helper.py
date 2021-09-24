@@ -55,8 +55,7 @@ class WrapHelper(object):
             try:
                 self.dec_timeout_float = float(self.dec_timeout)
             except ValueError:
-                raise ValueError('the given or evaluated value for the timeout can not be converted to float : "{dec_timeout}"'
-                                 .format(dec_timeout=self.dec_timeout))
+                raise ValueError(f'the given or evaluated value for the timeout can not be converted to float : "{self.dec_timeout}"')
 
     def pop_kwargs(self) -> None:
         self.dec_allow_eval = self.kwargs.pop('dec_allow_eval', self.dec_allow_eval)
@@ -74,8 +73,7 @@ class WrapHelper(object):
     def format_exception_message(self) -> None:
         function_name = self.wrapped.__name__ or '(unknown name)'
         if not self.exception_message:
-            self.exception_message = 'Function {function_name} timed out after {dec_timeout_float} seconds'
-        self.exception_message = self.exception_message.format(function_name=function_name, dec_timeout_float=self.dec_timeout_float)
+            self.exception_message = f'Function {function_name} timed out after {self.dec_timeout_float} seconds'
 
     def new_alarm_handler(self, signum: signal.Signals, frame: FrameType) -> None:
         raise_exception(self.timeout_exception, self.exception_message)
@@ -107,10 +105,8 @@ def detect_unpickable_objects_and_reraise(object_to_pickle: Any) -> None:
     # they can be pickled - so we just try to start the thread and report
     # the unpickable objects if that fails
     dict_result = detect_unpickable_objects(object_to_pickle, dill_trace=False, log_warning=False)
-    s_err = 'can not pickle {on}, bad items: {bi}, bad objects: {bo}, bad types {bt}'.format(on=dict_result['object_name'],
-                                                                                             bi=dict_result['bad_items'],
-                                                                                             bo=dict_result['bad_objects'],
-                                                                                             bt=dict_result['bad_types'])
+    s_err = f"can not pickle {dict_result['object_name']}, bad items: {dict_result['bad_items']}, bad objects: {dict_result['bad_objects']}, " \
+            f"bad types {dict_result['bad_types']}"
     raise dill.PicklingError(s_err)
 
 
