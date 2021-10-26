@@ -32,6 +32,9 @@ def timeout(dec_timeout: Union[None, float, str] = None,
              without success - so we stuck with any at the moment
              ** see example on bottom of that file for correct annotation of a generic decorator
 
+    ToDo :   look at https://stackoverflow.com/questions/6126007/python-getting-a-traceback-from-a-multiprocessing-process
+
+
     Windows remark : dont use the decorator on classes in the main.py because of Windows multiprocessing limitations
                      read the README
 
