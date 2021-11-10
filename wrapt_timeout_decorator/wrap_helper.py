@@ -11,7 +11,6 @@ from typing import Any, Callable, Dict, List, Type, Union
 import dill             # type: ignore
 import multiprocess     # type: ignore
 
-logging.basicConfig()
 logger = logging.getLogger('pickle_analyzer')
 
 
