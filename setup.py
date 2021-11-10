@@ -103,7 +103,7 @@ if __name__ == '__main__':
           # minimally needs to run tests - no project requirements here
           tests_require=tests_require,
           # specify what a project minimally needs to run correctly
-          install_requires=install_requires + ['typing', 'pathlib'],
+          install_requires=install_requires + ['typing; python_version < "3.5"', 'pathlib; python_version < "3.4"'],
           # minimally needs to run the setup script, dependencies needs also to put here for "setup.py install test"
           # dependencies must not be put here for pip install
           setup_requires=setup_requires
