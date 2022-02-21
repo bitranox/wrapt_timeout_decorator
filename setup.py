@@ -5,7 +5,7 @@ see : https://docs.python.org/3.8/distutils/setupscript.html
 
 import codecs
 import os
-import pathlib
+import importlib_metadata
 from typing import List
 
 # single point of configuration
@@ -44,7 +44,7 @@ def strip_links_from_required(l_required: List[str]) -> List[str]:
     return l_req_stripped
 
 
-path_readme = pathlib.Path(__file__).parent / 'README.rst'
+path_readme = importlib_metadata.pathlib.Path(__file__).parent / 'README.rst'
 long_description = project_conf.package_name
 
 
@@ -62,7 +62,7 @@ def get_requirements_from_file(requirements_filename: str) -> List[str]:
     >>> assert len(get_requirements_from_file('requirements.txt')) > 0
     """
     l_requirements = list()
-    with open(str(pathlib.Path(__file__).parent / requirements_filename), mode='r') as requirements_file:
+    with open(str(importlib_metadata.pathlib.Path(__file__).parent / requirements_filename), mode='r') as requirements_file:
         for line in requirements_file:
             line_data = get_line_data(line)
             if line_data:

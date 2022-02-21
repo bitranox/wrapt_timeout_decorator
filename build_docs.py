@@ -15,7 +15,6 @@ Options:
 import datetime
 import errno
 import logging
-import pathlib
 import sys
 from typing import Dict
 

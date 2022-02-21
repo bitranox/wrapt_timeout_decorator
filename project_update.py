@@ -7,7 +7,7 @@ this module exposes no other useful functions to the commandline
 
 """
 # stdlib
-import pathlib
+import importlib_metadata
 import shutil
 from typing import Dict, List, Union
 
@@ -19,7 +19,7 @@ import project_conf
 
 
 def format_commandline_help_file() -> None:
-    source_file = pathlib.Path(__file__).parent / '.docs/commandline_help.txt'
+    source_file = importlib_metadata.pathlib.Path(__file__).parent / '.docs/commandline_help.txt'
     if source_file.is_file():
         with open(source_file, 'r') as f_sourcefile:
             commandline_help_txt_lines = f_sourcefile.readlines()
@@ -42,7 +42,7 @@ def create_commandline_help_file() -> None:
     """
     import subprocess
     import sys
-    module_path = pathlib.Path('./{src_dir}/{module_name}.py'.format(src_dir=project_conf.src_dir, module_name=project_conf.module_name))
+    module_path = importlib_metadata.pathlib.Path('./{src_dir}/{module_name}.py'.format(src_dir=project_conf.src_dir, module_name=project_conf.module_name))
     if module_path.is_file():
         module_path = module_path.resolve()
         command = '{sys_executable} {module_path} -h > ./.docs/commandline_help.txt'.format(sys_executable=sys.executable, module_path=module_path)
@@ -52,7 +52,7 @@ def create_commandline_help_file() -> None:
 
 def create_init_config_file() -> None:
     path_source_dir = get_path_template_dir_local() / 'templates'
-    path_target_dir = pathlib.Path(__file__).parent.resolve() / project_conf.src_dir
+    path_target_dir = importlib_metadata.pathlib.Path(__file__).parent.resolve() / project_conf.src_dir
 
     path_target_dir.mkdir(parents=True, exist_ok=True)
 
@@ -94,14 +94,14 @@ def create_init_config_file() -> None:
 
 
 def is_in_own_project_folder() -> bool:
-    if pathlib.Path(__file__).parts[-2] == 'lib_travis_template':
+    if importlib_metadata.pathlib.Path(__file__).parts[-2] == 'lib_travis_template':
         return True
     else:
         return False
 
 
-def get_path_template_dir_local() -> pathlib.Path:
-    path_current_dir = pathlib.Path(__file__).parent.resolve()
+def get_path_template_dir_local() -> importlib_metadata.pathlib.Path:
+    path_current_dir = importlib_metadata.pathlib.Path(__file__).parent.resolve()
     while True:
         path_current_dir = path_current_dir.parent
         path_current_subdirs = path_current_dir.glob('**/')
@@ -110,7 +110,7 @@ def get_path_template_dir_local() -> pathlib.Path:
                 return subdir
 
 
-def is_ok_to_copy(path_source_file: pathlib.Path) -> bool:
+def is_ok_to_copy(path_source_file: importlib_metadata.pathlib.Path) -> bool:
     """ its ok when a file and not in the list """
     files_not_to_copy = ['requirements.txt', 'project_conf.py', '.travis.yml', 'README.rst',
                          'CHANGES.rst', 'description.rst', 'usage.rst', 'installation.rst', 'acknowledgment.rst',
@@ -125,7 +125,7 @@ def is_ok_to_copy(path_source_file: pathlib.Path) -> bool:
         return False
 
 
-def get_paths_to_copy(path_source_dir: pathlib.Path) -> List[pathlib.Path]:
+def get_paths_to_copy(path_source_dir: importlib_metadata.pathlib.Path) -> List[importlib_metadata.pathlib.Path]:
     paths_source = list(path_source_dir.glob('*'))
     paths_source = paths_source + list(path_source_dir.glob('**/.docs/*'))
     paths_source = paths_source + list(path_source_dir.glob('**/tests/*'))
@@ -139,7 +139,7 @@ def copy_project_files() -> None:
     we dont overwrite some files, see code
     """
     path_source_dir = get_path_template_dir_local()
-    path_target_dir = pathlib.Path(__file__).parent.resolve()
+    path_target_dir = importlib_metadata.pathlib.Path(__file__).parent.resolve()
     s_path_source_dir = str(path_source_dir)
     s_path_target_dir = str(path_target_dir)
 
@@ -149,7 +149,7 @@ def copy_project_files() -> None:
         if is_ok_to_copy(path_sourcefile):
             s_path_sourcefile = str(path_sourcefile)
             s_path_targetfile = s_path_sourcefile.replace(s_path_source_dir, s_path_target_dir, 1)
-            path_targetfile = pathlib.Path(s_path_targetfile)
+            path_targetfile = importlib_metadata.pathlib.Path(s_path_targetfile)
 
             if not path_targetfile.parent.is_dir():
                 path_targetfile.parent.mkdir(exist_ok=True)
@@ -159,7 +159,7 @@ def copy_project_files() -> None:
 
 def copy_template_files() -> None:
     path_source_dir = get_path_template_dir_local()
-    path_target_dir = pathlib.Path(__file__).parent.resolve()
+    path_target_dir = importlib_metadata.pathlib.Path(__file__).parent.resolve()
 
     # copy CHANGES.rst template if not there
     path_targetfile = path_target_dir / 'CHANGES.rst'
@@ -218,7 +218,7 @@ def copy_template_files() -> None:
 def replace_marker(text: str, marker: str, src_filename: str, replace_marker_with_src_file: bool = True) -> str:
     """ replace a marker in the text with the content of a file, or with '' """
     if replace_marker_with_src_file:
-        path_base_dir = pathlib.Path(__file__).parent
+        path_base_dir = importlib_metadata.pathlib.Path(__file__).parent
         path_src_filename = path_base_dir / src_filename
         with open(str(path_src_filename), 'r') as f_src_filename:
             s_src = f_src_filename.read()
@@ -235,7 +235,7 @@ def create_travis_file() -> None:
     else:
         travis_pypi_secure_code = '- secure: "{code}"'.format(code=project_conf.travis_pypi_secure_code)
 
-    path_base_dir = pathlib.Path(__file__).parent
+    path_base_dir = importlib_metadata.pathlib.Path(__file__).parent
     text = '{travis_template}\n'
     text = replace_marker(text=text, marker='{travis_template}', src_filename='.travis_template.yml')
     text = replace_marker(text=text, marker='{travis_template_linux_addon}',
