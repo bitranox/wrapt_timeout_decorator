@@ -1,16 +1,20 @@
-{repository}
-{double_underline_repository}
+wrapt_timeout_decorator
+=======================
 
-.. include:: ./badges_project.rst
+
+Version 1.3.2 as of 2022-03-01 see `Changelog`_
+
+
+.. include:: ./badges.rst
 
 .. include:: ./description.rst
 
+----
 
+automated tests, Travis Matrix, Documentation, Badges, etc. are managed with `PizzaCutter <https://github
+.com/bitranox/PizzaCutter>`_ (cookiecutter on steroids)
 
-
-automated tests, Travis Matrix, Documentation, Badges for this Project are managed with `lib_travis_template <https://github
-.com/bitranox/lib_travis_template>`_ - check it out
-
+Python version required: 3.6.0 or newer
 
 .. include:: ./tested_under.rst
 
@@ -22,17 +26,17 @@ automated tests, Travis Matrix, Documentation, Badges for this Project are manag
 
 .. include:: ./try_in_jupyter.rst
 
-Installation and Upgrade
-------------------------
-.. include:: ./installation.rst
-
 Usage
 -----------
 .. include:: ./usage.rst
 
 Usage from Commandline
 ------------------------
-.. include:: ./commandline_help.txt
+.. include:: ./commandline_help.rst
+
+Installation and Upgrade
+------------------------
+.. include:: ./installation.rst
 
 Requirements
 ------------

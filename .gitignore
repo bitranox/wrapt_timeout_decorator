@@ -101,5 +101,5 @@ ENV/
 .mypy_cache/
 
 # pytest
-.pytest_cache/
-.idea/
+.pytest_cache
+.idea

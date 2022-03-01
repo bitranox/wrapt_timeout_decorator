@@ -1,25 +1,12 @@
 - `Try it Online`_
-- `Installation and Upgrade`_
 - `Usage`_
-- `General Recommendations`_
-- `use with Windows`_
-- `Caveats using Signals`_
-- `Caveats using Multiprocessing`_
-- `nested Timeouts`_
-- `Alternative Exception`_
-- `Parameters`_
-- `Override Parameters`_
-- `Multithreading`_
-- `use as function not as decorator`_
-- `use powerful eval function`_
-- `detect pickle errors`_
-- `Logging in decorated functions`_
-- `hard timeout`_ or - when the timout should start ?
+- `Usage from Commandline`_
+- `Installation and Upgrade`_
 - `Requirements`_
 - `Acknowledgements`_
 - `Contribute`_
-- `Report Issues <https://github.com/{repository_slug}/blob/master/ISSUE_TEMPLATE.md>`_
-- `Pull Request <https://github.com/{repository_slug}/blob/master/PULL_REQUEST_TEMPLATE.md>`_
-- `Code of Conduct <https://github.com/{repository_slug}/blob/master/CODE_OF_CONDUCT.md>`_
+- `Report Issues <https://github.com/bitranox/wrapt_timeout_decorator/blob/master/ISSUE_TEMPLATE.md>`_
+- `Pull Request <https://github.com/bitranox/wrapt_timeout_decorator/blob/master/PULL_REQUEST_TEMPLATE.md>`_
+- `Code of Conduct <https://github.com/bitranox/wrapt_timeout_decorator/blob/master/CODE_OF_CONDUCT.md>`_
 - `License`_
 - `Changelog`_

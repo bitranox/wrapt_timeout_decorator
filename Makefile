@@ -6,7 +6,7 @@ venv:
 ## install all needed for development
 develop: venv
 	echo "ToDo - MakeFile is still in Development, contact bitranox@gmail.com if You need it"
-	## venv/bin/python3 -m pip install -e . -r requirements_pytest.txt
+	## venv/bin/python3 -m pip install -e . -r requirements_test.txt
 	## venv/bin/python3 -m pip install -e . -r requirements.txt
 
 test:

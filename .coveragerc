@@ -7,6 +7,11 @@
 # (boolean, default False): whether to measure branch coverage in addition to statement coverage
 branch  = True
 
+omit =
+    venv/*
+    tests/*
+    setup.py
+
 
 [report]
 # Regexes for lines to exclude from consideration
@@ -29,9 +34,3 @@ exclude_lines=
 
 ignore_errors = True
 
-omit =
-    venv/*
-    tests/*
-    setup.py
-    project_conf.py
-    project_conf_module.py

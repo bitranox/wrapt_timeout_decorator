@@ -5,23 +5,31 @@ Timeout decorator.
 """
 
 # STDLIB
+import sys
 from typing import Any, Callable, Type, Union
 
 # EXT
-from dill import PicklingError          # type: ignore
-import wrapt                            # type: ignore
+from dill import PicklingError  # type: ignore
+import wrapt  # type: ignore
 
 # OWN
-from .wrap_helper import WrapHelper, detect_unpickable_objects_and_reraise
-from .wrap_function_multiprocess import Timeout
+try:
+    from .wrap_helper import WrapHelper, detect_unpickable_objects_and_reraise
+    from .wrap_function_multiprocess import Timeout
+except ImportError:
+    # import for local doctest
+    from wrap_helper import WrapHelper, detect_unpickable_objects_and_reraise  # type: ignore
+    from wrap_function_multiprocess import Timeout  # type: ignore
 
 
-def timeout(dec_timeout: Union[None, float, str] = None,
-            use_signals: bool = True,
-            timeout_exception: Type[BaseException] = TimeoutError,
-            exception_message: str = '',
-            dec_allow_eval: bool = False,
-            dec_hard_timeout: bool = False) -> Any:
+def timeout(
+    dec_timeout: Union[None, float, str] = None,
+    use_signals: bool = True,
+    timeout_exception: Type[BaseException] = TimeoutError,
+    exception_message: str = "",
+    dec_allow_eval: bool = False,
+    dec_hard_timeout: bool = False,
+) -> Any:
 
     """Add a timeout parameter to a function and return it.
 
@@ -117,14 +125,16 @@ def timeout(dec_timeout: Union[None, float, str] = None,
     The function is wrapped and returned to the caller.
     """
 
-    @wrapt.decorator    # type: ignore
+    @wrapt.decorator  # type: ignore
     def wrapper(wrapped: Callable[..., Any], instance: object, args: Any, kwargs: Any) -> Any:
-        wrap_helper = WrapHelper(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval,
-                                 dec_hard_timeout, wrapped, instance, args, kwargs)
+        wrap_helper = WrapHelper(
+            dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval, dec_hard_timeout, wrapped, instance, args, kwargs
+        )
         if not wrap_helper.dec_timeout_float:
             return wrapped(*wrap_helper.args, **wrap_helper.kwargs)
         else:
             return wrapped_with_timeout(wrap_helper)
+
     return wrapper
 
 
@@ -153,7 +163,7 @@ def wrapped_with_timeout_process(wrap_helper: WrapHelper) -> Any:
 
 """
 
-# Example for generic decorator with does not destroy the signature of the wrapped function for mypy 
+# Example for generic decorator with does not destroy the signature of the wrapped function for mypy
 
 from typing import Any, Callable, TypeVar, cast
 
@@ -169,3 +179,9 @@ def check_for_kwargs(f: F) -> F:
     return cast(F, wrapper)
 
 """
+
+if __name__ == "__main__":
+    print(
+        b'this is a library only, the executable is named "wrapt_timeout_decorator_cli.py"',
+        file=sys.stderr,
+    )

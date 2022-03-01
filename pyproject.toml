@@ -1,0 +1,7 @@
+
+[tool.black]
+line-length = 160
+target-version = ['py36']
+# Note that you have to use single-quoted strings in TOML for regular expressions
+include = '\.pyi?$'
+exclude = '/(\.eggs|\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist)/'

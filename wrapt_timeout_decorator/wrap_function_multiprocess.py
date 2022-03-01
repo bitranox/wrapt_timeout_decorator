@@ -3,10 +3,13 @@ import sys
 from typing import Any
 
 # EXT
-import multiprocess     # type: ignore
+import multiprocess  # type: ignore
 
 # OWN
-from .wrap_helper import WrapHelper, raise_exception
+try:
+    from .wrap_helper import WrapHelper, raise_exception
+except ImportError:
+    from wrap_helper import WrapHelper, raise_exception  # type: ignore
 
 
 class Timeout(object):
@@ -21,8 +24,8 @@ class Timeout(object):
         self.wrap_helper = wrap_helper
         self.__name__ = self.wrap_helper.wrapped.__name__
         self.__doc__ = self.wrap_helper.wrapped.__doc__
-        self.__process = None       # type: multiprocess.Process
-        self.__parent_conn = None   # type: multiprocess.Pipe
+        self.__process = None  # type: multiprocess.Process
+        self.__parent_conn = None  # type: multiprocess.Pipe
 
     def __call__(self) -> Any:
         """Execute the embedded function object asynchronously.
@@ -44,7 +47,7 @@ class Timeout(object):
 
     def cancel(self) -> None:
         """Terminate any possible execution of the embedded function."""
-        if self.__process.is_alive():   # pragma: no cover      # we can not produce that state - its just a security measure
+        if self.__process.is_alive():  # pragma: no cover      # we can not produce that state - its just a security measure
             self.__process.terminate()
         self.__process.join(timeout=1.0)
         self.__parent_conn.close()
@@ -77,7 +80,7 @@ def _target(wrap_helper: WrapHelper) -> None:
     # noinspection PyBroadException
     try:
         if not wrap_helper.dec_hard_timeout:
-            wrap_helper.child_conn.send('started')
+            wrap_helper.child_conn.send("started")
         exception_occured = False
         wrap_helper.child_conn.send((exception_occured, wrap_helper.wrapped(*wrap_helper.args, **wrap_helper.kwargs)))
     except Exception:
