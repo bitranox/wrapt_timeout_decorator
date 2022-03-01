@@ -16,10 +16,10 @@ import wrapt  # type: ignore
 try:
     from .wrap_helper import WrapHelper, detect_unpickable_objects_and_reraise
     from .wrap_function_multiprocess import Timeout
-except ImportError:
+except ImportError:  # pragma: no cover
     # import for local doctest
-    from wrap_helper import WrapHelper, detect_unpickable_objects_and_reraise  # type: ignore
-    from wrap_function_multiprocess import Timeout  # type: ignore
+    from wrap_helper import WrapHelper, detect_unpickable_objects_and_reraise  # type: ignore   # pragma: no cover
+    from wrap_function_multiprocess import Timeout  # type: ignore  # pragma: no cover
 
 
 def timeout(

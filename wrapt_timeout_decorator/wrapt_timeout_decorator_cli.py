@@ -13,7 +13,7 @@ try:
     from . import __init__conf__
     from . import wrapt_timeout_decorator
 except (ImportError, ModuleNotFoundError):  # pragma: no cover
-    # imports for doctest
+    # imports for local doctest
     import __init__conf__  # type: ignore  # pragma: no cover
     import wrapt_timeout_decorator  # type: ignore  # pragma: no cover
 

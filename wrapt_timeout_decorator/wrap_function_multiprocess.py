@@ -8,8 +8,9 @@ import multiprocess  # type: ignore
 # OWN
 try:
     from .wrap_helper import WrapHelper, raise_exception
-except ImportError:
-    from wrap_helper import WrapHelper, raise_exception  # type: ignore
+except ImportError:  # pragma: no cover
+    # Import for local DocTest
+    from wrap_helper import WrapHelper, raise_exception  # type: ignore # pragma: no cover
 
 
 class Timeout(object):
