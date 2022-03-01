@@ -84,11 +84,11 @@ class WrapHelper(object):
 
     def save_old_and_set_new_alarm_handler(self) -> None:
         self.old_alarm_handler = signal.signal(signal.SIGALRM, self.new_alarm_handler)  # type: ignore
-        signal.setitimer(signal.ITIMER_REAL, self.dec_timeout_float)
+        signal.setitimer(signal.ITIMER_REAL, self.dec_timeout_float)  # type: ignore  # on windows we dont have signals
 
     def restore_old_alarm_handler(self) -> None:
-        signal.setitimer(signal.ITIMER_REAL, 0)
-        signal.signal(signal.SIGALRM, self.old_alarm_handler)
+        signal.setitimer(signal.ITIMER_REAL, 0)  # type: ignore  # on windows we dont have signals
+        signal.signal(signal.SIGALRM, self.old_alarm_handler)  # type: ignore  # on windows we dont have signals
 
     def set_signals_to_false_if_not_possible(self) -> None:
         if is_system_windows() or not is_in_main_thread():
