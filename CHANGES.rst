@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.3.3
+-------
+2022-03-10: extend time on test_timeout_alternate_exception - github macos seems to be slow, so sometimes that test fails
+
 v1.3.2
 -------
 2022-03-01: github actions pipeline, codestyle black, fix requirements

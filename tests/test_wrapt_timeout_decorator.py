@@ -54,11 +54,11 @@ def test_timeout_kwargs(use_signals: bool) -> None:
 
 
 def test_timeout_alternate_exception(use_signals: bool) -> None:
-    @timeout(0.1, use_signals=use_signals, timeout_exception=StopIteration)  # type: ignore
+    @timeout(0.2, use_signals=use_signals, timeout_exception=StopIteration)  # type: ignore
     def f() -> None:
-        time.sleep(0.2)
+        time.sleep(0.4)
 
-    with pytest.raises(StopIteration, match=r"Function f timed out after 0\.1 seconds"):
+    with pytest.raises(StopIteration, match=r"Function f timed out after 0\.2 seconds"):
         f()
 
 
