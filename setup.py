@@ -84,7 +84,7 @@ if is_travis_deploy() and is_tagged_commit():
 
 setup_kwargs: Dict[str, Any] = dict()
 setup_kwargs["name"] = "wrapt_timeout_decorator"
-setup_kwargs["version"] = "v1.3.2"
+setup_kwargs["version"] = "v1.3.3"
 setup_kwargs["url"] = "https://github.com/bitranox/wrapt_timeout_decorator"
 setup_kwargs["packages"] = find_packages()
 setup_kwargs["package_data"] = {"wrapt_timeout_decorator": ["py.typed", "*.pyi", "__init__.pyi"]}
