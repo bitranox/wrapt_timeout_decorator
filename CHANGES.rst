@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.3.4
+-------
+2022-03-23: extend time on test_timeout_ok_timeout_as_kwarg - github macos seems to be slow, so sometimes that test fails
+
 v1.3.3
 -------
 2022-03-10: extend time on test_timeout_alternate_exception - github macos seems to be slow, so sometimes that test fails

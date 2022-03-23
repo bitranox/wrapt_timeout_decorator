@@ -71,7 +71,7 @@ def test_no_timeout_given(use_signals: bool) -> None:
 
 
 def test_timeout_ok_timeout_as_kwarg(use_signals: bool) -> None:
-    @timeout(dec_timeout=0.2, use_signals=use_signals)  # type: ignore
+    @timeout(dec_timeout=0.5, use_signals=use_signals)  # type: ignore
     def f_test_timeout_ok_timeout_as_kwarg() -> None:
         time.sleep(0.1)
 
