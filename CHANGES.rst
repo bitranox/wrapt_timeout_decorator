@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.3.5
+--------
+2022-03-25: fix github actions windows test
+
 v1.3.4
 -------
 2022-03-23: extend time on test_timeout_ok_timeout_as_kwarg - github macos seems to be slow, so sometimes that test fails
