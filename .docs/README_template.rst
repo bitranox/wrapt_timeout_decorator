@@ -2,7 +2,7 @@ wrapt_timeout_decorator
 =======================
 
 
-Version v1.3.5 as of 2022-03-25 see `Changelog`_
+Version v1.3.6 as of 2022-03-25 see `Changelog`_
 
 
 .. include:: ./badges.rst

@@ -1,7 +1,7 @@
 Changelog
 =========
 
-v1.3.5
+v1.3.6
 --------
 2022-03-25: fix github actions windows test
 
