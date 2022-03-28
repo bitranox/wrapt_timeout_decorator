@@ -22,9 +22,9 @@ def use_signals(request: Any) -> Any:
 
 
 def test_timeout_decorator_arg(use_signals: bool) -> None:
-    @timeout(0.1, use_signals=use_signals)  # type: ignore
+    @timeout(0.2, use_signals=use_signals)  # type: ignore
     def f() -> None:
-        time.sleep(0.2)
+        time.sleep(0.6)
 
     with pytest.raises(TimeoutError):
         f()
