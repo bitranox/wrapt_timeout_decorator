@@ -2,7 +2,7 @@ wrapt_timeout_decorator
 =======================
 
 
-Version v1.3.6 as of 2022-03-25 see `Changelog`_
+Version v1.3.8 as of 2022-03-29 see `Changelog`_
 
 |build_badge| |license| |jupyter| |pypi| |pypi-downloads| |black|
 
@@ -843,6 +843,14 @@ This software is licensed under the `MIT license <http://en.wikipedia.org/wiki/M
 
 Changelog
 =========
+
+v1.3.8
+--------
+2022-03-29: remedy mypy Untyped decorator makes function "cli_info" untyped
+
+v1.3.7
+--------
+2022-03-28: extend time on test_timeout_decorator_arg - github macos seems to be slow, so sometimes that test fails
 
 v1.3.6
 --------

@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.3.8
+--------
+2022-03-29: remedy mypy Untyped decorator makes function "cli_info" untyped
+
 v1.3.7
 --------
 2022-03-28: extend time on test_timeout_decorator_arg - github macos seems to be slow, so sometimes that test fails
