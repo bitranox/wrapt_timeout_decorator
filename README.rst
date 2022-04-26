@@ -2,7 +2,7 @@ wrapt_timeout_decorator
 =======================
 
 
-Version v1.3.9 as of 2022-04-26 see `Changelog`_
+Version v1.3.10 as of 2022-04-26 see `Changelog`_
 
 |build_badge| |license| |jupyter| |pypi| |pypi-downloads| |black|
 
@@ -847,6 +847,10 @@ This software is licensed under the `MIT license <http://en.wikipedia.org/wiki/M
 
 Changelog
 =========
+
+v1.3.10
+--------
+2022-04-26: add tests for thread lock
 
 v1.3.9
 --------

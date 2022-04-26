@@ -1,6 +1,7 @@
 """Timeout decorator tests."""
 # STDLIB
 import sys
+import threading
 from threading import Thread
 import time
 from typing import Any
@@ -25,6 +26,17 @@ def test_timeout_decorator_arg(use_signals: bool) -> None:
     @timeout(0.2, use_signals=use_signals)  # type: ignore
     def f() -> None:
         time.sleep(0.6)
+
+    with pytest.raises(TimeoutError):
+        f()
+
+
+def test_timeout_decorator_thread_lock(use_signals: bool) -> None:
+    @timeout(0.2, use_signals=use_signals)  # type: ignore
+    def f() -> None:
+        my_lock = threading.Lock()
+        my_lock.acquire()
+        my_lock.acquire()
 
     with pytest.raises(TimeoutError):
         f()

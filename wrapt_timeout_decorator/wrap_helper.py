@@ -8,8 +8,8 @@ from types import FrameType
 from typing import Any, Callable, Dict, List, Type, Union, Optional
 
 # EXT
-import dill  # type: ignore
-import multiprocess  # type: ignore
+import dill
+import multiprocess
 
 # Types
 AlarmHandler = Union[Callable[[int, Optional[FrameType]], Any], int, signal.Handlers, None]
@@ -42,7 +42,7 @@ class WrapHelper(object):
         self.args = args
         self.kwargs = kwargs
 
-        self.dec_timeout_float = 0.0  # type: float
+        self.dec_timeout_float: float = 0.0
         self.old_alarm_handler: AlarmHandler = None
         self.child_conn: "multiprocess.Pipe" = None
 
@@ -120,7 +120,7 @@ def detect_unpickable_objects_and_reraise(object_to_pickle: Any) -> None:
 def detect_unpickable_objects(object_to_pickle: Any, dill_trace: bool = True, log_warning: bool = True) -> Dict[str, Union[str, List[Any]]]:
     if log_warning:
         logger.warning('always remember that the "object_to_pickle" should not be defined within the main context')
-    dict_result = dict()  # type: Dict[str, Union[str, List[Any]]]
+    dict_result: Dict[str, Union[str, List[Any]]] = dict()
     dict_result["object_name"] = ""
     dict_result["bad_items"] = list()
     dict_result["bad_objects"] = list()
@@ -150,7 +150,7 @@ def get_object_name(object_to_pickle: object) -> str:
 
 
 def get_bad_pickling_types(object_to_pickle: object) -> List[Any]:
-    bad_types = list()  # type: List[Any]
+    bad_types: List[Any] = list()
     # noinspection PyBroadException
     try:
         bad_types = dill.detect.badtypes(object_to_pickle)
@@ -161,7 +161,7 @@ def get_bad_pickling_types(object_to_pickle: object) -> List[Any]:
 
 
 def get_bad_pickling_objects(object_to_pickle: Any) -> Any:
-    bad_objects = list()  # type: List[object]
+    bad_objects: List[object] = list()
     # noinspection PyBroadException
     try:
         bad_objects = dill.detect.badobjects(object_to_pickle)

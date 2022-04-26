@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.3.10
+--------
+2022-04-26: add tests for thread lock
+
 v1.3.9
 --------
 2022-04-26: preserve Signature of the decorator

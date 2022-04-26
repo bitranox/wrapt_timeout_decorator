@@ -9,7 +9,7 @@ import sys
 from typing import Any, Callable, Type, TypeVar, Union
 
 # EXT
-from dill import PicklingError  # type: ignore
+from dill import PicklingError
 import wrapt
 
 # OWN
