@@ -12,7 +12,7 @@ import pytest  # type: ignore
 # OWN
 from wrapt_timeout_decorator import *
 from wrapt_timeout_decorator.wrap_helper import *
-from lib_test_helper import *
+from wrapt_timeout_test_helper import *
 
 
 @pytest.fixture(params=[False, True])  # type: ignore
@@ -31,14 +31,14 @@ def test_timeout_decorator_arg(use_signals: bool) -> None:
 
 
 def test_timeout_class_method(use_signals: bool) -> None:
-    with pytest.raises(TimeoutError, match=r"Function f timed out after 0\.1 seconds"):
+    with pytest.raises(TimeoutError, match=r"Function f timed out after 0\.3 seconds"):
         ClassTest1().f(use_signals=use_signals)
     assert ClassTest1().f(dec_timeout="instance.x", dec_allow_eval=True, use_signals=use_signals) is None
 
 
 def test_timeout_class_method_can_pickle(use_signals: bool) -> None:
-    my_object = ClassTest2(0.1)
-    with pytest.raises(TimeoutError, match=r"Function test_method timed out after 0\.1 seconds"):
+    my_object = ClassTest2(0.2)
+    with pytest.raises(TimeoutError, match=r"Function test_method timed out after 0\.2 seconds"):
         my_object.test_method(use_signals=use_signals)
     my_object = ClassTest2(1.0)
     assert my_object.test_method(use_signals=use_signals) == "done"
@@ -47,10 +47,10 @@ def test_timeout_class_method_can_pickle(use_signals: bool) -> None:
 def test_timeout_kwargs(use_signals: bool) -> None:
     @timeout(1, use_signals=use_signals)  # type: ignore
     def f() -> None:
-        time.sleep(0.2)
+        time.sleep(0.4)
 
-    with pytest.raises(TimeoutError, match=r"Function f timed out after 0\.1 seconds"):
-        f(dec_timeout=0.1)
+    with pytest.raises(TimeoutError, match=r"Function f timed out after 0\.2 seconds"):
+        f(dec_timeout=0.2)
 
 
 def test_timeout_alternate_exception(use_signals: bool) -> None:

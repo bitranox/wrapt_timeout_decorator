@@ -13,3 +13,10 @@
 .. include:: ./parts/detect_pickle_errors.rst
 .. include:: ./parts/logging.rst
 .. include:: ./parts/hard_timeout.rst
+
+
+MYPY Testing
+------------
+for local MYPY Testing please make sure that the stub file "wrapt.pyi" is in in the MYPY Path (once!), in order to preserve the decorated function signature.
+
+

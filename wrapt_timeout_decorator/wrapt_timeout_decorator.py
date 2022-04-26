@@ -6,11 +6,11 @@ Timeout decorator.
 
 # STDLIB
 import sys
-from typing import Any, Callable, Type, Union
+from typing import Any, Callable, Type, TypeVar, Union
 
 # EXT
 from dill import PicklingError  # type: ignore
-import wrapt  # type: ignore
+import wrapt
 
 # OWN
 try:
@@ -20,6 +20,9 @@ except ImportError:  # pragma: no cover
     # import for local doctest
     from wrap_helper import WrapHelper, detect_unpickable_objects_and_reraise  # type: ignore   # pragma: no cover
     from wrap_function_multiprocess import Timeout  # type: ignore  # pragma: no cover
+
+# to preserve Signature of the decorator
+F = TypeVar("F", bound=Callable[..., Any])
 
 
 def timeout(
@@ -125,8 +128,8 @@ def timeout(
     The function is wrapped and returned to the caller.
     """
 
-    @wrapt.decorator  # type: ignore
-    def wrapper(wrapped: Callable[..., Any], instance: object, args: Any, kwargs: Any) -> Any:
+    @wrapt.decorator
+    def wrapper(wrapped: F, instance: object, args: Any, kwargs: Any) -> Any:
         wrap_helper = WrapHelper(
             dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval, dec_hard_timeout, wrapped, instance, args, kwargs
         )
@@ -160,25 +163,6 @@ def wrapped_with_timeout_process(wrap_helper: WrapHelper) -> Any:
     except PicklingError:
         detect_unpickable_objects_and_reraise(wrap_helper.wrapped)
 
-
-"""
-
-# Example for generic decorator with does not destroy the signature of the wrapped function for mypy
-
-from typing import Any, Callable, TypeVar, cast
-
-F = TypeVar('F', bound=Callable[..., Any])
-
-
-def check_for_kwargs(f: F) -> F:
-    def wrapper(*args: Any, **kwargs: Any) -> Any:
-        if kwargs:
-            keys = ', '.join([key for key in kwargs.keys()])
-            raise TypeError("{fn}() got some positional-only arguments passed as keyword arguments: '{keys}'".format(fn=f.__name__, keys=keys))
-        return f(*args, **kwargs)
-    return cast(F, wrapper)
-
-"""
 
 if __name__ == "__main__":
     print(

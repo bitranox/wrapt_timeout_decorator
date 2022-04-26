@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.3.9
+--------
+2022-04-26: preserve Signature of the decorator
+
 v1.3.8
 --------
 2022-03-29: remedy mypy Untyped decorator makes function "cli_info" untyped

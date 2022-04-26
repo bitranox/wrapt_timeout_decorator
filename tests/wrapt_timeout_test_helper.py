@@ -8,11 +8,11 @@ import time
 
 class ClassTest1(object):
     def __init__(self) -> None:
-        self.x = 1.0
+        self.x = 3.0
 
     @timeout("instance.x/10", dec_allow_eval=True)  # type: ignore
     def f(self) -> None:
-        time.sleep(0.2)
+        time.sleep(0.5)
 
 
 class ClassTest2(object):
@@ -22,5 +22,5 @@ class ClassTest2(object):
     @timeout("instance.x", use_signals=False, dec_allow_eval=True)  # type: ignore
     def test_method(self) -> str:  # type: ignore
         print("swallow")
-        time.sleep(0.2)
+        time.sleep(0.5)
         return "done"

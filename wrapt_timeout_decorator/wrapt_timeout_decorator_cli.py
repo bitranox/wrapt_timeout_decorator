@@ -40,7 +40,7 @@ def cli_main(traceback: Optional[bool] = None) -> None:
         cli_exit_tools.config.traceback = traceback
 
 
-@cli_main.command("info", context_settings=CLICK_CONTEXT_SETTINGS)  # type: ignore
+@cli_main.command("info", context_settings=CLICK_CONTEXT_SETTINGS)
 def cli_info() -> None:
     """get program informations"""
     info()
