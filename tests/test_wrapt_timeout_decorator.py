@@ -127,11 +127,6 @@ def test_timeout_pickle_error() -> None:
 
     # codecov start ignore
 
-    # frames can not be pickled
-    @timeout(dec_timeout=1, use_signals=False)  # type: ignore
-    def unpickable_frame() -> object:
-        return inspect.currentframe()
-
     # generators can not be pickled
     @timeout(dec_timeout=1, use_signals=False)  # type: ignore
     def unpickable_generator(n):
@@ -140,12 +135,17 @@ def test_timeout_pickle_error() -> None:
             yield num
             num += 1
 
+    # frames can not be pickled
+    @timeout(dec_timeout=1, use_signals=False)  # type: ignore
+    def unpickable_frame() -> object:
+        return inspect.currentframe()
+
     # codecov end ignore
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         unpickable_generator(3)
 
-    with pytest.raises(ValueError):
-        f()
+    with pytest.raises(TypeError):
+        unpickable_frame()
 
 
 def test_timeout_custom_exception_message() -> None:
