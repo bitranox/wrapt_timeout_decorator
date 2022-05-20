@@ -124,6 +124,7 @@ def test_timeout_pickle_error() -> None:
     # codecov start ignore
     @timeout(dec_timeout=1, use_signals=False)  # type: ignore
     def f() -> object:
+        time.sleep(0.1)
         # frames can not be pickled
         return inspect.currentframe()
 
