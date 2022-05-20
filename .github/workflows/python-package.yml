@@ -73,7 +73,7 @@ jobs:
           # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-software
 
           - os: windows-latest
-            python-version: "3.10"
+            python-version: "3.9"
             env:
               cEXPORT: "SET"
               BUILD_DOCS: "False"
