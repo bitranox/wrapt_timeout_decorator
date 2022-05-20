@@ -91,7 +91,4 @@ def _target(wrap_helper: WrapHelper) -> None:
         except BrokenPipeError:
             pass
     finally:
-        try:
-            wrap_helper.child_conn.close()
-        except Exception:
-            pass
+        wrap_helper.child_conn.close()
