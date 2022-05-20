@@ -73,7 +73,7 @@ jobs:
           # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-software
 
           - os: windows-latest
-            python-version: 3.10
+            python-version: "3.10"
             env:
               cEXPORT: "SET"
               BUILD_DOCS: "False"
@@ -161,7 +161,7 @@ jobs:
               DO_CLI_TEST: "True"
 
           - os: macos-latest
-            python-version: 3.10
+            python-version: "3.10"
             env:
               cPREFIX: ""               # prefix before commands - used for wine, there the prefix is "wine"
               cPYTHON: "python3"        # command to launch python interpreter (it's different on macOS, there we need python3)
