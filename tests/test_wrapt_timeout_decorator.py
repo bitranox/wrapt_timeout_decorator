@@ -64,7 +64,7 @@ def test_timeout_class_method_can_pickle(use_signals: bool) -> None:
     my_object = ClassTest2(0.2)
     with pytest.raises(TimeoutError, match=r"Function test_method timed out after 0\.2 seconds"):
         my_object.test_method(use_signals=use_signals)
-    my_object = ClassTest2(1.0)
+    my_object = ClassTest2(2.0)
     assert my_object.test_method(use_signals=use_signals) == "done"
 
 
