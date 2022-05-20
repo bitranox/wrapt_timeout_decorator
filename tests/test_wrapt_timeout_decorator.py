@@ -1,5 +1,6 @@
 """Timeout decorator tests."""
 # STDLIB
+import inspect
 import sys
 import threading
 from threading import Thread
@@ -12,7 +13,6 @@ import pytest  # type: ignore
 
 # OWN
 from wrapt_timeout_decorator import *
-from wrapt_timeout_decorator.wrap_helper import *
 from wrapt_timeout_test_helper import *
 
 
@@ -40,6 +40,17 @@ def test_timeout_decorator_thread_lock(use_signals: bool) -> None:
 
     with pytest.raises(TimeoutError):
         f()
+
+
+@timeout(0.1, use_signals=use_signals)  # type: ignore
+def can_not_be_pickled(x: float) -> None:
+    # frames can not be pickled
+    # inspect.currentframe()
+    time.sleep(x)
+
+
+# get rid of not covered
+can_not_be_pickled(0, dec_timeout=0)
 
 
 def test_timeout_class_method(use_signals: bool) -> None:
@@ -109,15 +120,12 @@ def test_function_name(use_signals: bool) -> None:
 
 def test_timeout_pickle_error() -> None:
     """Test that when a pickle error occurs a pickling error is raised"""
+
     # codecov start ignore
     @timeout(dec_timeout=1, use_signals=False)  # type: ignore
     def f() -> object:
-        time.sleep(0.1)
-
-        class Test(object):
-            pass
-
-        return Test()
+        # frames can not be pickled
+        return inspect.currentframe()
 
     # codecov end ignore
     with pytest.raises(PicklingError):
@@ -205,15 +213,6 @@ def test_not_main_thread(use_signals: bool) -> None:
     # especially the virtual machine on travis can be very slow.
     # we experienced a total time up to 5.5 seconds until we get the 0.3s timeout !
     assert 0.0 < (stop_time - start_time) < 9
-
-
-@timeout(0.1, use_signals=use_signals)  # type: ignore
-def can_not_be_pickled(x: float) -> None:
-    time.sleep(x)
-
-
-# get rid of not covered because can not be pickled
-can_not_be_pickled(0, dec_timeout=0)
 
 
 def test_pickle_detection_not_implemented_error() -> None:
