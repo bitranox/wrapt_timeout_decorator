@@ -93,5 +93,5 @@ def _target(wrap_helper: WrapHelper) -> None:
     finally:
         try:
             wrap_helper.child_conn.close()
-        except:
+        except Exception:
             pass
