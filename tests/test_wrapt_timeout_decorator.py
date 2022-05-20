@@ -13,7 +13,8 @@ import pytest  # type: ignore
 
 # OWN
 from wrapt_timeout_decorator import *
-from wrapt_timeout_decorator.wrap_helper import *
+
+# from wrapt_timeout_decorator.wrap_helper import *
 from wrapt_timeout_test_helper import *
 
 
@@ -120,17 +121,31 @@ def test_function_name(use_signals: bool) -> None:
 
 
 def test_timeout_pickle_error() -> None:
-    """Test that when a pickle error occurs a pickling error is raised"""
+    """Test that when a pickle error occurs a pickling error is raised
+    >>> test_timeout_pickle_error()
+
+    """
 
     # codecov start ignore
+
+    # frames can not be pickled
     @timeout(dec_timeout=1, use_signals=False)  # type: ignore
-    def f() -> object:
-        time.sleep(0.1)
-        # frames can not be pickled
+    def unpickable_frame() -> object:
         return inspect.currentframe()
 
+    # generators can not be pickled
+    @timeout(dec_timeout=1, use_signals=False)  # type: ignore
+    def unpickable_generator(n):
+        num = 0
+        while num < n:
+            yield num
+            num += 1
+
     # codecov end ignore
-    with pytest.raises(PicklingError):
+    with pytest.raises(ValueError):
+        unpickable_generator(3)
+
+    with pytest.raises(ValueError):
         f()
 
 
