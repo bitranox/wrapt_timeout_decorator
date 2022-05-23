@@ -87,7 +87,6 @@ def _target(wrap_helper: WrapHelper) -> None:
     except Exception:
         exception_occured = True
         wrap_helper.child_conn.send((exception_occured, sys.exc_info()[1]))
-        # except BrokenPipeError:
 
     finally:
         wrap_helper.child_conn.close()
