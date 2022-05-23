@@ -3,8 +3,9 @@ Changelog
 
 v1.3.11
 --------
-2022-05-23: freeze dill version < 0.3.5.0 because decorating class methods fail under windows
-update tests to the latest python versions
+2022-05-23:
+    - set dill version < 0.3.5 on windows, because decorating class methods fails with dill 0.3.5 upwards
+    - update tests to the latest python versions
 
 v1.3.10
 --------
