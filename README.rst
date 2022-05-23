@@ -2,7 +2,7 @@ wrapt_timeout_decorator
 =======================
 
 
-Version v1.3.11 as of 2022-05-23 see `Changelog`_
+Version v1.3.12 as of 2022-05-23 see `Changelog`_
 
 |build_badge| |license| |jupyter| |pypi| |pypi-downloads| |black|
 
@@ -826,9 +826,7 @@ following modules will be automatically installed :
 
     # class decorators are failing on windows with dill 0.3.5, 0.3.5.1
     dill>0.3.0,<0.3.5;sys_platform=="win32"
-    dill;sys_platform=="linux"
-    dill;sys_platform=="darwin"
-
+    dill;sys_platform!="win32"
     multiprocess
     wrapt
 
@@ -852,6 +850,10 @@ This software is licensed under the `MIT license <http://en.wikipedia.org/wiki/M
 
 Changelog
 =========
+
+v1.3.12
+--------
+2022-05-23: update requirements.txt
 
 v1.3.11
 --------
