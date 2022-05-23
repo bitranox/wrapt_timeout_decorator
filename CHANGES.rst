@@ -1,6 +1,11 @@
 Changelog
 =========
 
+v1.3.11
+--------
+2022-05-23: freeze dill version < 0.3.5.0 because decorating class methods fail under windows
+update tests to the latest python versions
+
 v1.3.10
 --------
 2022-04-26: add tests for thread lock

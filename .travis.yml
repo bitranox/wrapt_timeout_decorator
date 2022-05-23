@@ -129,18 +129,6 @@ matrix:
       arch: "amd64"
       if: true
       language: python
-      python: "3.9-dev"
-      before_install:
-          - export BUILD_DOCS="False"
-          - export DEPLOY_SDIST="True"
-          - export DEPLOY_WHEEL="True"
-          - export BUILD_TEST="True"
-          - export MYPY_DO_TESTS="True"
-
-    - os: linux
-      arch: "amd64"
-      if: true
-      language: python
       python: "pypy3"
       before_install:
           - export BUILD_DOCS="False"
