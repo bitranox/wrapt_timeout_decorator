@@ -2,7 +2,7 @@ wrapt_timeout_decorator
 =======================
 
 
-Version v1.3.12 as of 2022-05-23 see `Changelog`_
+Version v1.3.12.2 as of 2022-06-02 see `Changelog`_
 
 |build_badge| |license| |jupyter| |pypi| |pypi-downloads| |black|
 
@@ -850,6 +850,10 @@ This software is licensed under the `MIT license <http://en.wikipedia.org/wiki/M
 
 Changelog
 =========
+
+v1.3.12.2
+---------
+2022-06-01: update to github actions checkout@v3 and setup-python@v3
 
 v1.3.12
 --------

@@ -1,6 +1,10 @@
 Changelog
 =========
 
+v1.3.12.2
+---------
+2022-06-01: update to github actions checkout@v3 and setup-python@v3
+
 v1.3.12
 --------
 2022-05-23: update requirements.txt
