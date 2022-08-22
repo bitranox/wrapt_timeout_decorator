@@ -26,6 +26,7 @@ class WrapHelper(object):
         exception_message: str,
         dec_allow_eval: bool,
         dec_hard_timeout: bool,
+        dec_poll_subprocess: float,
         wrapped: Callable[..., Any],
         instance: object,
         args: Any,
@@ -37,6 +38,7 @@ class WrapHelper(object):
         self.exception_message = exception_message
         self.dec_allow_eval = dec_allow_eval
         self.dec_hard_timeout = dec_hard_timeout
+        self.dec_poll_subprocess = dec_poll_subprocess
         self.wrapped = wrapped
         self.instance = instance
         self.args = args
@@ -50,7 +52,7 @@ class WrapHelper(object):
         self.set_signals_to_false_if_not_possible()
         self.eval_if_required()
         self.convert_timeout_given_to_float()
-        self.format_exception_message()
+        self.format_timeout_exception_message()
 
     def convert_timeout_given_to_float(self) -> None:
         if self.dec_timeout is None:
@@ -62,10 +64,12 @@ class WrapHelper(object):
                 raise ValueError(f'the given or evaluated value for the timeout can not be converted to float : "{self.dec_timeout}"')
 
     def pop_kwargs(self) -> None:
-        self.dec_allow_eval = self.kwargs.pop("dec_allow_eval", self.dec_allow_eval)
+        """ this is to override the decorator settings with parameters given to the decorated function itself """
         self.dec_timeout = self.kwargs.pop("dec_timeout", self.dec_timeout)
         self.use_signals = self.kwargs.pop("use_signals", self.use_signals)
+        self.dec_allow_eval = self.kwargs.pop("dec_allow_eval", self.dec_allow_eval)
         self.dec_hard_timeout = self.kwargs.pop("dec_hard_timeout", self.dec_hard_timeout)
+        self.dec_poll_subprocess = self.kwargs.pop("dec_poll_subprocess", self.dec_poll_subprocess)
 
     @property
     def should_eval(self) -> bool:
@@ -74,10 +78,16 @@ class WrapHelper(object):
         else:
             return False
 
-    def format_exception_message(self) -> None:
+    def format_timeout_exception_message(self) -> None:
+        # todo : make time human readable lib_cast
         function_name = self.wrapped.__name__ or "(unknown name)"
         if not self.exception_message:
             self.exception_message = f"Function {function_name} timed out after {self.dec_timeout_float} seconds"
+
+    def format_subprocess_exception_message(self, subprocess_run_time: float):
+        # todo : make time human readable lib_cast
+        function_name = self.wrapped.__name__ or "(unknown name)"
+        self.exception_message = f"Function {function_name} was terminated or killed after {subprocess_run_time} seconds"
 
     def new_alarm_handler(self, signum: signal.Signals, frame: FrameType) -> None:
         raise_exception(self.timeout_exception, self.exception_message)

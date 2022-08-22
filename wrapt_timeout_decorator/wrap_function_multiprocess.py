@@ -1,6 +1,8 @@
 # STDLIB
+from multiprocessing import ProcessError
 import sys
-from typing import Any
+import time
+from typing import Any, Optional
 
 # EXT
 import multiprocess  # type: ignore
@@ -27,6 +29,9 @@ class Timeout(object):
         self.__doc__ = self.wrap_helper.wrapped.__doc__
         self.__process = None  # type: multiprocess.Process
         self.__parent_conn = None  # type: multiprocess.Pipe
+        self.__subprocess_start_time: float = 0.0
+        self.__subprocess_max_end_time: float = 0.0
+        self.__sleeping_time: float = 0.0
 
     def __call__(self) -> Any:
         """Execute the embedded function object asynchronously.
@@ -41,10 +46,64 @@ class Timeout(object):
         self.__process.start()
         if not self.wrap_helper.dec_hard_timeout:
             self.wait_until_process_started()
-        if self.__parent_conn.poll(self.wrap_helper.dec_timeout_float):
-            return self.value
+
+        if self.wrap_helper.dec_poll_subprocess:
+            # here we poll for the result and check if the subprocess is still alive
+            # long living subprocesses might get killed by oop killer and some users want to
+            # return immediately if that happens
+            self.__subprocess_start_time = time.time()
+            self.__subprocess_max_end_time = self.__subprocess_start_time + self.wrap_helper.dec_timeout_float
+            self.adjust_sleeping_time()
+
+            while True:
+                if self.is_result_ready_on_the_pipe_with_timeout(timeout_seconds=self.__sleeping_time):
+                    return self.value
+                if not self.__process.is_alive():
+                    self.cancel_subprocess_was_killed()
+                self.adjust_sleeping_time()
+                if self.time_is_over():
+                    self.cancel()
+
         else:
-            self.cancel()
+            # here we just wait for the result and dont poll if the subprocess is actually alive
+            if self.is_result_ready_on_the_pipe_with_timeout(timeout_seconds=self.wrap_helper.dec_timeout_float):
+                return self.value
+            else:
+                self.cancel()
+
+    def is_result_ready_on_the_pipe(self) -> bool:
+        """ check if there is a result on the pipe, with timeout
+        see also : https://docs.python.org/3/library/multiprocessing.html#multiprocessing.connection.Connection
+
+        If timeout_seconds is not specified then it will return immediately.
+        If timeout is a number then this specifies the maximum time in seconds to block.
+        If timeout is None then an infinite timeout is used.
+        """
+        return self.__parent_conn.poll()
+
+    def is_result_ready_on_the_pipe_with_timeout(self, timeout_seconds: Optional[float]) -> bool:
+        """ check if there is a result on the pipe, with timeout
+        see also : https://docs.python.org/3/library/multiprocessing.html#multiprocessing.connection.Connection
+
+        If timeout_seconds is not specified then it will return immediately.
+        If timeout is a number then this specifies the maximum time in seconds to block.
+        If timeout is None then an infinite timeout is used.
+        """
+        return self.__parent_conn.poll(timeout_seconds)
+
+    def time_is_over(self) -> bool:
+        """ returns True if the Time is over """
+        return time.time() >= self.__subprocess_max_end_time
+
+    def adjust_sleeping_time(self) -> None:
+        """ adjust sleeping time, not to sleep longer as the timeout allows """
+        if time.time() + self.wrap_helper.dec_poll_subprocess > self.__subprocess_max_end_time:
+            self.__sleeping_time = self.__subprocess_max_end_time - time.time()
+        else:
+            self.__sleeping_time = self.wrap_helper.dec_poll_subprocess
+
+        if self.__sleeping_time < 0:
+            self.__sleeping_time = 0
 
     def cancel(self) -> None:
         """Terminate any possible execution of the embedded function."""
@@ -53,6 +112,13 @@ class Timeout(object):
         self.__process.join(timeout=1.0)
         self.__parent_conn.close()
         raise_exception(self.wrap_helper.timeout_exception, self.wrap_helper.exception_message)
+
+    def cancel_subprocess_was_killed(self) -> None:
+        self.__process.join(timeout=1.0)
+        self.__parent_conn.close()
+        subprocess_run_time = time.time() - self.__subprocess_start_time
+        self.wrap_helper.format_subprocess_exception_message(subprocess_run_time=subprocess_run_time)
+        raise_exception(ProcessError, self.wrap_helper.exception_message)
 
     def wait_until_process_started(self) -> None:
         self.__parent_conn.recv()
@@ -75,7 +141,7 @@ def _target(wrap_helper: WrapHelper) -> None:
     """Run a function with arguments and return output via a pipe.
     This is a helper function for the Process created in Timeout. It runs
     the function with positional arguments and keyword arguments and then
-    returns the function's output by way of a queue. If an exception gets
+    returns the function's output by way of a queue. If an exception is
     raised, it is returned to Timeout to be raised by the value property.
     """
     # noinspection PyBroadException

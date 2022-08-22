@@ -32,6 +32,7 @@ def timeout(
     exception_message: str = "",
     dec_allow_eval: bool = False,
     dec_hard_timeout: bool = False,
+    dec_poll_subprocess: float = 5.0,
 ) -> Any:
 
     """Add a timeout parameter to a function and return it.
@@ -131,7 +132,8 @@ def timeout(
     @wrapt.decorator
     def wrapper(wrapped: F, instance: object, args: Any, kwargs: Any) -> Any:
         wrap_helper = WrapHelper(
-            dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval, dec_hard_timeout, wrapped, instance, args, kwargs
+            dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval, dec_hard_timeout, dec_poll_subprocess, wrapped, instance, args,
+            kwargs
         )
         if not wrap_helper.dec_timeout_float:
             return wrapped(*wrap_helper.args, **wrap_helper.kwargs)

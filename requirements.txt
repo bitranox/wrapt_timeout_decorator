@@ -6,4 +6,5 @@ lib_detect_testenv
 dill>0.3.0,<0.3.5;sys_platform=="win32"
 dill;sys_platform!="win32"
 multiprocess
+psutil
 wrapt
