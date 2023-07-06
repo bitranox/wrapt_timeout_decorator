@@ -13,8 +13,8 @@ banner "this will encrypt the name and the value of a secret environment variabl
 common secrets for the PizzaCutter Python Template are:
 \"CC_TEST_REPORTER_ID\" and \"PYPI_PASSWORD\""
 
-read -r -p 'variable name  :' var_name
-read -r -p 'variable value :' var_value
+read -rp 'variable name  :' var_name
+read -rp 'variable value :' var_value
 
 cd "${project_root_dir}"||exit
 travis encrypt "${var_name}=${var_value}" --no-interactive --com > "${own_dir}/secrets/${var_name}.secret.txt"
