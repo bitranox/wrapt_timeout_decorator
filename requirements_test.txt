@@ -1,8 +1,7 @@
 ## Test Requirements
 ## following Requirements will be installed temporarily for
 ## "setup.py install test" or "pip install <package> --install-option test"
-black ; platform_python_implementation != "PyPy"
-black==19.3b0 ; platform_python_implementation == "PyPy"
+black
 codecov
 coloredlogs
 coverage
@@ -11,3 +10,4 @@ mypy ; platform_python_implementation != "PyPy"
 pytest
 pytest-cov
 pytest-runner
+readme_renderer

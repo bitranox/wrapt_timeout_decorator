@@ -1,0 +1,5 @@
+[flake8]
+max_line_length = 160
+ignore = E123, E203, E402, F401, F403, F405, W503
+exclude = .git, __pycache__, build, dist, .eggs, .hg, .mypy_cache, .nox, .tox, .venv, _build, buck-out
+max-complexity = 20

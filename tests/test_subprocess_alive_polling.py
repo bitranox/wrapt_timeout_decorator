@@ -1,13 +1,11 @@
 # STDLIB
 import logging
 import multiprocessing
-import sys
 import time
-from typing import Any
 
 # EXT
 import psutil
-import pytest  # type: ignore
+import pytest
 
 # OWN
 from wrapt_timeout_decorator import timeout

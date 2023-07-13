@@ -2,11 +2,11 @@ wrapt_timeout_decorator
 =======================
 
 
-Version v1.3.12.2 as of 2022-06-02 see `Changelog`_
+Version v1.3.13b as of 2023-07-13 see `Changelog`_
 
 |build_badge| |license| |jupyter| |pypi| |pypi-downloads| |black|
 
-|codecov| |better_code| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
+|codecov| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
 
 
 
@@ -27,9 +27,6 @@ Version v1.3.12.2 as of 2022-06-02 see `Changelog`_
 .. |codecov| image:: https://img.shields.io/codecov/c/github/bitranox/wrapt_timeout_decorator
    :target: https://codecov.io/gh/bitranox/wrapt_timeout_decorator
 
-.. |better_code| image:: https://bettercodehub.com/edge/badge/bitranox/wrapt_timeout_decorator?branch=master
-   :target: https://bettercodehub.com/results/bitranox/wrapt_timeout_decorator
-
 .. |cc_maintain| image:: https://img.shields.io/codeclimate/maintainability-percentage/bitranox/wrapt_timeout_decorator?label=CC%20maintainability
    :target: https://codeclimate.com/github/bitranox/wrapt_timeout_decorator/maintainability
    :alt: Maintainability
@@ -42,7 +39,7 @@ Version v1.3.12.2 as of 2022-06-02 see `Changelog`_
    :target: https://codeclimate.com/github/bitranox/wrapt_timeout_decorator/test_coverage
    :alt: Code Coverage
 
-.. |snyk| image:: https://img.shields.io/snyk/vulnerabilities/github/bitranox/wrapt_timeout_decorator
+.. |snyk| image:: https://snyk.io/test/github/bitranox/wrapt_timeout_decorator/badge.svg
    :target: https://snyk.io/test/github/bitranox/wrapt_timeout_decorator
 
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
@@ -73,14 +70,14 @@ Communication to the subprocess is done via "multiprocess.pipe" instead of "queu
 
 ----
 
-automated tests, Travis Matrix, Documentation, Badges, etc. are managed with `PizzaCutter <https://github
+automated tests, Github Actions, Documentation, Badges, etc. are managed with `PizzaCutter <https://github
 .com/bitranox/PizzaCutter>`_ (cookiecutter on steroids)
 
-Python version required: 3.6.0 or newer
+Python version required: 3.8.0 or newer
 
-tested on recent linux with python 3.6, 3.7, 3.8, 3.9, 3.10, pypy-3.8 - architectures: amd64
+tested on recent linux with python 3.8, 3.9, 3.10, 3.11, pypy-3.9 - architectures: amd64
 
-`100% code coverage <https://codecov.io/gh/bitranox/wrapt_timeout_decorator>`_, flake8 style checking ,mypy static type checking ,tested under `Linux, macOS, Windows <https://github.com/bitranox/wrapt_timeout_decorator/actions/workflows/python-package.yml>`_, automatic daily builds and monitoring
+`100% code coverage <https://codeclimate.com/github/bitranox/wrapt_timeout_decorator/test_coverage>`_, flake8 style checking ,mypy static type checking ,tested under `Linux, macOS, Windows <https://github.com/bitranox/wrapt_timeout_decorator/actions/workflows/python-package.yml>`_, automatic daily builds and monitoring
 
 ----
 
@@ -760,6 +757,13 @@ Installation and Upgrade
 
     python -m pip install --upgrade wrapt_timeout_decorator
 
+
+- to install the latest release from PyPi via pip, including test dependencies:
+
+.. code-block::
+
+    python -m pip install --upgrade wrapt_timeout_decorator[test]
+
 - to install the latest version from github via pip:
 
 
@@ -783,14 +787,14 @@ Installation and Upgrade
     python -m pip install --upgrade -r /<path>/requirements.txt
 
 
-- to install the latest development version from source code:
+- to install the latest development version, including test dependencies from source code:
 
 .. code-block::
 
     # cd ~
     $ git clone https://github.com/bitranox/wrapt_timeout_decorator.git
     $ cd wrapt_timeout_decorator
-    python setup.py install
+    python -m pip install -e .[test]
 
 - via makefile:
   makefiles are a very convenient way to install. Here we can do much more,
@@ -828,6 +832,7 @@ following modules will be automatically installed :
     dill>0.3.0,<0.3.5;sys_platform=="win32"
     dill;sys_platform!="win32"
     multiprocess
+    psutil
     wrapt
 
 Acknowledgements
@@ -850,6 +855,24 @@ This software is licensed under the `MIT license <http://en.wikipedia.org/wiki/M
 
 Changelog
 =========
+
+v1.3.13b
+---------
+2023-07-13:
+    - check for killed child processes (for instance by OOMKiller)
+    - require minimum python 3.8
+    - remove python 3.7 tests
+    - introduce PEP517 packaging standard
+    - introduce pyproject.toml build-system
+    - remove mypy.ini
+    - remove pytest.ini
+    - remove setup.cfg
+    - remove setup.py
+    - remove .bettercodehub.yml
+    - remove .travis.yml
+    - update black config
+    - clean ./tests/test_cli.py
+
 
 v1.3.12.2
 ---------

@@ -1,6 +1,6 @@
 |build_badge| |license| |jupyter| |pypi| |pypi-downloads| |black|
 
-|codecov| |better_code| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
+|codecov| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
 
 
 
@@ -21,9 +21,6 @@
 .. |codecov| image:: https://img.shields.io/codecov/c/github/bitranox/wrapt_timeout_decorator
    :target: https://codecov.io/gh/bitranox/wrapt_timeout_decorator
 
-.. |better_code| image:: https://bettercodehub.com/edge/badge/bitranox/wrapt_timeout_decorator?branch=master
-   :target: https://bettercodehub.com/results/bitranox/wrapt_timeout_decorator
-
 .. |cc_maintain| image:: https://img.shields.io/codeclimate/maintainability-percentage/bitranox/wrapt_timeout_decorator?label=CC%20maintainability
    :target: https://codeclimate.com/github/bitranox/wrapt_timeout_decorator/maintainability
    :alt: Maintainability
@@ -36,7 +33,7 @@
    :target: https://codeclimate.com/github/bitranox/wrapt_timeout_decorator/test_coverage
    :alt: Code Coverage
 
-.. |snyk| image:: https://img.shields.io/snyk/vulnerabilities/github/bitranox/wrapt_timeout_decorator
+.. |snyk| image:: https://snyk.io/test/github/bitranox/wrapt_timeout_decorator/badge.svg
    :target: https://snyk.io/test/github/bitranox/wrapt_timeout_decorator
 
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg

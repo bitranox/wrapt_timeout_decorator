@@ -2,7 +2,7 @@ wrapt_timeout_decorator
 =======================
 
 
-Version v1.3.12.2 as of 2022-06-02 see `Changelog`_
+Version v1.3.13b as of 2023-07-13 see `Changelog`_
 
 
 .. include:: ./badges.rst
@@ -11,10 +11,10 @@ Version v1.3.12.2 as of 2022-06-02 see `Changelog`_
 
 ----
 
-automated tests, Travis Matrix, Documentation, Badges, etc. are managed with `PizzaCutter <https://github
+automated tests, Github Actions, Documentation, Badges, etc. are managed with `PizzaCutter <https://github
 .com/bitranox/PizzaCutter>`_ (cookiecutter on steroids)
 
-Python version required: 3.6.0 or newer
+Python version required: 3.8.0 or newer
 
 .. include:: ./tested_under.rst
 

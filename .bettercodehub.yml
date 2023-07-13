@@ -1,6 +1,0 @@
-component_depth: 4
-languages:
-  - python
-exclude:
-  # regex pattern, see https://bettercodehub.com/docs/configuration-manual
-  - .*/setup\.py

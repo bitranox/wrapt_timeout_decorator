@@ -71,15 +71,15 @@ jobs:
       matrix:
         include:
           # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-software
+          # https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md#available-versions-of-python-and-pypy
 
           - os: windows-latest
-            python-version: "3.10"
+            python-version: "3.11"
             env:
               cEXPORT: "SET"
               BUILD_DOCS: "False"
-              DEPLOY_SDIST: "False"
-              DEPLOY_WHEEL: "False"
-              DEPLOY_TEST: "False"
+              BUILD: "False"
+              BUILD_TEST: "False"
               MYPY_DO_TESTS: "True"
               # Setup tests
               DO_SETUP_INSTALL: "True"
@@ -89,87 +89,69 @@ jobs:
 
 
           - os: ubuntu-latest
-            python-version: "3.6"
-            env:
-              BUILD_DOCS: "False"
-              DEPLOY_SDIST: "True"
-              DEPLOY_WHEEL: "True"
-              DEPLOY_TEST: "True"
-              MYPY_DO_TESTS: "True"
-              DO_SETUP_INSTALL: "True"
-              DO_SETUP_INSTALL_TEST: "False"
-              DO_CLI_TEST: "True"
-
-          - os: ubuntu-latest
-            python-version: "3.7"
-            env:
-              BUILD_DOCS: "False"
-              DEPLOY_SDIST: "True"
-              DEPLOY_WHEEL: "True"
-              DEPLOY_TEST: "True"
-              MYPY_DO_TESTS: "True"
-              DO_SETUP_INSTALL: "True"
-              DO_SETUP_INSTALL_TEST: "False"
-              DO_CLI_TEST: "True"
-
-          - os: ubuntu-latest
             python-version: "3.8"
             env:
               BUILD_DOCS: "False"
-              DEPLOY_SDIST: "True"
-              DEPLOY_WHEEL: "True"
-              DEPLOY_TEST: "True"
-              MYPY_DO_TESTS: "True"
-              DO_SETUP_INSTALL: "True"
-              DO_SETUP_INSTALL_TEST: "False"
-              DO_CLI_TEST: "True"
-
-          - os: ubuntu-latest
-            python-version: "3.9"
-            env:
-              BUILD_DOCS: "False"
-              DEPLOY_SDIST: "True"
-              DEPLOY_WHEEL: "True"
-              DEPLOY_TEST: "True"
-              MYPY_DO_TESTS: "True"
-              DO_SETUP_INSTALL: "True"
-              DO_SETUP_INSTALL_TEST: "False"
-              DO_CLI_TEST: "True"
-
-          - os: ubuntu-latest
-            python-version: "3.10"
-            env:
-              BUILD_DOCS: "True"
-              DEPLOY_SDIST: "True"
-              DEPLOY_WHEEL: "True"
-              DEPLOY_TEST: "True"
+              BUILD: "True"  
+              BUILD_TEST: "True"
               MYPY_DO_TESTS: "True"
               DO_SETUP_INSTALL: "True"
               DO_SETUP_INSTALL_TEST: "True"
               DO_CLI_TEST: "True"
 
           - os: ubuntu-latest
-            python-version: "pypy-3.8"
+            python-version: "3.9"
             env:
               BUILD_DOCS: "False"
-              DEPLOY_SDIST: "True"
-              DEPLOY_WHEEL: "True"
-              DEPLOY_TEST: "True"
+              BUILD: "True"  
+              BUILD_TEST: "True"
+              MYPY_DO_TESTS: "True"
+              DO_SETUP_INSTALL: "True"
+              DO_SETUP_INSTALL_TEST: "True"
+              DO_CLI_TEST: "True"
+
+          - os: ubuntu-latest
+            python-version: "3.10"
+            env:
+              BUILD_DOCS: "False"
+              BUILD: "True"  
+              BUILD_TEST: "True"
+              MYPY_DO_TESTS: "True"
+              DO_SETUP_INSTALL: "True"
+              DO_SETUP_INSTALL_TEST: "True"
+              DO_CLI_TEST: "True"
+
+          - os: ubuntu-latest
+            python-version: "3.11"
+            env:
+              BUILD_DOCS: "True"
+              BUILD: "True"  
+              BUILD_TEST: "True"
+              MYPY_DO_TESTS: "True"
+              DO_SETUP_INSTALL: "True"
+              DO_SETUP_INSTALL_TEST: "True"
+              DO_CLI_TEST: "True"
+
+          - os: ubuntu-latest
+            python-version: "pypy-3.9"
+            env:
+              BUILD_DOCS: "False"
+              BUILD: "True"  
+              BUILD_TEST: "True"
               MYPY_DO_TESTS: "False"
               DO_SETUP_INSTALL: "True"
-              DO_SETUP_INSTALL_TEST: "False"
+              DO_SETUP_INSTALL_TEST: "True"
               DO_CLI_TEST: "True"
 
           - os: macos-latest
-            python-version: "3.10"
+            python-version: "3.11"
             env:
               cPREFIX: ""               # prefix before commands - used for wine, there the prefix is "wine"
               cPYTHON: "python3"        # command to launch python interpreter (it's different on macOS, there we need python3)
               cPIP: "python3 -m pip"    # command to launch pip (it's different on macOS, there we need pip3)
               BUILD_DOCS: "False"
-              DEPLOY_SDIST: "True"
-              DEPLOY_WHEEL: "True"
-              DEPLOY_TEST: "True"
+              BUILD: "True"
+              BUILD_TEST: "True"
               MYPY_DO_TESTS: "True"
               # Setup tests
               DO_SETUP_INSTALL: "True"
@@ -185,7 +167,8 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Setting up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
+      # see: https://github.com/actions/setup-python
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
 

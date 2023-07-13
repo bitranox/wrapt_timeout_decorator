@@ -63,6 +63,7 @@ function clean_caches() {
 }
 
 function install_virtualenv_debian() {
+  # installs the debian python3-virtualenv package
   if ! is_package_installed python3-virtualenv; then
     banner "python3-virtualenv is not installed, I will install it for You"
     wait_for_enter
@@ -75,15 +76,16 @@ function install_test_requirements() {
   clr_green "installing/updating pip, setuptools, wheel"
   sudo chmod -R 0777 ~/.eggs # make already installed eggs accessible, just in case they were installed as root
 
-  python3 -m pip install --upgrade pip
-  python3 -m pip install --upgrade setuptools
-  python3 -m pip install --upgrade wheel
+  /opt/python3/bin/python3 -m pip install --upgrade pip
+  /opt/python3/bin/python3 -m pip install --upgrade setuptools
+  /opt/python3/bin/python3 -m pip install --upgrade wheel
   # this we need for local testscripts
-  python3 -m pip install --upgrade click
+  /opt/python3/bin/python3 -m pip install --upgrade click
+  /opt/python3/bin/python3 -m pip install --upgrade black
 
   if test -f "${project_root_dir}/requirements_test.txt"; then
     clr_green "installing/updating test requirements from \"requirements_test.txt\""
-    python3 -m pip install --upgrade -r "${project_root_dir}/requirements_test.txt"
+    /opt/python3/bin/python3 -m pip install --upgrade -r "${project_root_dir}/requirements_test.txt"
   else
     clr_red "requirements_test.txt not found"
   fi
@@ -103,6 +105,8 @@ function install_clean_virtual_environment() {
   clr_green "installing venv"
   delete_virtual_environment
   virtualenv ~/venv
+  sudo chmod -R 0777 ~/venv
+  sudo chmod -R 0777 /usr/local/lib/python3.*/dist-packages
 }
 
 
@@ -110,6 +114,8 @@ function cleanup() {
   trap '' 2 # disable Ctrl+C
   delete_virtual_environment
   clean_caches
+  # delete the link to commandline interface
+  rm -f  /usr/local/bin/wrapt_timeout_decorator
   cd "${save_dir}" || exit
   trap 2 # enable Ctrl+C
 }
@@ -118,7 +124,7 @@ function cleanup() {
 function run_black() {
   # run black for *.py files
   my_banner "running black with settings from ${project_root_dir}/pyproject.toml"
-  if ! python3 -m black "${project_root_dir}"/**/*.py; then
+  if ! /opt/python3/bin/python3 -m black "${project_root_dir}"/**/*.py; then
     my_banner_warning "black ERROR"
     beep
     sleep "${sleeptime_on_error}"
@@ -130,7 +136,7 @@ function run_black() {
 function run_flake8_tests() {
   # run flake8, settings from setup.cfg
   my_banner "running flake8 with settings from ${project_root_dir}/setup.cfg"
-  if ! python3 -m flake8 --append-config="${project_root_dir}/setup.cfg" "$@" "${project_root_dir}"; then
+  if ! /opt/python3/bin/python3 -m flake8 --append-config="${project_root_dir}/setup.cfg" "$@" "${project_root_dir}"; then
     my_banner_warning "flake8 ERROR"
     beep
     sleep "${sleeptime_on_error}"
@@ -141,7 +147,7 @@ function run_flake8_tests() {
 
 function run_mypy_tests() {
   my_banner "mypy tests"
-  if ! python3 -m mypy "${project_root_dir}" --follow-imports=normal --ignore-missing-imports --implicit-reexport --install-types --no-warn-unused-ignores --non-interactive --strict; then
+  if ! /opt/python3/bin/python3 -m mypy "${project_root_dir}" --follow-imports=normal --ignore-missing-imports --implicit-reexport --install-types --no-warn-unused-ignores --non-interactive --strict; then
     my_banner_warning "mypy tests ERROR"
     beep
     sleep "${sleeptime_on_error}"
@@ -153,7 +159,7 @@ function run_mypy_tests() {
 function run_pytest() {
   # run pytest, accepts additional pytest parameters like --disable-warnings and so on
   my_banner "running pytest with settings from pytest.ini, mypy.ini and conftest.py"
-  if ! python3 -m pytest "${project_root_dir}" "$@" --cov="${project_root_dir}" --cov-config=.coveragerc; then
+  if ! /opt/python3/bin/python3 -m pytest "${project_root_dir}" "$@" --cov="${project_root_dir}" --cov-config=.coveragerc; then
     my_banner_warning "pytest ERROR"
     beep
     sleep "${sleeptime_on_error}"
@@ -162,11 +168,26 @@ function run_pytest() {
 }
 
 
-function install_pip_requirements_venv() {
+function run_pytest_venv() {
+  # run pytest, accepts additional pytest parameters like --disable-warnings and so on
+  my_banner "running pytest with settings from pytest.ini, mypy.ini and conftest.py"
+  if ! ~/venv/local/bin/python3 -m pytest "${project_root_dir}" "$@" --cov="${project_root_dir}" --cov-config=.coveragerc; then
+    my_banner_warning "pytest ERROR"
+    beep
+    sleep "${sleeptime_on_error}"
+    return 1
+  fi
+}
+
+
+# todo wip delete me
+function install_pip_requirements_venv_old() {
+  # install the requirements in the virtual environment
   if test -f "${project_root_dir}/requirements.txt on virtual environment"; then
+    my_banner_warning "install_pip_requirements_venv is deprecated - setup_install_venv installiert requirements ohnehin"
     my_banner "pip install -r requirements.txt"
     install_clean_virtual_environment
-    if ! ~/venv/bin/python3 -m pip install -r "${project_root_dir}/requirements.txt"; then
+    if ! ~/venv/local/bin/python3 -m pip install -r "${project_root_dir}/requirements.txt"; then
       my_banner_warning "pip install -r requirements.txt ERROR"
       beep
       sleep "${sleeptime_on_error}"
@@ -177,12 +198,12 @@ function install_pip_requirements_venv() {
 
 
 function setup_install_venv() {
-  if test -f "${project_root_dir}/setup.py"; then
-    my_banner "setup.py install on virtual environment"
+  if test -f "${project_root_dir}/pyproject.toml"; then
+    my_banner "install via pip and pyproject.toml on virtual environment"
     install_clean_virtual_environment
     cd "${project_root_dir}" || exit
-    if ! ~/venv/bin/python3 "${project_root_dir}/setup.py" install; then
-      my_banner_warning "setup.py install ERROR"
+    if ! ~/venv/local/bin/python3 -m pip install -e ".[test]"; then
+      my_banner_warning "pip install [test] ERROR"
       beep
       sleep "${sleeptime_on_error}"
       return 1
@@ -191,12 +212,14 @@ function setup_install_venv() {
 }
 
 
-function setup_test_venv() {
+# todo wip delete me
+function setup_test_venv_old() {
   if test -f "${project_root_dir}/setup.py"; then
+    my_banner_warning "setup_test_venv is deprecated - benutze run_pytest_venv"
     my_banner "setup.py test on virtual environment"
     install_clean_virtual_environment
     cd "${project_root_dir}" || exit
-    if ! ~/venv/bin/python3 "${project_root_dir}/setup.py" test; then
+    if ! ~/venv/local/bin/python3 "${project_root_dir}/setup.py" test; then
       my_banner_warning "setup.py test ERROR"
       beep
       sleep "${sleeptime_on_error}"
@@ -207,11 +230,10 @@ function setup_test_venv() {
 
 
 function test_commandline_interface_venv() {
-  # this will fail if rotek lib directory is in the path - keep this as a reminder
   my_banner "test commandline interface on virtual environment"
 
-  clr_green "issuing command : $HOME/venv/bin/wrapt_timeout_decorator --version"
-  if ! "$HOME/venv/bin/wrapt_timeout_decorator" --version; then
+  clr_green "issuing command : /usr/local/bin/wrapt_timeout_decorator --version"
+  if ! "/usr/local/bin/wrapt_timeout_decorator" --version; then
     my_banner_warning "test commandline interface on virtual environment ERROR"
     beep
     sleep "${sleeptime_on_error}"
@@ -220,12 +242,26 @@ function test_commandline_interface_venv() {
 }
 
 
-function test_setup_test_venv() {
+function test_commandline_interface_venv_old() {
+  # this will fail if rotek lib directory is in the path - keep this as a reminder
+  my_banner "test commandline interface on virtual environment"
+
+  clr_green "issuing command : $HOME/venv/local/bin/wrapt_timeout_decorator --version"
+  if ! "$HOME/venv/local/bin/wrapt_timeout_decorator" --version; then
+    my_banner_warning "test commandline interface on virtual environment ERROR"
+    beep
+    sleep "${sleeptime_on_error}"
+    return 1
+  fi
+}
+
+# todo wip delete me
+function test_setup_test_venv_old() {
   if test -f "${project_root_dir}/setup.py"; then
     my_banner "setup.py test"
     install_clean_virtual_environment
     cd "${project_root_dir}" || exit
-    if ! ~/venv/bin/python3 "${project_root_dir}/setup.py" test; then
+    if ! ~/venv/local/bin/python3 "${project_root_dir}/setup.py" test; then
       my_banner_warning "setup.py test ERROR"
       beep
       sleep "${sleeptime_on_error}"

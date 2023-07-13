@@ -1,4 +1,5 @@
 ## create virtual environment
+## see: https://earthly.dev/blog/python-makefile/
 venv:
 	echo "ToDo - MakeFile is still in Development, contact bitranox@gmail.com if You need it"
 	## virtualenv venv
@@ -27,3 +28,4 @@ uninstall:
 ## ideas - create make targets for "normal" installation and virtual environments,
 ## and to be able to pass the virtual environment directory alternatively
 ## not a priority now, since there are many other ways to install this package
+## see: https://earthly.dev/blog/python-makefile/

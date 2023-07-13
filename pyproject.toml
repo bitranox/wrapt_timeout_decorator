@@ -1,7 +1,91 @@
+[build-system]
+requires = ['setuptools', 'setuptools-scm']
+build-backend = "setuptools.build_meta"
+
+[project]
+# see: https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html
+name = "wrapt_timeout_decorator"
+authors = [
+    {name = "Robert Nowotny", email = "bitranox@gmail.com"},
+]
+description = "The better timout decorator"
+readme = "README.rst"
+requires-python = ">=3.8.0"
+keywords = [
+]
+license = {text = "MIT"}
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+# dependencies - former setup.cfg "install_requires"
+# see: https://setuptools.pypa.io/en/latest/userguide/dependency_management.html
+dependencies = [
+    "cli_exit_tools",
+    "lib_detect_testenv",
+    "dill>0.3.0,<0.3.5;sys_platform=='win32'",
+    "dill;sys_platform!='win32'",
+    "multiprocess",
+    "psutil",
+    "wrapt",
+]
+version = "v1.3.13b"
+# seems to be not allowed anymore
+# zip-save = false
+
+[project.urls]
+Homepage = "https://github.com/bitranox/wrapt_timeout_decorator"
+Documentation = "https://github.com/bitranox/wrapt_timeout_decorator/blob/master/README.rst"
+Repository = "https://github.com/bitranox/wrapt_timeout_decorator.git"
+Changelog = "https://github.com/bitranox/wrapt_timeout_decorator/blob/master/CHANGES.rst"
+
+[project.optional-dependencies]
+test = [
+    "black",
+    "codecov",
+    "coloredlogs",
+    "coverage",
+    "flake8",
+    "mypy ; platform_python_implementation != 'PyPy'",
+    "pytest",
+    "pytest-cov",
+    "pytest-runner",
+    "readme_renderer",
+]
+
+[project.scripts]
+    wrapt_timeout_decorator = "wrapt_timeout_decorator.wrapt_timeout_decorator_cli:cli_main"
+
+[tool.setuptools.package-data]
+wrapt_timeout_decorator = [
+    "py.typed",
+    "*.pyi",
+    "__init__.pyi",
+]
 
 [tool.black]
 line-length = 160
-target-version = ['py36']
+#You should include all Python versions that you want your code to run under
+target-version = ['py37', 'py38', 'py39', 'py310', 'py311']
 # Note that you have to use single-quoted strings in TOML for regular expressions
 include = '\.pyi?$'
 exclude = '/(\.eggs|\.git|\.hg|\.mypy_cache|\.nox|\.tox|\.venv|_build|buck-out|build|dist)/'
+
+[tool.mypy]
+verbosity=0
+warn_unused_configs = true
+ignore_missing_imports = true
+no_implicit_optional = true
+no_strict_optional = true
+show_error_context = true
+
+[tool.pytest.ini_options]
+addopts = "-vvl --doctest-modules"
+doctest_optionflags =  "NORMALIZE_WHITESPACE ELLIPSIS ALLOW_UNICODE ALLOW_BYTES IGNORE_EXCEPTION_DETAIL"
+log_cli = true
+log_cli_level = "CRITICAL"

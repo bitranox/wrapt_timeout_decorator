@@ -1,6 +1,24 @@
 Changelog
 =========
 
+v1.3.13b
+---------
+2023-07-13:
+    - check for killed child processes (for instance by OOMKiller)
+    - require minimum python 3.8
+    - remove python 3.7 tests
+    - introduce PEP517 packaging standard
+    - introduce pyproject.toml build-system
+    - remove mypy.ini
+    - remove pytest.ini
+    - remove setup.cfg
+    - remove setup.py
+    - remove .bettercodehub.yml
+    - remove .travis.yml
+    - update black config
+    - clean ./tests/test_cli.py
+
+
 v1.3.12.2
 ---------
 2022-06-01: update to github actions checkout@v3 and setup-python@v3

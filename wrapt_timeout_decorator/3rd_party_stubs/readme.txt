@@ -1,6 +1,6 @@
-put 3rd party stubs in this directory needed to pass mypy on travis.
+put 3rd party stubs in this directory needed to pass mypy on Github Actions.
 
-in the travis.yml the MYPYPATH is set to this directory.
+in the Github Actions the MYPYPATH is set to this directory.
 
 for local testing, put the *.pyi Files into another central directory and set the mypy path accordingly.
 the reason for that is, that a certain *.pyi have to be only found once by mypy, otherwise it will throw an error.
