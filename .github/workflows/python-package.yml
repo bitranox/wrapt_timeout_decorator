@@ -215,6 +215,9 @@ jobs:
         export "BRANCH=$(lib_cicd_github get_branch)"
         # export for subsequent steps
         echo "BRANCH=$BRANCH" >> $GITHUB_ENV
+        # make mypy cache directory
+        log_util --level=SPAM  "create mypy cache directory"
+        mkdir .mypy_cache
         # run the tests
         lib_cicd_github script
 
