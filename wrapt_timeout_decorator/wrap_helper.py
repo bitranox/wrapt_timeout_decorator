@@ -84,7 +84,7 @@ class WrapHelper(object):
         if not self.exception_message:
             self.exception_message = f"Function {function_name} timed out after {self.dec_timeout_float} seconds"
 
-    def format_subprocess_exception_message(self, subprocess_run_time: float):
+    def format_subprocess_exception_message(self, subprocess_run_time: float) -> None:
         # todo : make time human readable lib_cast
         function_name = self.wrapped.__name__ or "(unknown name)"
         self.exception_message = f"Function {function_name} was terminated or killed after {subprocess_run_time} seconds"

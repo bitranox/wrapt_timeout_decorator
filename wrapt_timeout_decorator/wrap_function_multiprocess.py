@@ -79,7 +79,7 @@ class Timeout(object):
         If timeout is a number then this specifies the maximum time in seconds to block.
         If timeout is None then an infinite timeout is used.
         """
-        return self.__parent_conn.poll()
+        return bool(self.__parent_conn.poll())
 
     def is_result_ready_on_the_pipe_with_timeout(self, timeout_seconds: Optional[float]) -> bool:
         """ check if there is a result on the pipe, with timeout
@@ -89,7 +89,7 @@ class Timeout(object):
         If timeout is a number then this specifies the maximum time in seconds to block.
         If timeout is None then an infinite timeout is used.
         """
-        return self.__parent_conn.poll(timeout_seconds)
+        return bool(self.__parent_conn.poll(timeout_seconds))
 
     def time_is_over(self) -> bool:
         """ returns True if the Time is over """
