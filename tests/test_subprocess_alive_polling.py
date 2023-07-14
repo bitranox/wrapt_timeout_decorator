@@ -40,7 +40,7 @@ def test_killed_process() -> None:
     >>> test_killed_process()
     Traceback (most recent call last):
         ...
-    # multiprocessing.context.ProcessError: Function slow_process was terminated or killed after ... seconds
+    multiprocessing.context.ProcessError: Function slow_process was terminated or killed after ... seconds
     """
     process_oom_killer = multiprocessing.Process(target=fake_oom_killer, args=())
     process_oom_killer.start()
