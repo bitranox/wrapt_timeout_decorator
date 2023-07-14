@@ -3,7 +3,7 @@ cli_exit_tools
 lib_detect_testenv
 
 # class decorators are failing on windows with dill 0.3.5, 0.3.5.1
-dill>0.3.0,<0.3.5;sys_platform=="win32"
+dill>0.3.0,!=0.3.5,!=0.3.5.1;sys_platform=="win32"
 dill;sys_platform!="win32"
 multiprocess
 psutil

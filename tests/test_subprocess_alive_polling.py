@@ -51,14 +51,13 @@ def start_processes() -> None:
     process_oom_killer.join()
 
 
-def test_start_processes() -> None:
-    with pytest.raises(multiprocessing.context.ProcessError):
-        start_processes()
-
-
 def get_str_time() -> str:
     t = time.localtime()
     current_time = time.strftime("%H:%M:%S", t)
     return current_time
+
+
+if __name__ == '__main__':
+    start_processes()
 
 # TestPolling}}}

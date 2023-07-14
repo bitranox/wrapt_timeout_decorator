@@ -627,15 +627,14 @@ By default the subprocess is monitored every 5 seconds, but can be set with para
         process_oom_killer.join()
 
 
-    def test_start_processes() -> None:
-        with pytest.raises(multiprocessing.context.ProcessError):
-            start_processes()
-
-
     def get_str_time() -> str:
         t = time.localtime()
         current_time = time.strftime("%H:%M:%S", t)
         return current_time
+
+
+    if __name__ == '__main__':
+        start_processes()
 
 use as function not as decorator
 --------------------------------
@@ -892,7 +891,7 @@ following modules will be automatically installed :
     lib_detect_testenv
 
     # class decorators are failing on windows with dill 0.3.5, 0.3.5.1
-    dill>0.3.0,<0.3.5;sys_platform=="win32"
+    dill>0.3.0,!=0.3.5,!=0.3.5.1;sys_platform=="win32"
     dill;sys_platform!="win32"
     multiprocess
     psutil
