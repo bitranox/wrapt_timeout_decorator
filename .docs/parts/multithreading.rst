@@ -46,7 +46,7 @@ if the subprocess was terminated or killed (for instance by OOMKiller),
 By default the subprocess is monitored every 5 seconds, but can be set with parameter
 ``dec_poll_subprocess``
 
-.. include:: .../tests/test_subprocess_alive_polling.py
+.. include:: ../../tests/test_subprocess_alive_polling.py
     :code: python
     :start-after: # TestPolling{{{
     :end-before:  # TestPolling}}}

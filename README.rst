@@ -2,17 +2,19 @@ wrapt_timeout_decorator
 =======================
 
 
-Version v1.3.13b as of 2023-07-14 see `Changelog`_
+Version v1.4.0b as of 2023-07-14 see `Changelog`_
 
-|build_badge| |license| |jupyter| |pypi| |pypi-downloads| |black|
-
-|codecov| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
+|build_badge| |codeql| |license| |jupyter| |pypi|
+|pypi-downloads| |black| |codecov| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
 
 
 
 .. |build_badge| image:: https://github.com/bitranox/wrapt_timeout_decorator/actions/workflows/python-package.yml/badge.svg
    :target: https://github.com/bitranox/wrapt_timeout_decorator/actions/workflows/python-package.yml
 
+
+.. |codeql| image:: https://github.com/bitranox/wrapt_timeout_decorator/actions/workflows/codeql-analysis.yml/badge.svg?event=push
+   :target: https://github.com//bitranox/wrapt_timeout_decorator/actions/workflows/codeql-analysis.yml
 
 .. |license| image:: https://img.shields.io/github/license/webcomics/pywine.svg
    :target: http://en.wikipedia.org/wiki/MIT_License
@@ -574,6 +576,63 @@ The following Code will run on Linux but NOT on Windows :
 
     Since Signals will not work on Windows, it is disabled by default, whatever You set.
 
+
+Multithreading
+--------------
+
+when using multiprocessing, the subprocess is monitored if it is still alive.
+if the subprocess was terminated or killed (for instance by OOMKiller),
+``multiprocessing.context.ProcessError`` will be raised.
+By default the subprocess is monitored every 5 seconds, but can be set with parameter
+``dec_poll_subprocess``
+
+.. code-block:: python
+
+    from wrapt_timeout_decorator import timeout
+
+
+    @timeout(10, use_signals=False, timeout_exception=TimeoutError, dec_poll_subprocess=1)
+    def slow_process() -> None:
+        # should have enough time to finish
+        # but instead it gets terminated, and the
+        # poll the subprocess every second
+        logger.error(f"Slow process started at {get_str_time()}")
+        time.sleep(5)
+        logger.error(f"Slow process done at {get_str_time()}")
+
+
+    def fake_oom_killer() -> None:
+        logger.error(f"Fake OOMKiller started at {get_str_time()}")
+        time.sleep(2)
+        # kill sibling slow_process
+        # hacky way to find it
+        target = psutil.Process().parent().children(recursive=True)[-1]
+        target.kill()
+        logger.error(f"Killed {target.pid} at {get_str_time()}")
+
+
+    def test_killed_process() -> None:
+        """
+        >>> test_killed_process()
+        Traceback (most recent call last):
+            ...
+        # multiprocessing.context.ProcessError: Function slow_process was terminated or killed after ... seconds
+        """
+        process_oom_killer = multiprocessing.Process(target=fake_oom_killer, args=())
+        process_oom_killer.start()
+        slow_process()
+        process_oom_killer.join()
+
+
+    def get_str_time() -> str:
+        t = time.localtime()
+        current_time = time.strftime("%H:%M:%S", t)
+        return current_time
+
+
+    if __name__ == '__main__':
+        test_killed_process()
+
 use as function not as decorator
 --------------------------------
 
@@ -856,7 +915,7 @@ This software is licensed under the `MIT license <http://en.wikipedia.org/wiki/M
 Changelog
 =========
 
-v1.3.13b
+v1.4.0b
 ---------
 2023-07-13:
     - check for killed child processes (for instance by OOMKiller)
@@ -872,7 +931,10 @@ v1.3.13b
     - remove .travis.yml
     - update black config
     - clean ./tests/test_cli.py
-
+    - add codeql badge
+    - move 3rd_party_stubs outside the src directory to ``./.3rd_party_stubs``
+    - add pypy 3.10 tests
+    - add python 3.12-dev tests
 
 v1.3.12.2
 ---------
