@@ -55,7 +55,7 @@ can_not_be_pickled(0, dec_timeout=0)
 
 
 def test_timeout_class_method(use_signals: bool) -> None:
-    with pytest.raises(TimeoutError, match=r"Function f timed out after 0\.3 seconds"):
+    with pytest.raises(TimeoutError, match=r"Function f1 timed out after 0\.3 seconds"):
         ClassTest1().f1(use_signals=use_signals)
     assert ClassTest1().f1(dec_timeout="instance.x", dec_allow_eval=True, use_signals=use_signals) is None
 
