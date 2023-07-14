@@ -1,7 +1,7 @@
 Changelog
 =========
 
-v1.3.13b
+v1.4.0b
 ---------
 2023-07-13:
     - check for killed child processes (for instance by OOMKiller)
@@ -17,7 +17,10 @@ v1.3.13b
     - remove .travis.yml
     - update black config
     - clean ./tests/test_cli.py
-
+    - add codeql badge
+    - move 3rd_party_stubs outside the src directory to ``./.3rd_party_stubs``
+    - add pypy 3.10 tests
+    - add python 3.12-dev tests
 
 v1.3.12.2
 ---------
