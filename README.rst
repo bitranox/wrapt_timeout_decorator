@@ -611,9 +611,12 @@ By default the subprocess is monitored every 5 seconds, but can be set with para
         logger.error(f"Killed {target.pid} at {get_str_time()}")
 
 
-    def test_killed_process() -> None:
+    def start_processes() -> None:
         """
-        >>> test_killed_process()
+        starts the 'fake_oom_killer' and 'slow_process' process -
+        and kill 'slow_process' after two seconds
+
+        >>> start_processes()
         Traceback (most recent call last):
             ...
         multiprocessing.context.ProcessError: Function slow_process was terminated or killed after ... seconds
@@ -624,14 +627,15 @@ By default the subprocess is monitored every 5 seconds, but can be set with para
         process_oom_killer.join()
 
 
+    def test_start_processes() -> None:
+        with pytest.raises(multiprocessing.context.ProcessError):
+            start_processes()
+
+
     def get_str_time() -> str:
         t = time.localtime()
         current_time = time.strftime("%H:%M:%S", t)
         return current_time
-
-
-    if __name__ == '__main__':
-        test_killed_process()
 
 use as function not as decorator
 --------------------------------

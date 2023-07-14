@@ -37,6 +37,9 @@ def fake_oom_killer() -> None:
 
 def start_processes() -> None:
     """
+    starts the 'fake_oom_killer' and 'slow_process' process -
+    and kill 'slow_process' after two seconds
+
     >>> start_processes()
     Traceback (most recent call last):
         ...
@@ -46,6 +49,11 @@ def start_processes() -> None:
     process_oom_killer.start()
     slow_process()
     process_oom_killer.join()
+
+
+def test_start_processes() -> None:
+    with pytest.raises(multiprocessing.context.ProcessError):
+        start_processes()
 
 
 def get_str_time() -> str:
