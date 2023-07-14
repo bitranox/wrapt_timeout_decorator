@@ -1,10 +1,11 @@
 Changelog
 =========
 
-v1.4.0b
+v1.4.0
 ---------
 2023-07-13:
     - check for killed child processes (for instance by OOMKiller)
+    - change dill requirements for windows
     - require minimum python 3.8
     - remove python 3.7 tests
     - introduce PEP517 packaging standard

@@ -2,7 +2,7 @@ wrapt_timeout_decorator
 =======================
 
 
-Version v1.4.0b as of 2023-07-14 see `Changelog`_
+Version v1.4.0 as of 2023-07-14 see `Changelog`_
 
 |build_badge| |codeql| |license| |jupyter| |pypi|
 |pypi-downloads| |black| |codecov| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
@@ -577,14 +577,14 @@ The following Code will run on Linux but NOT on Windows :
     Since Signals will not work on Windows, it is disabled by default, whatever You set.
 
 
-Multithreading
---------------
+Subprocess Monitoring
+---------------------
 
 when using multiprocessing, the subprocess is monitored if it is still alive.
 if the subprocess was terminated or killed (for instance by OOMKiller),
 ``multiprocessing.context.ProcessError`` will be raised.
 By default the subprocess is monitored every 5 seconds, but can be set with parameter
-``dec_poll_subprocess``
+``dec_poll_subprocess``. polling can be turned off by setting to 0.0 seconds
 
 .. code-block:: python
 
@@ -918,10 +918,11 @@ This software is licensed under the `MIT license <http://en.wikipedia.org/wiki/M
 Changelog
 =========
 
-v1.4.0b
+v1.4.0
 ---------
 2023-07-13:
     - check for killed child processes (for instance by OOMKiller)
+    - change dill requirements for windows
     - require minimum python 3.8
     - remove python 3.7 tests
     - introduce PEP517 packaging standard

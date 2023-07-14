@@ -34,7 +34,7 @@ dependencies = [
     "psutil",
     "wrapt",
 ]
-version = "v1.4.0b"
+version = "v1.4.0"
 # seems to be not allowed anymore
 # zip-save = false
 

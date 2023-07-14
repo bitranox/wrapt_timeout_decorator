@@ -123,6 +123,7 @@ def timeout(
     :param dec_poll_subprocess: when using multiprocessing, monitor the subprocess if it is still alive.
                                 if the subprocess was terminated or killed (for instance by OOMKiller),
                                 multiprocessing.context.ProcessError will be raised.
+                                the default is 5.0 seconds, polling can be turned off by setting to 0.0 seconds
 
     * all parameters starting with dec_ can be overridden via kwargs passed to the wrapped function.
 
