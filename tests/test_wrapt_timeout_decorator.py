@@ -55,14 +55,14 @@ can_not_be_pickled(0, dec_timeout=0)
 
 
 def test_timeout_class_method(use_signals: bool) -> None:
-    with pytest.raises(TimeoutError, match=r"Function f timed out after 0\.. seconds"):
-        ClassTest1().f(use_signals=use_signals)
-    assert ClassTest1().f(dec_timeout="instance.x", dec_allow_eval=True, use_signals=use_signals) is None
+    with pytest.raises(TimeoutError, match=r"Function f timed out after 0\.3 seconds"):
+        ClassTest1().f1(use_signals=use_signals)
+    assert ClassTest1().f1(dec_timeout="instance.x", dec_allow_eval=True, use_signals=use_signals) is None
 
 
 def test_timeout_class_method_can_pickle(use_signals: bool) -> None:
     my_object = ClassTest2(0.3)
-    with pytest.raises(TimeoutError, match=r"Function test_method timed out after 0\.. seconds"):
+    with pytest.raises(TimeoutError, match=r"Function test_method timed out after 0\.3 seconds"):
         my_object.test_method(use_signals=use_signals)
     my_object = ClassTest2(3.0)
     assert my_object.test_method(use_signals=use_signals) == "done"
@@ -73,7 +73,7 @@ def test_timeout_kwargs(use_signals: bool) -> None:
     def f() -> None:
         time.sleep(0.4)
 
-    with pytest.raises(TimeoutError, match=r"Function f timed out after 0\.. seconds"):
+    with pytest.raises(TimeoutError, match=r"Function f timed out after 0\.2 seconds"):
         f(dec_timeout=0.2)
 
 
@@ -82,7 +82,7 @@ def test_timeout_alternate_exception(use_signals: bool) -> None:
     def f() -> None:
         time.sleep(0.4)
 
-    with pytest.raises(StopIteration, match=r"Function f timed out after 0\.. seconds"):
+    with pytest.raises(StopIteration, match=r"Function f timed out after 0\.2 seconds"):
         f()
 
 

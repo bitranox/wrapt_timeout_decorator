@@ -11,7 +11,7 @@ class ClassTest1(object):
         self.x = 3.0
 
     @timeout("instance.x/10", dec_allow_eval=True)  # type: ignore
-    def f(self) -> None:
+    def f1(self) -> None:
         time.sleep(0.5)
 
 
