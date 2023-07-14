@@ -1,11 +1,19 @@
 General Recommendations
 -----------------------
-dont sprincle Your code with timeouts. Just use it were absolutely necessary, for instance when reading or writing a file. And do that on the lowest
-abstraction level possible to avoid unwanted side effects (Exceptions caught by some other code, non pickable functions or arguments, and so on, but not TOO
-low. Remember that forking the program takes some time (when use multiprocessing).
+Minimize the excessive use of timeouts in your code and reserve their usage for essential cases.
 
-Most functions and libraries You call, they HAVE already some timeouts. use those. This Timeout Decorator should be only the last ressort, if everything else
-fails.
+Implement timeouts at the lowest possible abstraction level to prevent unintended
+consequences such as exceptions being caught by unrelated code or non-pickable
+functions and arguments.
+
+Avoid incorporating the Timeout Decorator within a loop that iterates multiple times,
+as this can result in considerable time overhead,
+especially on Windows systems, when utilizing multiprocessing.
+
+Whenever feasible, leverage the existing built-in timeouts already provided by the functions
+and libraries you utilize. These built-in timeouts can handle most situations effectively.
+Only resort to use this Timeout Decorator as a last resort when all other alternatives have been exhausted.
+
 
     BAD EXAMPLE (Pseudocode) - lets assume the write to the database fails sometimes for unknown reasons, and "hangs"
 

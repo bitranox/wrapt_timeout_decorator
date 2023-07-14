@@ -1,16 +1,33 @@
-there are many timeout decorators out there - that one focuses on correctness when using with Classes, methods,
-class methods, static methods and so on, preserving also the traceback information for Pycharm debugging.
+There are several timeout decorators available, but the one mentioned here
+focuses on ensuring correctness when used with classes, methods, class methods,
+static methods, etc. It also preserves traceback information for PyCharm debugging.
 
-There is also a powerful eval function, it allows to read the desired timeout value even from Class attributes.
+Additionally, there is a powerful eval function that allows reading
+the desired timeout value even from class attributes.
 
-There are two timeout strategies implemented, the ubiquitous method using "Signals" and the second using Multiprocessing.
-Using "Signals" is slick and lean, but there are nasty caveats, please check section `Caveats using Signals`_
+Two timeout strategies have been implemented:
+one using "Signals" and the other using "Multiprocessing".
 
-The default strategy is therefore using Multiprocessing, but You can also use Signals, You have been warned !
+Signals
+-------
 
-Due to the lack of signals on Windows, or for threaded functions (in a subthread) where signals cant be used, Your only choice is Multiprocessing,
-this is set automatically.
+The "Signals" strategy (for POSIX Systems) is elegant and efficient,
+but it has some important caveats which should be reviewed
+in the `Caveats using Signals`_ section.
 
-Under Windows the decorated function and results needs to be pickable.
-For that purpose we use "multiprocess" and "dill" instead of "multiprocessing" and "pickle", in order to be able to use this decorator on more sophisticated objects.
-Communication to the subprocess is done via "multiprocess.pipe" instead of "queue", which is faster and might also work on Amazon AWS.
+
+Multiprocessing
+---------------
+
+The default strategy is to use Multiprocessing
+
+- on Windows, due to the lack of signals, this is only available choice, which is enforced automatically
+- signals (on POSIX) can not be used in a subthread, therefore multiprocessing is enforced in such cases
+
+When using a subprocess many types from multiprocessing need to be pickable so that child processes can use them.
+Therefore we use "dill" instead of "pickle" and "multiprocess" instead of "multiprocessing".
+
+dill extends python’s pickle module for serializing and de-serializing python objects to the majority of the built-in python types
+
+Communication with the subprocess is done via "multiprocess.pipe" instead of "queue",
+which offers improved speed and may also work on Amazon AWS.
