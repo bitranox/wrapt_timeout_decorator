@@ -133,7 +133,7 @@ jobs:
               DO_CLI_TEST: "True"
 
           - os: ubuntu-latest
-            python-version: "3.x-dev"
+            python-version: "3.12-dev"
             env:
               BUILD_DOCS: "True"
               BUILD: "True"  
