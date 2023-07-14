@@ -35,9 +35,9 @@ def fake_oom_killer() -> None:
     logger.error(f"Killed {target.pid} at {get_str_time()}")
 
 
-def test_killed_process() -> None:
+def start_processes() -> None:
     """
-    >>> test_killed_process()
+    >>> start_processes()
     Traceback (most recent call last):
         ...
     multiprocessing.context.ProcessError: Function slow_process was terminated or killed after ... seconds
@@ -52,9 +52,5 @@ def get_str_time() -> str:
     t = time.localtime()
     current_time = time.strftime("%H:%M:%S", t)
     return current_time
-
-
-if __name__ == '__main__':
-    test_killed_process()
 
 # TestPolling}}}
