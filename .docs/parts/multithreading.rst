@@ -35,3 +35,19 @@ The following Code will run on Linux but NOT on Windows :
     we use multiprocess and dill instead of multiprocessing and pickle.
 
     Since Signals will not work on Windows, it is disabled by default, whatever You set.
+
+
+Multithreading
+--------------
+
+when using multiprocessing, the subprocess is monitored if it is still alive.
+if the subprocess was terminated or killed (for instance by OOMKiller),
+``multiprocessing.context.ProcessError`` will be raised.
+By default the subprocess is monitored every 5 seconds, but can be set with parameter
+``dec_poll_subprocess``
+
+.. include:: .../tests/test_subprocess_alive_polling.py
+    :code: python
+    :start-after: # TestPolling{{{
+    :end-before:  # TestPolling}}}
+

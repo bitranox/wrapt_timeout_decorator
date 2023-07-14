@@ -7,40 +7,54 @@ import time
 import psutil
 import pytest
 
-# OWN
-from wrapt_timeout_decorator import timeout
-
 logger = logging.getLogger()
 
 
-@timeout(10, use_signals=False, timeout_exception=TimeoutError)
-def slow_process():
+# OWN
+# TestPolling{{{
+from wrapt_timeout_decorator import timeout
+
+
+@timeout(10, use_signals=False, timeout_exception=TimeoutError, dec_poll_subprocess=1)
+def slow_process() -> None:
     # should have enough time to finish
     # but instead it gets terminated, and the
-    logger.error("Slow process started")
+    # poll the subprocess every second
+    logger.error(f"Slow process started at {get_str_time()}")
     time.sleep(5)
-    logger.error("Slow process done")
+    logger.error(f"Slow process done at {get_str_time()}")
 
 
-def fake_oomkiller():
-    logger.error("Fake OOMKiller started")
+def fake_oom_killer() -> None:
+    logger.error(f"Fake OOMKiller started at {get_str_time()}")
     time.sleep(2)
     # kill sibling slow_process
     # hacky way to find it
     target = psutil.Process().parent().children(recursive=True)[-1]
     target.kill()
-    logger.error(f"Killed {target.pid}")
+    logger.error(f"Killed {target.pid} at {get_str_time()}")
 
 
-def test_killed_process():
+def test_killed_process() -> None:
     """
     >>> test_killed_process()
+    Traceback (most recent call last):
+        ...
+    # multiprocessing.context.ProcessError: Function slow_process was terminated or killed after ... seconds
     """
-    oomkiller = multiprocessing.Process(target=fake_oomkiller, args=())
-    oomkiller.start()
+    process_oom_killer = multiprocessing.Process(target=fake_oom_killer, args=())
+    process_oom_killer.start()
     slow_process()
-    oomkiller.join()
+    process_oom_killer.join()
+
+
+def get_str_time() -> str:
+    t = time.localtime()
+    current_time = time.strftime("%H:%M:%S", t)
+    return current_time
 
 
 if __name__ == '__main__':
     test_killed_process()
+
+# TestPolling}}}

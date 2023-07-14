@@ -120,6 +120,10 @@ def timeout(
                                 allowing the function in the process to run for 0.1 seconds.
                                 Since You can not know how long the spawn() will take under Windows, this is the default setting.
 
+    :param dec_poll_subprocess: when using multiprocessing, monitor the subprocess if it is still alive.
+                                if the subprocess was terminated or killed (for instance by OOMKiller),
+                                multiprocessing.context.ProcessError will be raised.
+
     * all parameters starting with dec_ can be overridden via kwargs passed to the wrapped function.
 
     :raises:                    TimeoutError if time limit is reached
