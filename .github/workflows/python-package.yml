@@ -46,7 +46,7 @@ jobs:
         # MYPY tests
         MYPY_DO_TESTS: "True"
         MYPY_OPTIONS: "--follow-imports=normal --ignore-missing-imports --implicit-reexport --install-types --no-warn-unused-ignores --non-interactive --strict"
-        MYPYPATH: ""
+        MYPYPATH: "./wrapt_timeout_decorator/3rd_party_stubs"
 
         # coverage
         DO_COVERAGE: "True"
@@ -216,8 +216,8 @@ jobs:
         # export for subsequent steps
         echo "BRANCH=$BRANCH" >> $GITHUB_ENV
         # make mypy cache directory
-        log_util --level=SPAM  "create mypy cache directory"
-        mkdir .mypy_cache
+        # log_util --level=SPAM  "create mypy cache directory"
+        # mkdir .mypy_cache
         # run the tests
         lib_cicd_github script
 
