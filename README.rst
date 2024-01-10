@@ -2,7 +2,7 @@ wrapt_timeout_decorator
 =======================
 
 
-Version v1.4.0 as of 2023-07-14 see `Changelog`_
+Version v1.4.1 as of 2024-01-10 see `Changelog`_
 
 |build_badge| |codeql| |license| |jupyter| |pypi|
 |pypi-downloads| |black| |codecov| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
@@ -26,7 +26,10 @@ Version v1.4.0 as of 2023-07-14 see `Changelog`_
 .. |pypi| image:: https://img.shields.io/pypi/status/wrapt-timeout-decorator?label=PyPI%20Package
    :target: https://badge.fury.io/py/wrapt_timeout_decorator
 
-.. |codecov| image:: https://img.shields.io/codecov/c/github/bitranox/wrapt_timeout_decorator
+.. badge until 2023-10-08:
+.. https://img.shields.io/codecov/c/github/bitranox/wrapt_timeout_decorator
+.. badge from 2023-10-08:
+.. |codecov| image:: https://codecov.io/gh/bitranox/wrapt_timeout_decorator/graph/badge.svg
    :target: https://codecov.io/gh/bitranox/wrapt_timeout_decorator
 
 .. |cc_maintain| image:: https://img.shields.io/codeclimate/maintainability-percentage/bitranox/wrapt_timeout_decorator?label=CC%20maintainability
@@ -940,6 +943,13 @@ This software is licensed under the `MIT license <http://en.wikipedia.org/wiki/M
 
 Changelog
 =========
+
+v1.4.1
+---------
+2024-01-10:
+    - thanks to `fayak: <https://github.com/fayak>`_
+    - omit mypy option --no-implicit-reexport
+    - explicitly export methods in ``__init__.py``
 
 v1.4.0
 ---------

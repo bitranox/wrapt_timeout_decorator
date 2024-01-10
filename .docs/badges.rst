@@ -20,7 +20,10 @@
 .. |pypi| image:: https://img.shields.io/pypi/status/wrapt-timeout-decorator?label=PyPI%20Package
    :target: https://badge.fury.io/py/wrapt_timeout_decorator
 
-.. |codecov| image:: https://img.shields.io/codecov/c/github/bitranox/wrapt_timeout_decorator
+.. badge until 2023-10-08:
+.. https://img.shields.io/codecov/c/github/bitranox/wrapt_timeout_decorator
+.. badge from 2023-10-08:
+.. |codecov| image:: https://codecov.io/gh/bitranox/wrapt_timeout_decorator/graph/badge.svg
    :target: https://codecov.io/gh/bitranox/wrapt_timeout_decorator
 
 .. |cc_maintain| image:: https://img.shields.io/codeclimate/maintainability-percentage/bitranox/wrapt_timeout_decorator?label=CC%20maintainability

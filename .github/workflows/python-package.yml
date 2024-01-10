@@ -45,9 +45,7 @@ jobs:
 
         # MYPY tests
         MYPY_DO_TESTS: "True"
-        # MYPY_OPTIONS: "--follow-imports=normal --ignore-missing-imports --implicit-reexport --install-types --no-warn-unused-ignores
-        # --non-interactive --strict"
-        MYPY_OPTIONS: "--follow-imports=normal --ignore-missing-imports --no-implicit-reexport --install-types --no-warn-unused-ignores --non-interactive --strict"
+        MYPY_OPTIONS: "--follow-imports=normal --ignore-missing-imports --install-types --no-warn-unused-ignores --non-interactive --strict"
         MYPYPATH: "./.3rd_party_stubs"
 
         # coverage
@@ -65,8 +63,8 @@ jobs:
         RST_INCLUDE_TARGET: "./README.rst"
         # make Code Coverage Secret available in Environment
         CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-        # make PyPi Password available in Environment
-        PYPI_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        # make PyPi API token available in Environment
+        PYPI_UPLOAD_API_TOKEN: ${{ secrets.PYPI_UPLOAD_API_TOKEN }}
 
 
     strategy:
@@ -151,7 +149,7 @@ jobs:
               BUILD_DOCS: "False"
               BUILD: "True"  
               BUILD_TEST: "True"
-              MYPY_DO_TESTS: "False"
+              MYPY_DO_TESTS: "True"
               DO_SETUP_INSTALL: "True"
               DO_SETUP_INSTALL_TEST: "True"
               DO_CLI_TEST: "True"
@@ -162,7 +160,7 @@ jobs:
               BUILD_DOCS: "False"
               BUILD: "True"  
               BUILD_TEST: "True"
-              MYPY_DO_TESTS: "False"
+              MYPY_DO_TESTS: "True"
               DO_SETUP_INSTALL: "True"
               DO_SETUP_INSTALL_TEST: "True"
               DO_CLI_TEST: "True"

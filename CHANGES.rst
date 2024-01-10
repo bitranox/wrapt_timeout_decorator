@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v1.4.1
+---------
+2024-01-10:
+    - thanks to `fayak: <https://github.com/fayak>`_
+    - omit mypy option --no-implicit-reexport
+    - explicitly export methods in ``__init__.py``
+
 v1.4.0
 ---------
 2023-07-13:
