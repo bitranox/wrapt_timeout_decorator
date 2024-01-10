@@ -47,7 +47,7 @@ jobs:
         MYPY_DO_TESTS: "True"
         # MYPY_OPTIONS: "--follow-imports=normal --ignore-missing-imports --implicit-reexport --install-types --no-warn-unused-ignores
         # --non-interactive --strict"
-        MYPY_OPTIONS: "--follow-imports=normal --ignore-missing-imports --install-types --no-warn-unused-ignores --non-interactive --strict"
+        MYPY_OPTIONS: "--follow-imports=normal --ignore-missing-imports --no-implicit-reexport --install-types --no-warn-unused-ignores --non-interactive --strict"
         MYPYPATH: "./.3rd_party_stubs"
 
         # coverage
