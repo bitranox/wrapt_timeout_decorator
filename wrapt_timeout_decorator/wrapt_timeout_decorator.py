@@ -33,6 +33,7 @@ def timeout(
     dec_allow_eval: bool = False,
     dec_hard_timeout: bool = False,
     dec_poll_subprocess: float = 5.0,
+    dec_mp_reset_signals: bool = False
 ) -> Any:
 
     """Add a timeout parameter to a function and return it.
@@ -125,6 +126,87 @@ def timeout(
                                 multiprocessing.context.ProcessError will be raised.
                                 the default is 5.0 seconds, polling can be turned off by setting to 0.0 seconds
 
+    :param dec_mp_reset_signals: if True, it restores the default behavior of signal handlers for child process and don't use the inherited fd from the parent
+                                this makes it possible to use the fast "fork" method, but handling signals correctly for "unicorn" or "FastAPI"
+                                see also : https://github.com/tiangolo/fastapi/discussions/7442
+
+                                if the process is using wakeup_fd, the child process will inherit the file descriptor
+                                when we are sending a signal to the child, it goes to this opened socket.
+                                but the parent process listens also to this socket, so it receives a signal to terminate and shut down the application.
+                                therefore we need to return the default behavior of signal handlers for child process and
+                                don't use the inherited fd from the parent;
+
+                                this parameter is specific to the "fork" method, and has no function on the other methods
+
+                                when using multiprocessing, there are different start methods to start a subprocess:
+                                on windows we only have "spawn",
+                                on Linux we have : "fork", "forkserver" and "spawn"
+
+                                The fork method directly clones the parent process, including its memory space.
+                                This means the child process starts execution at the same point as the parent but with a unique process ID.
+                                It's generally the default method on Unix/Linux systems.
+                                It's fast because it doesn't need to initialize a new Python interpreter environment from scratch.
+                                fork can lead to issues in programs that are multi-threaded or use certain kinds of resources
+                                (like file descriptors or locks) at the time of the fork. This is because the child process inherits the parent's memory,
+                                including the state of locks, leading to potential deadlocks or corruption.
+                                Some libraries and environments (e.g., those that use GPU resources or certain database connections) may not behave correctly
+                                after a fork because of the abrupt cloning of the process state.
+
+                                When using forkserver, a server process is started when the program starts. Whenever a new process is needed,
+                                the parent process requests the fork server to create a new process. The fork server then forks itself,
+                                creating a fresh process that is not a direct clone of the parent (except for the server itself).
+                                Use Cases: It is particularly useful in scenarios where the fork method leads to instability due to issues with inherited
+                                resources or when running on platforms where fork is less efficient or safe.
+                                forkserver is safer than fork in multi-threaded applications or when using resources that don't handle forking well.
+                                Since the fork server is a separate process with a minimal state, the chances of inheriting problematic states are reduced.
+                                Performance: Starting new processes can be slower compared to fork because it involves communication with the
+                                fork server process to initiate the fork, rather than cloning the current process directly.
+
+                                Multi-threaded Applications: If your application uses multiple threads, forkserver can help avoid the issues
+                                associated with fork in a multi-threaded context.
+                                Stability with External Libraries: If your application uses external libraries
+                                (e.g., for database connections, GPU acceleration, or network resources) that do not behave well with fork,
+                                using forkserver can provide a more stable environment.
+                                Security Concerns: The forkserver method can offer an additional layer of isolation, which might be desirable in scenarios
+                                where increased security is a concern.
+                                In summary, while fork can be more efficient and is often the default on Unix/Linux,
+                                forkserver offers a safer and potentially more compatible choice in complex or multi-threaded applications.
+                                The decision should be based on your application's specific requirements, the operating system,
+                                and the behavior of any third-party libraries you are using.
+
+                                The spawn method starts a fresh python interpreter process, and the child process will only inherit those resources that
+                                are explicitly provided to it. This method is slower than fork because it needs to initialize a new Python interpreter
+                                and import necessary modules from scratch.
+                                spawn is generally the default method on Windows and is also available on Unix/Linux.
+                                It's recommended for situations where you need a clean, independent process without the risk of shared state
+                                between parent and child leading to bugs. spawn is safer in the context of multi-threaded applications or when using libraries
+                                that have their own internal resources (like database connections or open files).
+
+                                The trade-off is that spawn can have a higher startup cost due to the need to re-import modules and possibly
+                                re-initialize data that could have been inherited directly with fork.
+
+                                If your application is multi-threaded, spawn is generally safer because it avoids issues related to threads being copied
+                                into the child process, which can lead to unpredictable behavior or deadlocks.
+                                Use spawn when you need each process to have a completely independent state or when you're working with libraries
+                                that may not be fork-safe.
+
+                                Cross-Platform Compatibility: If your application needs to run on both Unix/Linux and Windows,
+                                spawn provides a more consistent behavior across these platforms, as fork is not available on Windows.
+                                Avoiding Side Effects: When the parent process holds resources or locks, spawn avoids the risk of the child process
+                                inadvertently affecting these resources. In summary, while fork can offer performance benefits due to its lower overhead
+                                in creating new processes, spawn is generally safer and more versatile,
+                                especially in complex applications or those that need to be portable across different operating systems.
+
+                                You can set the start_method with : multiprocessing.set_start_method(method, force=False)
+                                Set the method which should be used to start child processes.
+                                The method argument can be 'fork', 'spawn' or 'forkserver'.
+                                Raises RuntimeError if the start method has already been set and force is not True.
+                                If method is None and force is True then the start method is set to None.
+                                If method is None and force is False then the context is set to the default context.
+                                Note that this should be called at most once, and it should be protected inside the
+                                if __name__ == '__main__' clause of the main module.
+
+
     * all parameters starting with dec_ can be overridden via kwargs passed to the wrapped function.
 
     :raises:                    TimeoutError if time limit is reached
@@ -137,7 +219,8 @@ def timeout(
     @wrapt.decorator
     def wrapper(wrapped: F, instance: object, args: Any, kwargs: Any) -> Any:
         wrap_helper = WrapHelper(
-            dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval, dec_hard_timeout, dec_poll_subprocess, wrapped, instance, args,
+            dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval, dec_hard_timeout, dec_poll_subprocess,
+            dec_mp_reset_signals, wrapped, instance, args,
             kwargs
         )
         if not wrap_helper.dec_timeout_float:

@@ -65,7 +65,7 @@ jobs:
         CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         # make PyPi API token available in Environment
         PYPI_UPLOAD_API_TOKEN: ${{ secrets.PYPI_UPLOAD_API_TOKEN }}
-
+        # additional Environment Variables:
 
     strategy:
       matrix:
@@ -74,7 +74,7 @@ jobs:
           # https://github.com/actions/setup-python/blob/main/docs/advanced-usage.md#available-versions-of-python-and-pypy
 
           - os: windows-latest
-            python-version: "3.11"
+            python-version: "3.12"
             env:
               cEXPORT: "SET"
               BUILD_DOCS: "False"
@@ -133,7 +133,7 @@ jobs:
               DO_CLI_TEST: "True"
 
           - os: ubuntu-latest
-            python-version: "3.12-dev"
+            python-version: "3.12"
             env:
               BUILD_DOCS: "True"
               BUILD: "True"  
@@ -166,7 +166,7 @@ jobs:
               DO_CLI_TEST: "True"
 
           - os: macos-latest
-            python-version: "3.11"
+            python-version: "3.12"
             env:
               cPREFIX: ""               # prefix before commands - used for wine, there the prefix is "wine"
               cPYTHON: "python3"        # command to launch python interpreter (it's different on macOS, there we need python3)

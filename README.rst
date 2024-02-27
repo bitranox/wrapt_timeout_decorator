@@ -2,7 +2,7 @@ wrapt_timeout_decorator
 =======================
 
 
-Version v1.4.1 as of 2024-01-10 see `Changelog`_
+Version v1.4.1 as of 2024-02-27 see `Changelog`_
 
 |build_badge| |codeql| |license| |jupyter| |pypi|
 |pypi-downloads| |black| |codecov| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
@@ -95,7 +95,7 @@ automated tests, Github Actions, Documentation, Badges, etc. are managed with `P
 
 Python version required: 3.8.0 or newer
 
-tested on recent linux with python 3.8, 3.9, 3.10, 3.11, 3.12-dev, pypy-3.9, pypy-3.10 - architectures: amd64
+tested on recent linux with python 3.8, 3.9, 3.10, 3.11, 3.12, pypy-3.9, pypy-3.10 - architectures: amd64
 
 `100% code coverage <https://codeclimate.com/github/bitranox/wrapt_timeout_decorator/test_coverage>`_, flake8 style checking ,mypy static type checking ,tested under `Linux, macOS, Windows <https://github.com/bitranox/wrapt_timeout_decorator/actions/workflows/python-package.yml>`_, automatic daily builds and monitoring
 
@@ -393,27 +393,47 @@ see the next example - You may try it out in `jupyter <https://mybinder.org/v2/g
             # this will never be printed because the decorated function catches implicitly the TimeoutError !
             print('Timeout Occured')
 
-Caveats using Multiprocessing
+Multiprocessing Caveats and Usage Guidelines
+--------------------------------------------
+
+Overview
+--------
+Multiprocessing is utilized by default to implement timeout functionality. This involves forking or spawning subprocesses, each with its own set of considerations and caveats.
+
+Initialization
+--------------
+- **Windows Considerations:** On Windows, the spawn method can significantly slow down the process initiation.
+- **Main Context Protection:** It is crucial to protect the ``__main__`` context for compatibility, especially on Windows. See the "Usage with Windows" section for more details.
+- **Pickle Requirements:** Function codes and arguments must be pickleable. To accommodate a wider range of types, `dill` is used for serialization.
+- **Global Variables:** Access to global variables from a child process might not reflect the parent process's state at the time of the fork. Module-level constants are generally unaffected.
+
+Process Execution and Communication
+------------------------------------
+- **Subprocess Execution:** Functions run in a separate subprocess, whether forked or spawned.
+- **Data Transmission:** Parameters and results are communicated through pipes, with `dill` used for serialization.
+- **Timeout Management:** Absent a result within the specified timeout, the subprocess is terminated using `SIGTERM`. Ensuring subprocesses can terminate safely is essential; thus, disabling the `SIGTERM` handler is not advisable.
+
+Multiprocessing Start Methods
 -----------------------------
+- **Windows Limitation:** Only `spawn` is available on Windows.
+- **Linux/Unix Options:** Options include `fork`, `forkserver`, and `spawn`.
+    - **Fork:** Efficiently clones the parent process, including memory space, but may lead to issues with shared resources or in multi-threaded applications.
+    - **Forkserver:** Starts a server at program launch, creating new processes upon request for better isolation but at a slower pace due to the server communication requirement.
+    - **Spawn:** Initiates a fresh Python interpreter process, ensuring total independence at the cost of slower start-up due to the need for full initialization.
 
-by default we use multiprocessing to archive the timeout function.
+Choosing the Right Start Method
+-------------------------------
+- **fork** offers speed but can encounter issues with resource sharing or threading.
+- **forkserver** enhances stability and isolation, ideal for applications requiring safety or managing unstable resources.
+- **spawn** provides the highest level of isolation, recommended for a clean start and avoiding shared state complications.
 
-Basically this is done like that :
+Setting the Start Method
+------------------------
+Configure the start method with ``multiprocessing.set_start_method(method, force=False)``. This should be done cautiously, ideally once, and within the ``if __name__ == '__main__'`` block to prevent unintended effects.
 
-- the program is forked
-    - on Windows hat might take a long time
-    - the __main__ context needs to be guarded (see section usage with windows)
-    - on windows the function code itself and all arguments need to be pickable (we use dill to offer more types here)
-    - function parameters and function results needs to be pickable
-    - Bear in mind that if code run in a child process tries to access a global variable,
-      then the value it sees (if any) may not be the same as the value in
-      the parent process at the time that process was called.
-      However, global variables which are just module level constants cause no problems.
-
-- the forked function is run in a subprocess
-- parameters and results are passed via pipe (pickled, we use dill here)
-- if there is no result within the timeout period, the forked process will be terminated with SIGTERM
-    - the subprocess needs to be able to terminate, so You must not disable the SIGTERM Handler
+Special Considerations for Uvicorn and FastAPI
+----------------------------------------------
+For Uvicorn or FastAPI applications, a specific approach to the `fork` method is recommended to ensure proper signal handling and isolation, facilitated by the `dec_mp_reset_signals` parameter. This design aims to reset signal handlers and manage file descriptors in child processes effectively.
 
 nested Timeouts
 ----------------
@@ -477,7 +497,7 @@ Specify an alternate exception to raise on timeout:
 Parameters
 ----------
 
-.. code-block:: py
+.. code-block::
 
     @timeout(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval, dec_hard_timeout)
     def decorated_function(*args, **kwargs):
@@ -536,6 +556,34 @@ Parameters
                         type: bool
                         default: false
                         can be overridden by passing the kwarg dec_hard_timeout to the decorated function*
+
+    dec_mp_reset_signals  This parameter is relevant when using the "fork" start method for multiprocessing.
+                        Setting it to True accomplishes two primary objectives:
+
+                        - Restores Default Signal Handlers in Child Processes:
+                            It ensures that child processes revert to the default signal handling behavior,
+                            rather than inheriting signal handlers from the parent process.
+                            This adjustment is crucial for applications utilizing frameworks like "unicorn" or "FastAPI",
+                            facilitating the use of the efficient "fork" method while maintaining correct signal handling.
+                            For more context, refer to the Discussion on
+                            FastAPI GitHub page: https://github.com/tiangolo/fastapi/discussions/7442
+
+                        - Avoids Inheritance of the File Descriptor (fd) for Wakeup Signals:
+                            Typically, if the parent process utilizes a wakeup_fd, child processes inherit this descriptor.
+                            Consequently, when a signal is sent to a child, it is also received by the parent process
+                            via this shared socket, potentially leading to unintended termination or shutdown of the application.
+                            By resetting signal handlers and not using the inherited fd, this parameter prevents such conflicts,
+                            ensuring isolated and correct signal handling in child processes.
+
+                        Note: This parameter exclusively affects processes initiated with the "fork" method
+                        and is not applicable to other multiprocessing start methods.
+
+    For enhanced isolation of subprocesses, consider utilizing the "forkserver" or "spawn" start methods in multiprocessing.
+    These methods provide a greater degree of independence between the parent process and its children,
+    mitigating the risks associated with shared resources and ensuring a cleaner execution environment for each subprocess,
+    at the cost of slower startup times. This slowdown is due to the additional overhead involved in setting up a completely
+    new process environment for each child process, as opposed to directly duplicating the parent process's environment,
+    which occurs with the "fork" method.
 
     * that means the decorated_function must not use that kwarg itself, since this kwarg will be popped from the kwargs
     """

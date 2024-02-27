@@ -1,5 +1,6 @@
 # STDLIB
 from multiprocessing import ProcessError
+import signal
 import sys
 import time
 from typing import Any, Optional
@@ -32,6 +33,7 @@ class Timeout(object):
         self.__subprocess_start_time: float = 0.0
         self.__subprocess_max_end_time: float = 0.0
         self.__sleeping_time: float = 0.0
+        self.__reset_signals = wrap_helper.dec_mp_reset_signals
 
     def __call__(self) -> Any:
         """Execute the embedded function object asynchronously.
@@ -146,6 +148,8 @@ def _target(wrap_helper: WrapHelper) -> None:
     """
     # noinspection PyBroadException
     try:
+        if multiprocess.get_start_method() == 'fork' and wrap_helper.dec_mp_reset_signals:
+            _mp_reset_signals()
         if not wrap_helper.dec_hard_timeout:
             wrap_helper.child_conn.send("started")
         exception_occured = False
@@ -156,3 +160,14 @@ def _target(wrap_helper: WrapHelper) -> None:
 
     finally:
         wrap_helper.child_conn.close()
+
+
+def _mp_reset_signals() -> None:
+    """ if the process is using wakeup_fd, the child process will inherit the file descriptor
+    when we are sending a signal to the child, it goes to this opened socket.
+    but the parent process listens also to this socket, so it receives a signal to terminate and shut down the application.
+    therefore we need to return the default behavior of signal handlers for child process and don't use the inherited fd from the parent;
+    """
+    signal.set_wakeup_fd(-1)
+    signal.signal(signal.SIGTERM, signal.SIG_DFL)
+    signal.signal(signal.SIGINT, signal.SIG_DFL)

@@ -1,7 +1,7 @@
 Parameters
 ----------
 
-.. code-block:: py
+.. code-block::
 
     @timeout(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval, dec_hard_timeout)
     def decorated_function(*args, **kwargs):
@@ -60,6 +60,34 @@ Parameters
                         type: bool
                         default: false
                         can be overridden by passing the kwarg dec_hard_timeout to the decorated function*
+
+    dec_mp_reset_signals  This parameter is relevant when using the "fork" start method for multiprocessing.
+                        Setting it to True accomplishes two primary objectives:
+
+                        - Restores Default Signal Handlers in Child Processes:
+                            It ensures that child processes revert to the default signal handling behavior,
+                            rather than inheriting signal handlers from the parent process.
+                            This adjustment is crucial for applications utilizing frameworks like "unicorn" or "FastAPI",
+                            facilitating the use of the efficient "fork" method while maintaining correct signal handling.
+                            For more context, refer to the Discussion on
+                            FastAPI GitHub page: https://github.com/tiangolo/fastapi/discussions/7442
+
+                        - Avoids Inheritance of the File Descriptor (fd) for Wakeup Signals:
+                            Typically, if the parent process utilizes a wakeup_fd, child processes inherit this descriptor.
+                            Consequently, when a signal is sent to a child, it is also received by the parent process
+                            via this shared socket, potentially leading to unintended termination or shutdown of the application.
+                            By resetting signal handlers and not using the inherited fd, this parameter prevents such conflicts,
+                            ensuring isolated and correct signal handling in child processes.
+
+                        Note: This parameter exclusively affects processes initiated with the "fork" method
+                        and is not applicable to other multiprocessing start methods.
+
+    For enhanced isolation of subprocesses, consider utilizing the "forkserver" or "spawn" start methods in multiprocessing.
+    These methods provide a greater degree of independence between the parent process and its children,
+    mitigating the risks associated with shared resources and ensuring a cleaner execution environment for each subprocess,
+    at the cost of slower startup times. This slowdown is due to the additional overhead involved in setting up a completely
+    new process environment for each child process, as opposed to directly duplicating the parent process's environment,
+    which occurs with the "fork" method.
 
     * that means the decorated_function must not use that kwarg itself, since this kwarg will be popped from the kwargs
     """

@@ -27,6 +27,7 @@ class WrapHelper(object):
         dec_allow_eval: bool,
         dec_hard_timeout: bool,
         dec_poll_subprocess: float,
+        dec_mp_reset_signals: bool,
         wrapped: Callable[..., Any],
         instance: object,
         args: Any,
@@ -39,6 +40,7 @@ class WrapHelper(object):
         self.dec_allow_eval = dec_allow_eval
         self.dec_hard_timeout = dec_hard_timeout
         self.dec_poll_subprocess = dec_poll_subprocess
+        self.dec_mp_reset_signals = dec_mp_reset_signals
         self.wrapped = wrapped
         self.instance = instance
         self.args = args
@@ -70,6 +72,7 @@ class WrapHelper(object):
         self.dec_allow_eval = self.kwargs.pop("dec_allow_eval", self.dec_allow_eval)
         self.dec_hard_timeout = self.kwargs.pop("dec_hard_timeout", self.dec_hard_timeout)
         self.dec_poll_subprocess = self.kwargs.pop("dec_poll_subprocess", self.dec_poll_subprocess)
+        self.dec_mp_reset_signals = self.kwargs.pop("dec_mp_reset_signals", self.dec_mp_reset_signals)
 
     @property
     def should_eval(self) -> bool:
