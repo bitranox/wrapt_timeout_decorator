@@ -29,7 +29,7 @@ def mp_reset_signals(request: Any) -> Any:
     return request.param
 
 
-def test_timeout_decorator_arg(use_signals: bool) -> None:
+def test_timeout_decorator_arg(use_signals: bool, mp_reset_signals: bool) -> None:
     @timeout(0.2, use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f() -> None:
         time.sleep(0.6)
