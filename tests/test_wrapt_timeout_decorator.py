@@ -23,8 +23,14 @@ def use_signals(request: Any) -> Any:
     return request.param
 
 
+@pytest.fixture(params=[False, True])  # type: ignore
+def mp_reset_signals(request: Any) -> Any:
+    """Reset Signals on multiprocessing"""
+    return request.param
+
+
 def test_timeout_decorator_arg(use_signals: bool) -> None:
-    @timeout(0.2, use_signals=use_signals)  # type: ignore
+    @timeout(0.2, use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f() -> None:
         time.sleep(0.6)
 
