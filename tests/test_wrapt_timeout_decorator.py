@@ -38,8 +38,8 @@ def test_timeout_decorator_arg(use_signals: bool, mp_reset_signals: bool) -> Non
         f()
 
 
-def test_timeout_decorator_thread_lock(use_signals: bool) -> None:
-    @timeout(0.2, use_signals=use_signals)  # type: ignore
+def test_timeout_decorator_thread_lock(use_signals: bool, mp_reset_signals: bool) -> None:
+    @timeout(0.2, use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f() -> None:
         my_lock = threading.Lock()
         my_lock.acquire()
@@ -49,7 +49,7 @@ def test_timeout_decorator_thread_lock(use_signals: bool) -> None:
         f()
 
 
-@timeout(0.1, use_signals=use_signals)  # type: ignore
+@timeout(0.1, use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
 def can_not_be_pickled(x: float) -> None:
     # frames can not be pickled
     # inspect.currentframe()
@@ -60,22 +60,22 @@ def can_not_be_pickled(x: float) -> None:
 can_not_be_pickled(0, dec_timeout=0)
 
 
-def test_timeout_class_method(use_signals: bool) -> None:
+def test_timeout_class_method(use_signals: bool, mp_reset_signals: bool) -> None:
     with pytest.raises(TimeoutError, match=r"Function f1 timed out after 0\.3 seconds"):
         ClassTest1().f1(use_signals=use_signals)
-    assert ClassTest1().f1(dec_timeout="instance.x", dec_allow_eval=True, use_signals=use_signals) is None
+    assert ClassTest1().f1(dec_timeout="instance.x", dec_allow_eval=True, use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals) is None
 
 
-def test_timeout_class_method_can_pickle(use_signals: bool) -> None:
+def test_timeout_class_method_can_pickle(use_signals: bool, mp_reset_signals: bool) -> None:
     my_object = ClassTest2(0.3)
     with pytest.raises(TimeoutError, match=r"Function test_method timed out after 0\.3 seconds"):
-        my_object.test_method(use_signals=use_signals)
+        my_object.test_method(use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals)
     my_object = ClassTest2(3.0)
-    assert my_object.test_method(use_signals=use_signals) == "done"
+    assert my_object.test_method(use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals) == "done"
 
 
-def test_timeout_kwargs(use_signals: bool) -> None:
-    @timeout(1, use_signals=use_signals)  # type: ignore
+def test_timeout_kwargs(use_signals: bool, mp_reset_signals: bool) -> None:
+    @timeout(1, use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f() -> None:
         time.sleep(0.4)
 
@@ -83,8 +83,8 @@ def test_timeout_kwargs(use_signals: bool) -> None:
         f(dec_timeout=0.2)
 
 
-def test_timeout_alternate_exception(use_signals: bool) -> None:
-    @timeout(0.2, use_signals=use_signals, timeout_exception=StopIteration)  # type: ignore
+def test_timeout_alternate_exception(use_signals: bool, mp_reset_signals: bool) -> None:
+    @timeout(0.2, use_signals=use_signals, timeout_exception=StopIteration, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f() -> None:
         time.sleep(0.4)
 
@@ -92,32 +92,32 @@ def test_timeout_alternate_exception(use_signals: bool) -> None:
         f()
 
 
-def test_no_timeout_given(use_signals: bool) -> None:
-    @timeout(use_signals=use_signals)  # type: ignore
+def test_no_timeout_given(use_signals: bool, mp_reset_signals: bool) -> None:
+    @timeout(use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f() -> None:
         time.sleep(0.1)
 
     f()
 
 
-def test_timeout_ok_timeout_as_kwarg(use_signals: bool) -> None:
-    @timeout(dec_timeout=0.5, use_signals=use_signals)  # type: ignore
+def test_timeout_ok_timeout_as_kwarg(use_signals: bool, mp_reset_signals: bool) -> None:
+    @timeout(dec_timeout=0.5, use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f_test_timeout_ok_timeout_as_kwarg() -> None:
         time.sleep(0.1)
 
     f_test_timeout_ok_timeout_as_kwarg()
 
 
-def test_timeout_ok_timeout_as_arg(use_signals: bool) -> None:
-    @timeout(2, use_signals=use_signals)  # type: ignore
+def test_timeout_ok_timeout_as_arg(use_signals: bool, mp_reset_signals: bool) -> None:
+    @timeout(2, use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f() -> None:
         time.sleep(0.5)
 
     f()
 
 
-def test_function_name(use_signals: bool) -> None:
-    @timeout(dec_timeout=2, use_signals=use_signals)  # type: ignore
+def test_function_name(use_signals: bool, mp_reset_signals: bool) -> None:
+    @timeout(dec_timeout=2, use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def func_name() -> None:
         pass
 
@@ -134,7 +134,7 @@ def test_timeout_pickle_error() -> None:
     # codecov start ignore
 
     # generators can not be pickled
-    @timeout(dec_timeout=1, use_signals=False)  # type: ignore
+    @timeout(dec_timeout=1, use_signals=False, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def unpickable_generator(n):
         num = 0
         while num < n:
@@ -142,7 +142,7 @@ def test_timeout_pickle_error() -> None:
             num += 1
 
     # frames can not be pickled
-    @timeout(dec_timeout=1, use_signals=False)  # type: ignore
+    @timeout(dec_timeout=1, use_signals=False, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def unpickable_frame() -> object:
         return inspect.currentframe()
 
@@ -155,7 +155,7 @@ def test_timeout_pickle_error() -> None:
 
 
 def test_timeout_custom_exception_message() -> None:
-    @timeout(dec_timeout=1, exception_message="Custom fail message")  # type: ignore
+    @timeout(dec_timeout=1, exception_message="Custom fail message", dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f() -> None:
         time.sleep(2)
 
@@ -164,7 +164,7 @@ def test_timeout_custom_exception_message() -> None:
 
 
 def test_timeout_default_exception_message() -> None:
-    @timeout(dec_timeout=1)  # type: ignore
+    @timeout(dec_timeout=1, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f() -> None:
         time.sleep(2)
 
@@ -172,10 +172,10 @@ def test_timeout_default_exception_message() -> None:
         f()
 
 
-def test_timeout_eval(use_signals: bool) -> None:
+def test_timeout_eval(use_signals: bool, mp_reset_signals: bool) -> None:
     """Test Eval"""
 
-    @timeout(dec_timeout="args[0] * 2", use_signals=use_signals, dec_allow_eval=True)  # type: ignore
+    @timeout(dec_timeout="args[0] * 2", use_signals=use_signals, dec_allow_eval=True, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f(x: float) -> None:
         time.sleep(0.4)
 
@@ -184,10 +184,10 @@ def test_timeout_eval(use_signals: bool) -> None:
         f(0.1)
 
 
-def test_exception(use_signals: bool) -> None:
+def test_exception(use_signals: bool, mp_reset_signals: bool) -> None:
     """Test Exception"""
 
-    @timeout(1.0, use_signals=use_signals)  # type: ignore
+    @timeout(1.0, use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f() -> None:
         raise AssertionError("test")
 
@@ -195,8 +195,8 @@ def test_exception(use_signals: bool) -> None:
         f()
 
 
-def test_no_function_name(use_signals: bool) -> None:
-    @timeout(0.1, use_signals=use_signals)  # type: ignore
+def test_no_function_name(use_signals: bool, mp_reset_signals: bool) -> None:
+    @timeout(0.1, use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f() -> None:
         time.sleep(1)
 
@@ -205,8 +205,9 @@ def test_no_function_name(use_signals: bool) -> None:
         f()
 
 
-def test_custom_exception(use_signals: bool) -> None:
-    @timeout(0.1, use_signals=use_signals, timeout_exception=ValueError, exception_message="custom exception message")  # type: ignore
+def test_custom_exception(use_signals: bool, mp_reset_signals: bool) -> None:
+    @timeout(0.1, use_signals=use_signals, timeout_exception=ValueError, exception_message="custom exception message",
+             dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f() -> None:
         time.sleep(1)
 
@@ -214,8 +215,8 @@ def test_custom_exception(use_signals: bool) -> None:
         f()
 
 
-def test_not_main_thread(use_signals: bool) -> None:
-    @timeout(0.3, use_signals=use_signals)  # type: ignore
+def test_not_main_thread(use_signals: bool, mp_reset_signals: bool) -> None:
+    @timeout(0.3, use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f(x: float) -> None:
         time.sleep(x)
 
@@ -260,7 +261,7 @@ def test_pickle_analyser() -> None:
 
 
 def test_hard_timeout_windows_only() -> None:
-    @timeout(dec_timeout=0.25, use_signals=use_signals)  # type: ignore
+    @timeout(dec_timeout=0.25, use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f_test_hard_timeout() -> str:
         time.sleep(0.1)
         return "done"
@@ -275,12 +276,12 @@ def test_hard_timeout_windows_only() -> None:
         assert f_test_hard_timeout(dec_hard_timeout=False) == "done"
 
 
-@timeout(dec_timeout=1, use_signals=use_signals)  # type: ignore
+@timeout(dec_timeout=1, use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
 def outer() -> None:
     inner()
 
 
-@timeout(dec_timeout=2, use_signals=False)  # type: ignore
+@timeout(dec_timeout=2, use_signals=False, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
 def inner() -> str:
     time.sleep(3)
     return "done"
@@ -296,7 +297,7 @@ def test_nested_decorator() -> None:
 
 
 def test_dec_timeout_is_none() -> None:
-    @timeout(dec_timeout=None, use_signals=use_signals)  # type: ignore
+    @timeout(dec_timeout=None, use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f() -> None:
         time.sleep(0.1)
 
@@ -304,7 +305,7 @@ def test_dec_timeout_is_none() -> None:
 
 
 def test_dec_timeout_is_invalid() -> None:
-    @timeout(dec_timeout="invalid", use_signals=use_signals)  # type: ignore
+    @timeout(dec_timeout="invalid", use_signals=use_signals, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f() -> None:
         time.sleep(0.1)  # pragma: no cover
 
@@ -313,7 +314,7 @@ def test_dec_timeout_is_invalid() -> None:
 
 
 def test_exception_is_none() -> None:
-    @timeout(dec_timeout=0.1, use_signals=use_signals, timeout_exception=None)  # type: ignore
+    @timeout(dec_timeout=0.1, use_signals=use_signals, timeout_exception=None, dec_mp_reset_signals=mp_reset_signals)  # type: ignore
     def f() -> None:
         time.sleep(3)
 
