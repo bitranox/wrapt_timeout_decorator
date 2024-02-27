@@ -2,7 +2,7 @@ wrapt_timeout_decorator
 =======================
 
 
-Version v1.4.1 as of 2024-02-27 see `Changelog`_
+Version v1.5.0 as of 2024-02-27 see `Changelog`_
 
 |build_badge| |codeql| |license| |jupyter| |pypi|
 |pypi-downloads| |black| |codecov| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
@@ -991,6 +991,14 @@ This software is licensed under the `MIT license <http://en.wikipedia.org/wiki/M
 
 Changelog
 =========
+
+v1.5.0
+---------
+2024-02-27:
+    - thanks to `Alberto Ornaghi: <https://github.com/alor>`_
+    - parameter ``dec_mp_reset_signals``
+    - restores the default behavior of signal handlers on multiprocessing ``fork``
+    - suitible especially for ``FastAPI`` and ``Uvicorn``
 
 v1.4.1
 ---------

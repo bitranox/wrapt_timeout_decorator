@@ -1,6 +1,14 @@
 Changelog
 =========
 
+v1.5.0
+---------
+2024-02-27:
+    - thanks to `Alberto Ornaghi: <https://github.com/alor>`_
+    - parameter ``dec_mp_reset_signals``
+    - restores the default behavior of signal handlers on multiprocessing ``fork``
+    - suitible especially for ``FastAPI`` and ``Uvicorn``
+
 v1.4.1
 ---------
 2024-01-10:
