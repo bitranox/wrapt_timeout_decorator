@@ -2,7 +2,7 @@ wrapt_timeout_decorator
 =======================
 
 
-Version v1.5.0 as of 2024-02-27 see `Changelog`_
+Version v1.5.1 as of 2024-02-28 see `Changelog`_
 
 |build_badge| |codeql| |license| |jupyter| |pypi|
 |pypi-downloads| |black| |codecov| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
@@ -69,24 +69,37 @@ Signals
 
 The "Signals" strategy (for POSIX Systems) is elegant and efficient,
 but it has some important caveats which should be reviewed
-in the `Caveats using Signals`_ section.
+in the `Considerations using Signals`_ section.
 
 
-Multiprocessing
----------------
+Subprocess Strategy
+-------------------
 
-The default strategy is to use Multiprocessing
+The utilization of subprocesses serves as the default approach for executing timeouts:
 
-- on Windows, due to the lack of signals, this is only available choice, which is enforced automatically
-- signals (on POSIX) can not be used in a subthread, therefore multiprocessing is enforced in such cases
+- **Windows Compatibility**: Given the absence of signal support,
+        subprocesses become the sole method for implementing timeouts on Windows,
+        automatically applied to accommodate the platform's limitations.
+        On Windows the only available startmethod for subprocesses is ``spawn``
+- **POSIX Systems**: On POSIX-compliant systems, signals cannot be employed within
+        subthreads, necessitating the use of subprocesses in these contexts as well.
+        On POSIX the available startmethods for subprocesses are ``fork``, ``forkserver``, ``spawn``
 
-When using a subprocess many types from multiprocessing need to be pickable so that child processes can use them.
-Therefore we use "dill" instead of "pickle" and "multiprocess" instead of "multiprocessing".
+To ensure compatibility and functionality across subprocesses,
+it's essential that as many object types as possible are pickleable.
+To this end, the ``dill`` library is preferred over Python's standard ``pickle`` module,
+and ``multiprocess`` is chosen instead of ``multiprocessing``.
+``dill`` enhances the pickle module's capabilities, extending support for
+serialization and deserialization to a broader array of Python object types.
 
-dill extends python’s pickle module for serializing and de-serializing python objects to the majority of the built-in python types
+Subprocess communication is primarily facilitated through ``multiprocess.pipe`` rather than ``queue``.
+This choice not only boosts performance but also enhances compatibility,
+potentially offering better support for environments like Amazon AWS.
 
-Communication with the subprocess is done via "multiprocess.pipe" instead of "queue",
-which offers improved speed and may also work on Amazon AWS.
+Subprocesses can be initiated using various methods,
+including 'fork', 'forkserver', and 'spawn'.
+For detailed information on these methods and their implications,
+please refer to Section `Considerations using Subprocesses`_ of this manual.
 
 ----
 
@@ -125,7 +138,10 @@ repository_slug}}/master?filepath=wrapt_timeout_decorator.ipynb>`_
 Usage
 -----------
 
-.. code-block:: py
+Basic Usage
+-----------
+
+.. code-block::
 
     import time
     from wrapt_timeout_decorator import *
@@ -144,19 +160,42 @@ Usage
 
 General Recommendations
 -----------------------
-Minimize the excessive use of timeouts in your code and reserve their usage for essential cases.
+It is advised to limit the use of timeouts in your code, applying them only in critical situations.
 
-Implement timeouts at the lowest possible abstraction level to prevent unintended
-consequences such as exceptions being caught by unrelated code or non-pickable
-functions and arguments.
+Ensure that timeouts are implemented at the right granular level which is specific to Your application.
 
-Avoid incorporating the Timeout Decorator within a loop that iterates multiple times,
-as this can result in considerable time overhead,
-especially on Windows systems, when utilizing multiprocessing.
+On one hand, this approach helps in avoiding undesired effects, such as exceptions being intercepted by unrelated segments of code,
+or issues with non-pickable entities.
 
-Whenever feasible, leverage the existing built-in timeouts already provided by the functions
-and libraries you utilize. These built-in timeouts can handle most situations effectively.
-Only resort to use this Timeout Decorator as a last resort when all other alternatives have been exhausted.
+On the other hand, incorporating a Timeout Decorator within a repetitive loop should be avoided.
+This practice can lead to significant delays, particularly on Windows platforms
+due to the overhead associated with spawning subprocesses.
+
+Preferably, make use of the native timeouts provided by the functions and libraries you are working with.
+These built-in mechanisms typically suffice for most scenarios.
+The Timeout Decorator should only be considered as a fallback option, after all other possibilities have been thoroughly explored.
+
+Be aware that the isolation and performance of subprocesses can be very different, depending on the Platform (Windows or Linux) and the selected subprecess
+start method. - see STARTMETHOD
+
+
+It's recommended to minimize the utilization of timeouts in your programming, reserving them for truly essential instances.
+
+Timers should be applied at an appropriate level of detail, tailored specifically to the needs of your application.
+This precision aids in circumventing unwanted outcomes, such as the mishandling of exceptions by unrelated code sections
+or complications with entities that cannot be pickled.
+
+Conversely, it's prudent to refrain from embedding a Timeout Decorator within loops that execute multiple times.
+Such an approach can induce notable delays, especially on Windows systems, owing to the additional burden of initiating subprocesses.
+
+Where possible, opt for the timeout features natively available in the functions and libraries at your disposal.
+These inherent capabilities are often adequate for the majority of use cases.
+The implementation of a Timeout Decorator is best reserved as a measure of last resort,
+subsequent to the exhaustive consideration of alternative strategies.
+
+Additionally, be cognizant of the fact that the behavior and efficiency of subprocesses may vary significantly across platforms
+(Windows versus Linux) and depending on the chosen method for subprocess initiation.
+Refer to the documentation on STARTMETHOD for further details.
 
 
     BAD EXAMPLE (Pseudocode) - lets assume the write to the database fails sometimes for unknown reasons, and "hangs"
@@ -210,17 +249,18 @@ Only resort to use this Timeout Decorator as a last resort when all other altern
 use with Windows
 ----------------
 
-For the impatient:
+Quick Guide for the Eager
+-------------------------
+To bypass complexities, simply place the decorated function within a separate module, rather than in the main script.
 
-All You need to do is to put the decorated function into another Module, NOT in the main program.
+In-Depth Explanation for the Curious
+------------------------------------
+On Windows, due to the absence of native forking support, Python attempts to emulate a forking environment.
+This emulation involves re-importing the main module under a different name, not as '__main__'.
+This behavior is part of Python's multiprocessing efforts to replicate the main process's environment as closely as possible.
+Consequently, it's crucial to protect the entry point of your application with the well-known conditional statement
+"if __name__ == '__main__':".
 
-For those who want to dive deeper :
-
-
-On Windows the main module is imported again (but with a name != 'main') because Python is trying to simulate
-a forking-like behavior on a system that doesn't support forking. multiprocessing tries to create an environment
-similar to Your main process by importing the main module again with a different name. Thats why You need to shield
-the entry point of Your program with the famous " if __name__ == '__main__': "
 
 .. code-block:: py
 
@@ -237,40 +277,44 @@ the entry point of Your program with the famous " if __name__ == '__main__': "
     if __name__ = '__main__':
         main()
 
-This is a problem of Windows OS, because the Windows Operating System does not support "fork"
 
-You can find more information on that here:
+Windows Compatibility Issue
+---------------------------
+The challenge arises from Windows OS's lack of support for the "fork" process model, a limitation not present in Unix-based systems.
 
-https://stackoverflow.com/questions/45110287/workaround-for-using-name-main-in-python-multiprocessing
+Further details can be explored through these resources:
 
-https://docs.python.org/2/library/multiprocessing.html#windows
+- [Stack Overflow discussion on multiprocessing and `__name__ == '__main__'`](https://stackoverflow.com/questions/45110287/workaround-for-using-name-main-in-python-multiprocessing)
+- [Python's multiprocessing documentation for Windows](https://docs.python.org/2/library/multiprocessing.html#windows)
 
-Since main.py is loaded again with a different name but "__main__", the decorated function now points to objects that do not exist anymore, therefore You need to put the decorated Classes and functions into another module.
-In general (especially on windows) , the main() program should not have anything but the main function, the real thing should happen in the modules.
-I am also used to put all settings or configurations in a different file - so all processes or threads can access them (and also to keep them in one place together, not to forget typing hints and name completion in Your favorite editor)
+Due to this, when `main.py` is re-imported under a name different from `"__main__"`, references within decorated classes
+and functions become invalid. To circumvent this, it's advisable to house decorated entities in a separate module.
+Generally, and particularly on Windows, the `main()` function should be streamlined to act merely as an entry point,
+with the substantive logic residing in modules.
+Additionally, storing settings or configurations in a distinct file is beneficial for centralized access and to leverage features
+like type hints and auto-completion in your preferred IDE.
 
-The "dill" serializer is able to serialize also the __main__ context, that means the objects in our example are pickled to "__main__.lib_foo", "__main__.some_module","__main__.main" etc.
-We would not have this limitation when using "pickle" with the downside that "pickle" can not serialize following types:
+The `dill` serializer, chosen for its broader compatibility, successfully serializes the `__main__` context,
+enabling objects to be pickled to `"__main__.lib_foo"`, `"__main__.some_module"`, `"__main__.main"`, etc.
+This overcomes the limitations faced when using `pickle`, which cannot serialize various types including functions
+with yields, nested functions, and more.
+`Dill` enhances functionality by enabling the saving/loading of Python sessions, extraction of source code, and interactive debugging of serialization errors.
+However, it necessitates that decorated methods and classes not be defined in the `__main__` context but within a module.
 
-functions with yields, nested functions, lambdas, cell, method, unboundmethod, module, code, methodwrapper,
-dictproxy, methoddescriptor, getsetdescriptor, memberdescriptor, wrapperdescriptor, xrange, slice,
-notimplemented, ellipsis, quit
+For more insights on serialization with `pickle` or `dill`:
+- [Stack Overflow discussion on serializing objects in `__main__` with `pickle` or `dill`](https://stackoverflow.com/questions/45616584/serializing-an-object-in-main-with-pickle-or-dill)
 
-additional dill supports:
-
-save and load python interpreter sessions, save and extract the source code from functions and classes, interactively diagnose pickling errors
-
-To support more types with the decorator, we selected dill as serializer, with the small downside that methods and classes can not be decorated in the __main__ context, but need to reside in a module.
-
-You can find more information on that here:
-https://stackoverflow.com/questions/45616584/serializing-an-object-in-main-with-pickle-or-dill
-
-**Timing :** Since spawning takes some unknown timespan (all imports needs to be done again !), You can specify when the timeout should start, please read the section `hard timeout`_
-
-Here an example that will work on Linux but wont work on Windows (the variable "name" and the function "sleep" wont be found in the spawned process :
+Timing Considerations
+---------------------
+Given the variable duration of the spawning process (due to re-importing modules),
+the `hard timeout`_ section provides guidance on configuring the commencement of timeouts.
 
 
-.. code-block:: py
+An illustration highlights a scenario functional on Linux but problematic on Windows,
+where the variable `"name"` and the function `"sleep"` are not recognized in the spawned process:
+
+
+.. code-block::
 
     main.py:
 
@@ -297,7 +341,7 @@ Here an example that will work on Linux but wont work on Windows (the variable "
 here the same example, which will work on Windows:
 
 
-.. code-block:: py
+.. code-block::
 
 
     # my_program_main.py:
@@ -311,7 +355,7 @@ here the same example, which will work on Windows:
         main()
 
 
-.. code-block:: py
+.. code-block::
 
 
         # conf_my_program.py:
@@ -323,7 +367,7 @@ here the same example, which will work on Windows:
         conf_my_program = ConfMyProgram()
 
 
-.. code-block:: py
+.. code-block::
 
     # lib_test.py:
 
@@ -341,28 +385,32 @@ here the same example, which will work on Windows:
             print("{} seconds have passed".format(i))
         return i
 
-Caveats using Signals
----------------------
+Considerations using Signals
+----------------------------
 
-as ABADGER1999 `points out in his blog <https://anonbadger.wordpress.com/2018/12/15/python-signal-handlers-and-exceptions/>`_
-using signals and the TimeoutException is probably not the best idea - because it can be catched in the decorated function.
+ABADGER1999 highlights in his `blog post <https://anonbadger.wordpress.com/2018/12/15/python-signal-handlers-and-exceptions/>`_ the
+potential pitfalls of using signals alongside the TimeoutException.
+This approach may not be advisable as the exception can be intercepted within the decorated function.
 
-Of course You can use Your own Exception, derived from the Base Exception Class, but the code might still not work as expected -
-see the next example - You may try it out in `jupyter <https://mybinder.org/v2/gh/bitranox/wrapt_timeout_decorator/master?filepath=jupyter_test_{repository}.ipynb>`_:
+While it's possible to implement a custom Exception derived from the Base Exception Class,
+this doesn't guarantee the code will behave as anticipated.
+For an illustrative example, you're encouraged to conduct an experiment using a
+`Jupyter notebook <https://mybinder.org/v2/gh/bitranox/wrapt_timeout_decorator/master?filepath=jupyter_test_{repository}.ipynb>`_.
 
-.. code-block:: py
+
+.. code-block::
 
     import time
     from wrapt_timeout_decorator import *
 
-    # caveats when using signals - the TimeoutError raised by the signal may be catched
-    # inside the decorated function.
-    # So You might use Your own Exception, derived from the base Exception Class.
-    # In Python-3.7.1 stdlib there are over 300 pieces of code that will catch your timeout
-    # if you were to base an exception on Exception. If you base your exception on BaseException,
-    # there are still 231 places that can potentially catch your exception.
-    # You should use use_signals=False if You want to make sure that the timeout is handled correctly !
-    # therefore the default value for use_signals = False on this decorator !
+    # Considerations for Signal Usage - Handling TimeoutError
+    # The TimeoutError triggered by a signal might be intercepted within the decorated function.
+    # Utilizing a custom Exception, derived from the base Exception Class, is a possible workaround.
+    # Within Python 3.7.1's standard library, there are over 300 instances where your custom timeout might be caught
+    # if it's based on Exception. Should you base your exception on BaseException,
+    # there still remain 231 potential catch points.
+    # To ensure proper timeout management, it's advisable to set `use_signals=False`.
+    # Consequently, `use_signals` defaults to `False` in this decorator to avoid these issues.
 
     @timeout(5, use_signals=True)
     def mytest(message):
@@ -393,12 +441,13 @@ see the next example - You may try it out in `jupyter <https://mybinder.org/v2/g
             # this will never be printed because the decorated function catches implicitly the TimeoutError !
             print('Timeout Occured')
 
-Multiprocessing Caveats and Usage Guidelines
---------------------------------------------
+Considerations using Subprocesses
+---------------------------------
 
 Overview
 --------
-Multiprocessing is utilized by default to implement timeout functionality. This involves forking or spawning subprocesses, each with its own set of considerations and caveats.
+Subprocesses ares utilized by default to implement timeout functionality. This involves forking or spawning subprocesses, each with its own set of
+considerations and caveats.
 
 Initialization
 --------------
@@ -413,8 +462,8 @@ Process Execution and Communication
 - **Data Transmission:** Parameters and results are communicated through pipes, with `dill` used for serialization.
 - **Timeout Management:** Absent a result within the specified timeout, the subprocess is terminated using `SIGTERM`. Ensuring subprocesses can terminate safely is essential; thus, disabling the `SIGTERM` handler is not advisable.
 
-Multiprocessing Start Methods
------------------------------
+Subprocess Start Methods
+------------------------
 - **Windows Limitation:** Only `spawn` is available on Windows.
 - **Linux/Unix Options:** Options include `fork`, `forkserver`, and `spawn`.
     - **Fork:** Efficiently clones the parent process, including memory space, but may lead to issues with shared resources or in multi-threaded applications.
@@ -430,19 +479,25 @@ Choosing the Right Start Method
 Setting the Start Method
 ------------------------
 Configure the start method with ``multiprocessing.set_start_method(method, force=False)``. This should be done cautiously, ideally once, and within the ``if __name__ == '__main__'`` block to prevent unintended effects.
+Since we use ``multiprocess`` instead of ``multiprocessing``, we provide a method to set the starting method on both at the same time.
+see : `set_subprocess_starting_method`_
 
-Special Considerations for Uvicorn and FastAPI
-----------------------------------------------
+Special Considerations for Uvicorn, FastAPI, asyncio
+----------------------------------------------------
 For Uvicorn or FastAPI applications, a specific approach to the `fork` method is recommended to ensure proper signal handling and isolation, facilitated by the `dec_mp_reset_signals` parameter. This design aims to reset signal handlers and manage file descriptors in child processes effectively.
+You can set that by using the parameter `dec_mp_reset_signals`
 
-nested Timeouts
-----------------
+Handling Nested Timeouts
+------------------------
 
-since there is only ONE ALARM Signal on Unix per process, You need to use use_signals = False for nested timeouts.
-The outmost decorator might use Signals, all nested Decorators needs to use use_signals=False (the default)
-You may try it out in `jupyter <https://mybinder.org/v2/gh/bitranox/wrapt_timeout_decorator/master?filepath=jupyter_test_{repository}.ipynb>`_:
+Due to Unix's limitation of having just one ALARM signal per process, it's necessary to set `use_signals=False` for nested timeouts
+to function correctly. While the outermost decorator may utilize signals,
+all inner decorators must have `use_signals` set to `False`—which is the default setting.
+For practical experimentation and to see this behavior in action,
+you're encouraged to use a `Jupyter notebook <https://mybinder.org/v2/gh/bitranox/wrapt_timeout_decorator/master?filepath=jupyter_test_{repository}.ipynb>`_.
 
-.. code-block:: py
+
+.. code-block::
 
     # main.py
     import mylib
@@ -454,7 +509,7 @@ You may try it out in `jupyter <https://mybinder.org/v2/gh/bitranox/wrapt_timeou
     mylib.outer()
 
 
-.. code-block:: py
+.. code-block::
 
     # mylib.py
     from wrapt_timeout_decorator import *
@@ -472,10 +527,10 @@ You may try it out in `jupyter <https://mybinder.org/v2/gh/bitranox/wrapt_timeou
         time.sleep(3)
         print("Should never be printed if you call outer()")
 
-Alternative Exception
----------------------
+Custom Timeout Exception
+------------------------
 
-Specify an alternate exception to raise on timeout:
+Define a different exception to be raised upon timeout:
 
 .. code-block:: py
 
@@ -499,60 +554,54 @@ Parameters
 
 .. code-block::
 
-    @timeout(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval, dec_hard_timeout)
+    @timeout(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval, dec_hard_timeout, dec_mp_reset_signals)
     def decorated_function(*args, **kwargs):
         # interesting things happens here ...
         ...
 
     """
-    dec_timeout         the timeout period in seconds, or a string that can be evaluated when dec_allow_eval = True
-                        type: float, integer or string
-                        default: None (no Timeout set)
-                        can be overridden by passing the kwarg dec_timeout to the decorated function*
+    dec_timeout         This parameter sets the timeout duration. It accepts a float, integer, or a string
+                        that can be evaluated to a number if dec_allow_eval is enabled.
+                        By default, there's no timeout (None). You can change the timeout dynamically
+                        by passing a dec_timeout keyword argument to the decorated function.
 
-    use_signals         if to use signals (linux, osx) to realize the timeout. The most accurate method but with caveats.
-                        By default the Wrapt Timeout Decorator does NOT use signals !
-                        Please note that signals can only be used in the main thread and only on linux. In all other cases
-                        (not the main thread, or under Windows) signals cant be used anyway and will be disabled automatically.
-                        In general You dont need to set use_signals Yourself.
-                        Please read the sections - `Caveats using Signals` and `Caveats using Multiprocessing`
-                        type: boolean
-                        default: False
-                        can be overridden by passing the kwarg use_signals to the decorated function*
+    use_signals         This boolean parameter controls whether to use UNIX signals for implementing timeouts.
+                        It's the most accurate method but comes with certain limitations,
+                        such as being available only on Linux and macOS, and only in the main thread.
+                        By default, signals are not used (False). It's typically not necessary to modify
+                        this setting manually, but you can override it by passing a use_signals keyword argument
+                        to the decorated function.
 
-    timeout_exception   the Exception that will be raised if a timeout occurs.
+    timeout_exception   Specifies the exception to raise when a timeout occurs.
+                        by default, it's set to TimeoutError
                         type: exception
-                        default: TimeoutError, on Python < 3.3: Assertion Error (since TimeoutError does not exist on that Python Versions)
+                        default: TimeoutError
 
-    exception_message   custom Exception message.
+    exception_message   You can customize the message of the timeout exception.
+                        The default message includes the name of the function and the timeout duration.
+                        This message gets formatted with the actual values when a timeout occurs.
                         type: str
                         default : 'Function {function_name} timed out after {dec_timeout} seconds' (will be formatted)
 
-    dec_allow_eval      will allow to evaluate the parameter dec_timeout.
-                        If enabled, the parameter of the function dec_timeout, or the parameter passed
-                        by kwarg dec_timeout will be evaluated if its type is string. You can access :
-                        wrapped (the decorated function object and all the exposed objects below)
+    dec_allow_eval      When enabled (True), this boolean parameter allows the dec_timeout string to be evaluated dynamically.
+                        It provides access to the decorated function (wrapped), the instance it belongs to (instance),
+                        the positional arguments (args), and keyword arguments (kwargs).
+                        It's disabled (False) by default for safety reasons but can be enabled by passing a dec_allow_eval
+                        keyword argument to the decorated function.
+
                         instance    Example: 'instance.x' - see example above or doku
                         args        Example: 'args[0]' - the timeout is the first argument in args
                         kwargs      Example: 'kwargs["max_time"] * 2'
                         type: bool
                         default: false
-                        can be overridden by passing the kwarg dec_allow_eval to the decorated function*
 
-    dec_hard_timeout    only relevant when signals can not be used. In that case a new process needs to be created.
-                        The creation of the process on windows might take 0.5 seconds and more, depending on the size
-                        of the main module and modules to be imported. Especially useful for small timeout periods.
-
-                        dec_hard_timeout = True : the decorated function will time out after dec_timeout, no matter what -
-                        that means if You set 0.1 seconds here, the subprocess can not be created in that time and the
-                        function will always time out and never run.
-
-                        dec_hard_timeout = False : the decorated function will time out after the called function
-                        is allowed to run for dec_timeout seconds. The time needed to create that process is not considered.
-                        That means if You set 0.1 seconds here, and the time to create the subprocess is 0.5 seconds,
-                        the decorated function will time out after 0.6 seconds in total, allowing the decorated function to run
-                        for 0.1 seconds.
-
+    dec_hard_timeout    This boolean parameter is relevant when signals cannot be used,
+                        necessitating the creation of a new process for the timeout mechanism.
+                        Setting it to True means the timeout strictly applies to the execution time of the function,
+                        potentially not allowing enough time for process creation.
+                        With False, the process creation time is not included in the timeout, giving the actual function
+                        the full duration to execute.
+                        You can override this setting by passing a dec_hard_timeout keyword argument to the decorated function.
                         type: bool
                         default: false
                         can be overridden by passing the kwarg dec_hard_timeout to the decorated function*
@@ -615,16 +664,9 @@ decorator parameters starting with \dec_* and use_signals can be overridden by k
 Multithreading
 --------------
 
-By default, timeout-decorator uses signals to limit the execution time
-of the given function. This approach does not work if your function is
-executed not in the main thread (for example if it's a worker thread of
-the web application) or when the operating system does not support signals (aka Windows).
-There is an alternative timeout strategy for this case - by using multiprocessing.
-This is done automatically, so you dont need to set ``use_signals=False``.
-You can force not to use signals on Linux by passing the parameter ``use_signals=False`` to the timeout
-decorator function for testing. If Your program should (also) run on Windows, I recommend to test under
-Windows, since Windows does not support forking (read more under Section ``use with Windows``).
-The following Code will run on Linux but NOT on Windows :
+Signals will not work if your function is not executed in the main thread.
+``use_signals`` is therefore automatically disabled (if set) when the function is not running in the main thread.
+
 
 .. code-block:: py
 
@@ -644,17 +686,16 @@ The following Code will run on Linux but NOT on Windows :
         mytest('starting')
 
 .. warning::
-    Make sure that in case of multiprocessing strategy for timeout, your function does not return objects which cannot
+    Make sure that in case of subprocess strategy for timeout, your function does not return objects which cannot
     be pickled, otherwise it will fail at marshalling it between master and child processes. To cover more cases,
     we use multiprocess and dill instead of multiprocessing and pickle.
 
     Since Signals will not work on Windows, it is disabled by default, whatever You set.
 
-
 Subprocess Monitoring
 ---------------------
 
-when using multiprocessing, the subprocess is monitored if it is still alive.
+when using subprocesses, the subprocess is monitored if it is still alive.
 if the subprocess was terminated or killed (for instance by OOMKiller),
 ``multiprocessing.context.ProcessError`` will be raised.
 By default the subprocess is monitored every 5 seconds, but can be set with parameter
@@ -729,36 +770,36 @@ You can use the timout also as function, without using as decorator:
     if __name__ == '__main__':
         timeout(dec_timeout=5)(mytest)('starting')
 
-use powerful eval function
---------------------------
+Dynamic Timeout Value Adjustment with eval
+------------------------------------------
 
-This is very powerful, but can be also very dangerous if you accept strings to evaluate from UNTRUSTED input.
+The timeout value can be dynamically adjusted, calculated from other parameters or methods accessible via the eval function.
+This capability is highly potent yet bears significant risks, especially when evaluating strings from UNTRUSTED sources.
 
-read: https://nedbatchelder.com/blog/201206/eval_really_is_dangerous.html
+.. caution::
 
-If enabled, the parameter of the function dec_timeout, or the parameter passed by kwarg dec_timeout will
-be evaluated if its type is string.
+   Utilizing eval with untrusted input is perilous.
+   For an in-depth understanding, refer to `this article by Ned Batchelder <https://nedbatchelder.com/blog/201206/eval_really_is_dangerous.html>`_.
 
-You can access :
+When activated, the ``dec_timeout`` function parameter,
+or the value passed through the ``dec_timeout`` keyword argument (kwarg), will undergo evaluation if it's a string type.
 
-- "wrapped"
-   (the decorated function and its attributes)
+Accessible objects within the eval context include:
 
-- "instance"
-   Example: 'instance.x' - an attribute of the instance of the class instance
+- **wrapped**: Represents the decorated function and its attributes.
 
-- "args"
-   Example: 'args[0]' - the timeout is the first argument in args
+- **instance**: Accesses attributes of the class instance, e.g., ``'instance.x'`` refers to an attribute ``x`` of the instance.
 
-- "kwargs"
-   Example: 'kwargs["max_time"] * 2'
+- **args**: Refers to positional arguments, e.g., ``'args[0]'`` might be used to indicate the first argument is the timeout.
 
-- and of course all attributes You can think of - that makes it powerful but dangerous.
-   by default allow_eval is disabled - but You can enable it in order to cover some edge cases without
-   modifying the timeout decorator.
+- **kwargs**: Accesses keyword arguments, e.g., ``'kwargs["max_time"] * 2'`` doubles the value of ``max_time``.
+
+These elements underscore the feature's versatility but also highlight its potential hazards.
+By default, ``allow_eval`` is turned off to mitigate risks.
+However, it can be enabled to address specific use cases without altering the timeout decorator's core functionality.
 
 
-.. code-block:: py
+.. code-block::
 
     # this example does NOT work on windows, please check the section
     # "use with Windows" in the README.rst
@@ -795,48 +836,80 @@ You can access :
     if __name__ == '__main__':
         main()
 
+Tools
+-----
+
 detect pickle errors
 --------------------
 
-remember that decorated functions (and their results !) needs to be pickable under Windows. In order to detect pickle problems You can use :
+Keep in mind that when employing subprocesses, both decorated functions and their return values must be pickleable.
+To identify issues with pickling, you can utilize the ``detect_unpickable_objects`` function:
 
-.. code-block:: py
+.. code-block:: python
 
     from wrapt_timeout_decorator import *
-    # always remember that the "object_to_pickle" should not be defined within the main context
-    detect_unpickable_objects(object_to_pickle, dill_trace=True)  # type: (Any, bool) -> Dict
+    detect_unpickable_objects(object_to_pickle, dill_trace=True)
 
-Logging in decorated functions
+
+set_subprocess_starting_method
 ------------------------------
 
-when signals=False (on Windows), logging in the wrapped function can be tricky. Since a new process is
-created, we can not use the logger object of the main process. Further development is needed to
-connect to the main process logger via a socket or queue.
+Set the start Method for Subprocesses. Since we use multiprocess,
+we set the starting method for multiprocess and multiprocessing to the same value.
+we did not test what would happen if we set that to different values.
 
-When the wrapped function is using logger=logging.getLogger(), a new Logger Object is created.
-Setting up that Logger can be tricky (File Logging from two Processes is not supported ...)
-I think I will use a socket to implement that (SocketHandler and some Receiver Thread)
+    - Windows Limitation: Only `spawn` is available on Windows.
+    - Linux/Unix Options: Options include `fork`, `forkserver`, and `spawn`.
+        - fork:       Efficiently clones the parent process, including memory space,
+                      but may lead to issues with shared resources or in multi-threaded applications.
+        - forkserver: Starts a server at program launch, creating new processes upon request
+                      for better isolation but at a slower pace due to the server communication requirement.
+        - spawn:      Initiates a fresh Python interpreter process, ensuring total independence
+                      at the cost of slower start-up due to the need for full initialization.
 
-Until then, You need to set up Your own new logger in the decorated function, if logging is needed.
-Again - keep in mind that You can not write to the same logfile from different processes !
-(although there are logging modules which can do that)
+    - Choosing the Right Start Method
+        - fork          offers speed but can encounter issues with resource sharing or threading.
+        - forkserver    enhances stability and isolation, ideal for applications requiring safety or managing unstable resources.
+        - spawn         provides the highest level of isolation, recommended for a clean start and avoiding shared state complications.
+
+    - Setting the Start Method
+        Configure the start method with `set_subprocess_starting_method(method)`
+        This should be done cautiously, ideally once, and within the `if __name__ == '__main__'` block to prevent unintended effects.
+
+.. code-block:: python
+
+    from wrapt_timeout_decorator import *
+    set_subprocess_starting_method("forkserver")
+
+Logging Challenges with Subprocesses
+------------------------------------
+
+When `signals=False` is set, implementing logging within a subprocess poses challenges.
+A new process does not inherit the main process's logger object, necessitating further development
+for integration with the main process's logger via mechanisms like sockets or queues.
+
+Utilizing `logger=logging.getLogger()` within the wrapped function results in the instantiation of a new Logger Object.
+Configuring this Logger, especially for file logging from concurrent processes, presents complications as direct file
+logging from multiple processes is generally unsupported.
+A potential solution involves employing a SocketHandler coupled with a Receiver Thread to facilitate logging.
+
+In the interim, it's necessary to initialize a separate logger within the decorated function for logging purposes.
+It's crucial to remember that writing to the same logfile from multiple processes is not advisable.
+While certain logging modules may offer solutions for concurrent logging, they require specific setup and configuration.
 
 hard timeout
 ------------
 
-when use_signals = False (this is the only method available on Windows), the timeout function is realized by starting
-another process and terminate that process after the given timeout.
-Under Linux fork() of a new process is very fast, under Windows it might take some considerable time,
-because the main context needs to be reloaded on spawn().
-Spawning of a small module might take something like 0.5 seconds and more.
+When employing subprocesses (which is the default behavior), the timeout functionality is achieved by initiating
+a new subprocess and terminating it once the specified timeout period elapses.
+The process creation speed varies significantly between operating systems.
+On Linux, the ``fork()`` method allows rapid creation of a new process.
+In contrast, on Windows, the ``spawn()`` method can introduce a noticeable delay due to the necessity of reloading the main context,
+with spawning a small module potentially taking upwards of 0.5 seconds.
 
-By default, when using signals=False, the timeout begins after the new process is created.
-
-This means that the timeout given, is the time the decorated process is allowed to run, not included the time excluding the time to setup the process itself.
-This is especially important if You use small timeout periods :
-
-for Instance:
-
+The timeout duration commences subsequent to the creation of the new process.
+Consequently, the specified timeout reflects the period the decorated function is permitted to execute,
+exclusive of the process setup time. This distinction is particularly vital for scenarios utilizing brief timeout intervals:
 
 .. code-block:: py
 
@@ -845,15 +918,26 @@ for Instance:
         time.sleep(0.2)
 
 
-the total time to timeout on linux with use_signals = False will be around 0.1 seconds, but on windows this can take
-about 0.6 seconds: 0.5 seconds to spawn the new process, and giving the function test() 0.1 seconds to run !
+Understanding Timeout Durations Across Platforms
+------------------------------------------------
 
-If You need that a decorated function should timeout exactly** after the given timeout period, You can pass
-the parameter dec_hard_timeout=True. in this case the called function will timeout exactly** after the given time,
-no matter how long it took to spawn the process itself. In that case, if You set up the timeout too short,
-the process might never run and will always timeout during spawning.
+The implementation of timeouts, yields different total timeout durations on Linux (fork, forkserver) compared to Windows (spawn).
+On Linux, the timeout process may for instance complete in approximately 0.1 seconds with "fork".
+Conversely, on Windows, the total time to reach timeout could extend for instance to about 0.6 seconds,
+comprising a 0.5-second delay to spawn a new process and then allowing 0.1 seconds for the function ``test()`` to execute.
 
-** well, more or less exactly - it still takes some short time to return from the spawned process - so be extra cautious on very short timeouts !
+To enforce a decorated function to timeout strictly after the specified timeout period,
+you may use the ``dec_hard_timeout=True`` parameter.
+
+With this setting, the targeted function will timeout precisely after the designated duration after start,
+regardless of the process spawning time.
+However, setting a very short timeout with this option may prevent the process from running at all,
+resulting in an immediate timeout upon spawning.
+
+.. note::
+
+   The term "exactly" should be interpreted with a degree of flexibility.
+   There remains a negligible delay in returning from the spawned process, making it imperative to approach very short timeouts with caution.
 
 MYPY Testing
 ------------
@@ -991,6 +1075,13 @@ This software is licensed under the `MIT license <http://en.wikipedia.org/wiki/M
 
 Changelog
 =========
+
+v1.5.1
+---------
+2024-02-28:
+    - overhaul documentation
+    - github actions/checkout@v4
+    - github actions/setup-python@v5
 
 v1.5.0
 ---------

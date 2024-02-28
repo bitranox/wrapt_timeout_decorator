@@ -1,6 +1,8 @@
 from .wrapt_timeout_decorator import timeout as timeout
 from .wrap_helper import detect_unpickable_objects as detect_unpickable_objects
 from .wrap_helper import detect_unpickable_objects_and_reraise as detect_unpickable_objects_and_reraise
+from .wrap_helper import set_subprocess_starting_method as set_subprocess_starting_method
+
 
 # this needs to come after the module imports, otherwise circular import under windows
 from . import __init__conf__

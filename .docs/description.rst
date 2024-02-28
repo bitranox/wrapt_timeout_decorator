@@ -13,21 +13,34 @@ Signals
 
 The "Signals" strategy (for POSIX Systems) is elegant and efficient,
 but it has some important caveats which should be reviewed
-in the `Caveats using Signals`_ section.
+in the `Considerations using Signals`_ section.
 
 
-Multiprocessing
----------------
+Subprocess Strategy
+-------------------
 
-The default strategy is to use Multiprocessing
+The utilization of subprocesses serves as the default approach for executing timeouts:
 
-- on Windows, due to the lack of signals, this is only available choice, which is enforced automatically
-- signals (on POSIX) can not be used in a subthread, therefore multiprocessing is enforced in such cases
+- **Windows Compatibility**: Given the absence of signal support,
+        subprocesses become the sole method for implementing timeouts on Windows,
+        automatically applied to accommodate the platform's limitations.
+        On Windows the only available startmethod for subprocesses is ``spawn``
+- **POSIX Systems**: On POSIX-compliant systems, signals cannot be employed within
+        subthreads, necessitating the use of subprocesses in these contexts as well.
+        On POSIX the available startmethods for subprocesses are ``fork``, ``forkserver``, ``spawn``
 
-When using a subprocess many types from multiprocessing need to be pickable so that child processes can use them.
-Therefore we use "dill" instead of "pickle" and "multiprocess" instead of "multiprocessing".
+To ensure compatibility and functionality across subprocesses,
+it's essential that as many object types as possible are pickleable.
+To this end, the ``dill`` library is preferred over Python's standard ``pickle`` module,
+and ``multiprocess`` is chosen instead of ``multiprocessing``.
+``dill`` enhances the pickle module's capabilities, extending support for
+serialization and deserialization to a broader array of Python object types.
 
-dill extends python’s pickle module for serializing and de-serializing python objects to the majority of the built-in python types
+Subprocess communication is primarily facilitated through ``multiprocess.pipe`` rather than ``queue``.
+This choice not only boosts performance but also enhances compatibility,
+potentially offering better support for environments like Amazon AWS.
 
-Communication with the subprocess is done via "multiprocess.pipe" instead of "queue",
-which offers improved speed and may also work on Amazon AWS.
+Subprocesses can be initiated using various methods,
+including 'fork', 'forkserver', and 'spawn'.
+For detailed information on these methods and their implications,
+please refer to Section `Considerations using Subprocesses`_ of this manual.

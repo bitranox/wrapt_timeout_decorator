@@ -10,6 +10,7 @@ from typing import Any, Callable, Dict, List, Type, Union, Optional
 # EXT
 import dill
 import multiprocess
+import multiprocessing
 
 # Types
 AlarmHandler = Union[Callable[[int, Optional[FrameType]], Any], int, signal.Handlers, None]
@@ -182,6 +183,60 @@ def get_bad_pickling_objects(object_to_pickle: Any) -> Any:
         bad_objects = [sys.exc_info()[1]]
     finally:
         return bad_objects
+
+
+def set_subprocess_starting_method(start_method: str) -> None:
+    """ Set the start Method for Subprocesses.
+    since we use multiprocess, we set the starting method for multiprocess and multiprocessing to the same value.
+    we did not test what would happen if we set that to different values.
+
+
+
+    :param start_method:
+        Windows Limitation: Only `spawn` is available on Windows.
+        Linux/Unix Options: Options include `fork`, `forkserver`, and `spawn`.
+            fork:       Efficiently clones the parent process, including memory space,
+                        but may lead to issues with shared resources or in multi-threaded applications.
+            forkserver: Starts a server at program launch, creating new processes upon request
+                        for better isolation but at a slower pace due to the server communication requirement.
+            spawn:      Initiates a fresh Python interpreter process, ensuring total independence
+                        at the cost of slower start-up due to the need for full initialization.
+
+        Choosing the Right Start Method
+        -------------------------------
+        - fork offers   speed but can encounter issues with resource sharing or threading.
+        - forkserver    enhances stability and isolation, ideal for applications requiring safety or managing unstable resources.
+        - spawn         provides the highest level of isolation, recommended for a clean start and avoiding shared state complications.
+
+        Setting the Start Method
+        ------------------------
+        Configure the start method with `set_subprocess_starting_method(method)`
+        This should be done cautiously, ideally once, and within the `if __name__ == '__main__'` block to prevent unintended effects.
+
+    >>> # Setup
+    >>> test_preserve_current_method = multiprocessing.get_start_method()
+    >>> test_available_start_methods = multiprocessing.get_all_start_methods()
+
+    >>> # Test OK
+    >>> for test_start_method in test_available_start_methods:
+    ...     set_subprocess_starting_method(test_start_method)
+
+    >>> # Test Failed
+    >>> set_subprocess_starting_method("unknown_start_method")
+    Traceback (most recent call last):
+        ...
+    RuntimeError: Subprocess Start Method "unknown_start_method" is not supported on this OS. Permittable are : ...
+
+    >>> # Teardown
+    >>> set_subprocess_starting_method(test_preserve_current_method)
+
+    """
+    available_start_methods = multiprocessing.get_all_start_methods()
+    if start_method not in available_start_methods:
+        raise RuntimeError(f'Subprocess Start Method "{start_method}" is not supported on this OS. Permittable are : {", ".join(available_start_methods)}')
+
+    multiprocessing.set_start_method(start_method, force=True)
+    multiprocess.set_start_method(start_method, force=True)
 
 
 def raise_exception(exception: Type[BaseException], exception_message: str) -> None:
