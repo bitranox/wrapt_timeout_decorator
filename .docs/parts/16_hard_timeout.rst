@@ -37,5 +37,5 @@ resulting in an immediate timeout upon spawning.
 
 .. note::
 
-   The term "exactly" should be interpreted with a degree of flexibility.
+   The term "precisely" should be interpreted with a degree of flexibility.
    There remains a negligible delay in returning from the spawned process, making it imperative to approach very short timeouts with caution.

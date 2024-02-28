@@ -2,8 +2,7 @@ There are several timeout decorators available, but the one mentioned here
 focuses on ensuring correctness when used with classes, methods, class methods,
 static methods, etc. It also preserves traceback information for PyCharm debugging.
 
-Additionally, there is a powerful eval function that allows reading
-the desired timeout value even from class attributes.
+The timeout can be dynamically adjusted, calculated from other parameters or methods accessible via an optional eval function.
 
 Two timeout strategies have been implemented:
 one using "Signals" and the other using "Subprocess".

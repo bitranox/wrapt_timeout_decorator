@@ -1,7 +1,7 @@
 Basic Usage
 -----------
 
-.. code-block::
+.. code-block:: python
 
     import time
     from wrapt_timeout_decorator import *

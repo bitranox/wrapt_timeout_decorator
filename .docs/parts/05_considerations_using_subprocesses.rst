@@ -35,11 +35,13 @@ Choosing the Right Start Method
 
 Setting the Start Method
 ------------------------
-Configure the start method with ``multiprocessing.set_start_method(method, force=False)``. This should be done cautiously, ideally once, and within the ``if __name__ == '__main__'`` block to prevent unintended effects.
+Configure the start method with ``multiprocessing.set_start_method(method, force=True)``. This should be done cautiously, ideally once, and within the ``if
+__name__ == '__main__'`` block to prevent unintended effects.
 Since we use ``multiprocess`` instead of ``multiprocessing``, we provide a method to set the starting method on both at the same time.
 see : `set_subprocess_starting_method`_
 
 Special Considerations for Uvicorn, FastAPI, asyncio
 ----------------------------------------------------
-For Uvicorn or FastAPI applications, a specific approach to the `fork` method is recommended to ensure proper signal handling and isolation, facilitated by the `dec_mp_reset_signals` parameter. This design aims to reset signal handlers and manage file descriptors in child processes effectively.
-You can set that by using the parameter `dec_mp_reset_signals`
+For Uvicorn or FastAPI applications, a specific approach to the `fork` method is recommended to ensure proper signal handling and isolation, facilitated by the ``dec_mp_reset_signals`` parameter.
+This design aims to reset signal handlers and manage file descriptors in child processes effectively.
+You can set that by passing the parameter ``dec_mp_reset_signals=True`` to the decorator.

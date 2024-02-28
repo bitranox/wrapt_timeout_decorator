@@ -3,7 +3,7 @@ Override Parameters
 
 decorator parameters starting with \dec_* and use_signals can be overridden by kwargs with the same name :
 
-.. code-block:: py
+.. code-block:: python
 
 
     import time

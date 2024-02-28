@@ -8,7 +8,7 @@ For practical experimentation and to see this behavior in action,
 you're encouraged to use a `Jupyter notebook <https://mybinder.org/v2/gh/bitranox/wrapt_timeout_decorator/master?filepath=jupyter_test_{repository}.ipynb>`_.
 
 
-.. code-block::
+.. code-block:: python
 
     # main.py
     import mylib
@@ -20,7 +20,7 @@ you're encouraged to use a `Jupyter notebook <https://mybinder.org/v2/gh/bitrano
     mylib.outer()
 
 
-.. code-block::
+.. code-block:: python
 
     # mylib.py
     from wrapt_timeout_decorator import *

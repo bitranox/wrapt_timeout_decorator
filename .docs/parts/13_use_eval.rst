@@ -27,7 +27,7 @@ By default, ``allow_eval`` is turned off to mitigate risks.
 However, it can be enabled to address specific use cases without altering the timeout decorator's core functionality.
 
 
-.. code-block::
+.. code-block:: python
 
     # this example does NOT work on windows, please check the section
     # "use with Windows" in the README.rst

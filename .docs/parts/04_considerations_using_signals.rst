@@ -11,7 +11,7 @@ For an illustrative example, you're encouraged to conduct an experiment using a
 `Jupyter notebook <https://mybinder.org/v2/gh/bitranox/wrapt_timeout_decorator/master?filepath=jupyter_test_{repository}.ipynb>`_.
 
 
-.. code-block::
+.. code-block:: python
 
     import time
     from wrapt_timeout_decorator import *

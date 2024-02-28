@@ -5,7 +5,7 @@ Signals will not work if your function is not executed in the main thread.
 ``use_signals`` is therefore automatically disabled (if set) when the function is not running in the main thread.
 
 
-.. code-block:: py
+.. code-block:: python
 
     import time
     from wrapt_timeout_decorator import *

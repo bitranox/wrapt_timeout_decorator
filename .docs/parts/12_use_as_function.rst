@@ -3,7 +3,7 @@ use as function not as decorator
 
 You can use the timout also as function, without using as decorator:
 
-.. code-block:: py
+.. code-block:: python
 
     import time
     from wrapt_timeout_decorator import *

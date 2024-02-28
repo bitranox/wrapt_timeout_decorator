@@ -58,8 +58,7 @@ There are several timeout decorators available, but the one mentioned here
 focuses on ensuring correctness when used with classes, methods, class methods,
 static methods, etc. It also preserves traceback information for PyCharm debugging.
 
-Additionally, there is a powerful eval function that allows reading
-the desired timeout value even from class attributes.
+The timeout can be dynamically adjusted, calculated from other parameters or methods accessible via an optional eval function.
 
 Two timeout strategies have been implemented:
 one using "Signals" and the other using "Subprocess".
@@ -175,7 +174,7 @@ Usage
 Basic Usage
 -----------
 
-.. code-block::
+.. code-block:: python
 
     import time
     from wrapt_timeout_decorator import *
@@ -194,24 +193,6 @@ Basic Usage
 
 General Recommendations
 -----------------------
-It is advised to limit the use of timeouts in your code, applying them only in critical situations.
-
-Ensure that timeouts are implemented at the right granular level which is specific to Your application.
-
-On one hand, this approach helps in avoiding undesired effects, such as exceptions being intercepted by unrelated segments of code,
-or issues with non-pickable entities.
-
-On the other hand, incorporating a Timeout Decorator within a repetitive loop should be avoided.
-This practice can lead to significant delays, particularly on Windows platforms
-due to the overhead associated with spawning subprocesses.
-
-Preferably, make use of the native timeouts provided by the functions and libraries you are working with.
-These built-in mechanisms typically suffice for most scenarios.
-The Timeout Decorator should only be considered as a fallback option, after all other possibilities have been thoroughly explored.
-
-Be aware that the isolation and performance of subprocesses can be very different, depending on the Platform (Windows or Linux) and the selected subprecess
-start method. - see STARTMETHOD
-
 
 It's recommended to minimize the utilization of timeouts in your programming, reserving them for truly essential instances.
 
@@ -229,12 +210,12 @@ subsequent to the exhaustive consideration of alternative strategies.
 
 Additionally, be cognizant of the fact that the behavior and efficiency of subprocesses may vary significantly across platforms
 (Windows versus Linux) and depending on the chosen method for subprocess initiation.
-Refer to the documentation on STARTMETHOD for further details.
+Refer to the documentation on `Subprocess Start Methods`_ for further details.
 
 
     BAD EXAMPLE (Pseudocode) - lets assume the write to the database fails sometimes for unknown reasons, and "hangs"
 
-    .. code-block:: py
+    .. code-block:: python
 
         # module file_analyzer
         import time
@@ -259,7 +240,7 @@ Refer to the documentation on STARTMETHOD for further details.
 
     BETTER EXAMPLE (Pseudocode)
 
-    .. code-block:: py
+    .. code-block:: python
 
         # module file_analyzer
         import time
@@ -348,7 +329,7 @@ An illustration highlights a scenario functional on Linux but problematic on Win
 where the variable `"name"` and the function `"sleep"` are not recognized in the spawned process:
 
 
-.. code-block::
+.. code-block:: python
 
     main.py:
 
@@ -375,7 +356,7 @@ where the variable `"name"` and the function `"sleep"` are not recognized in the
 here the same example, which will work on Windows:
 
 
-.. code-block::
+.. code-block:: python
 
 
     # my_program_main.py:
@@ -389,7 +370,7 @@ here the same example, which will work on Windows:
         main()
 
 
-.. code-block::
+.. code-block:: python
 
 
         # conf_my_program.py:
@@ -401,7 +382,7 @@ here the same example, which will work on Windows:
         conf_my_program = ConfMyProgram()
 
 
-.. code-block::
+.. code-block:: python
 
     # lib_test.py:
 
@@ -432,7 +413,7 @@ For an illustrative example, you're encouraged to conduct an experiment using a
 `Jupyter notebook <https://mybinder.org/v2/gh/bitranox/wrapt_timeout_decorator/master?filepath=jupyter_test_{repository}.ipynb>`_.
 
 
-.. code-block::
+.. code-block:: python
 
     import time
     from wrapt_timeout_decorator import *
@@ -512,14 +493,16 @@ Choosing the Right Start Method
 
 Setting the Start Method
 ------------------------
-Configure the start method with ``multiprocessing.set_start_method(method, force=False)``. This should be done cautiously, ideally once, and within the ``if __name__ == '__main__'`` block to prevent unintended effects.
+Configure the start method with ``multiprocessing.set_start_method(method, force=True)``. This should be done cautiously, ideally once, and within the ``if
+__name__ == '__main__'`` block to prevent unintended effects.
 Since we use ``multiprocess`` instead of ``multiprocessing``, we provide a method to set the starting method on both at the same time.
 see : `set_subprocess_starting_method`_
 
 Special Considerations for Uvicorn, FastAPI, asyncio
 ----------------------------------------------------
-For Uvicorn or FastAPI applications, a specific approach to the `fork` method is recommended to ensure proper signal handling and isolation, facilitated by the `dec_mp_reset_signals` parameter. This design aims to reset signal handlers and manage file descriptors in child processes effectively.
-You can set that by using the parameter `dec_mp_reset_signals`
+For Uvicorn or FastAPI applications, a specific approach to the `fork` method is recommended to ensure proper signal handling and isolation, facilitated by the ``dec_mp_reset_signals`` parameter.
+This design aims to reset signal handlers and manage file descriptors in child processes effectively.
+You can set that by passing the parameter ``dec_mp_reset_signals=True`` to the decorator.
 
 Handling Nested Timeouts
 ------------------------
@@ -531,7 +514,7 @@ For practical experimentation and to see this behavior in action,
 you're encouraged to use a `Jupyter notebook <https://mybinder.org/v2/gh/bitranox/wrapt_timeout_decorator/master?filepath=jupyter_test_{repository}.ipynb>`_.
 
 
-.. code-block::
+.. code-block:: python
 
     # main.py
     import mylib
@@ -543,7 +526,7 @@ you're encouraged to use a `Jupyter notebook <https://mybinder.org/v2/gh/bitrano
     mylib.outer()
 
 
-.. code-block::
+.. code-block:: python
 
     # mylib.py
     from wrapt_timeout_decorator import *
@@ -566,11 +549,12 @@ Custom Timeout Exception
 
 Define a different exception to be raised upon timeout:
 
-.. code-block:: py
+.. code-block::  python
 
     import time
     from wrapt_timeout_decorator import *
 
+    # this will throw StopIteration Error instead of TimeoutError
     @timeout(5, timeout_exception=StopIteration)
     def mytest(message):
         # this example does NOT work on windows, please check the section
@@ -586,80 +570,94 @@ Define a different exception to be raised upon timeout:
 Parameters
 ----------
 
-.. code-block::
+.. code-block::  python
 
-    @timeout(dec_timeout, use_signals, timeout_exception, exception_message, dec_allow_eval, dec_hard_timeout, dec_mp_reset_signals)
+    @timeout(dec_timeout, use_signals, timeout_exception, exception_message,
+             dec_allow_eval, dec_hard_timeout, dec_mp_reset_signals)
     def decorated_function(*args, **kwargs):
         # interesting things happens here ...
         ...
 
-    """
-    dec_timeout         This parameter sets the timeout duration. It accepts a float, integer, or a string
-                        that can be evaluated to a number if dec_allow_eval is enabled.
-                        By default, there's no timeout (None). You can change the timeout dynamically
-                        by passing a dec_timeout keyword argument to the decorated function.
 
-    use_signals         This boolean parameter controls whether to use UNIX signals for implementing timeouts.
-                        It's the most accurate method but comes with certain limitations,
-                        such as being available only on Linux and macOS, and only in the main thread.
-                        By default, signals are not used (False). It's typically not necessary to modify
-                        this setting manually, but you can override it by passing a use_signals keyword argument
-                        to the decorated function.
 
-    timeout_exception   Specifies the exception to raise when a timeout occurs.
-                        by default, it's set to TimeoutError
-                        type: exception
-                        default: TimeoutError
+- dec_timeout
+    This parameter sets the timeout duration. It accepts a float, integer, or a string
+    that can be evaluated to a number if dec_allow_eval is enabled.
+    By default, there's no timeout (None). You can change the timeout dynamically
+    by passing a dec_timeout keyword argument to the decorated function.
 
-    exception_message   You can customize the message of the timeout exception.
-                        The default message includes the name of the function and the timeout duration.
-                        This message gets formatted with the actual values when a timeout occurs.
-                        type: str
-                        default : 'Function {function_name} timed out after {dec_timeout} seconds' (will be formatted)
+- use_signals
+    This boolean parameter controls whether to use UNIX signals for implementing timeouts.
+    It's the most accurate method but comes with certain limitations,
+    such as being available only on Linux and macOS, and only in the main thread.
+    By default, signals are not used (False). It's typically not necessary to modify
+    this setting manually, but you can override it by passing 'use_signals=True' to the decorated function.
 
-    dec_allow_eval      When enabled (True), this boolean parameter allows the dec_timeout string to be evaluated dynamically.
-                        It provides access to the decorated function (wrapped), the instance it belongs to (instance),
-                        the positional arguments (args), and keyword arguments (kwargs).
-                        It's disabled (False) by default for safety reasons but can be enabled by passing a dec_allow_eval
-                        keyword argument to the decorated function.
+- timeout_exception
+    Specifies the exception to raise when a timeout occurs.
+    by default, it's set to TimeoutError
+    type: exception
+    default: TimeoutError
 
-                        instance    Example: 'instance.x' - see example above or doku
-                        args        Example: 'args[0]' - the timeout is the first argument in args
-                        kwargs      Example: 'kwargs["max_time"] * 2'
-                        type: bool
-                        default: false
+- exception_message
+    You can customize the message of the timeout exception.
+    The default message includes the name of the function and the timeout duration.
+    This message gets formatted with the actual values when a timeout occurs.
+    type: str
+    default : 'Function {function_name} timed out after {dec_timeout} seconds' (will be formatted)
 
-    dec_hard_timeout    This boolean parameter is relevant when signals cannot be used,
-                        necessitating the creation of a new process for the timeout mechanism.
-                        Setting it to True means the timeout strictly applies to the execution time of the function,
-                        potentially not allowing enough time for process creation.
-                        With False, the process creation time is not included in the timeout, giving the actual function
-                        the full duration to execute.
-                        You can override this setting by passing a dec_hard_timeout keyword argument to the decorated function.
-                        type: bool
-                        default: false
-                        can be overridden by passing the kwarg dec_hard_timeout to the decorated function*
+- dec_allow_eval
+    When enabled (True), this boolean parameter allows the dec_timeout string to be evaluated dynamically.
+    It provides access
 
-    dec_mp_reset_signals  This parameter is relevant when using the "fork" start method for multiprocessing.
-                        Setting it to True accomplishes two primary objectives:
+    - to the decorated function (wrapped),
+    - the instance it belongs to (instance),
+    - the positional arguments (args),
+    - and keyword arguments (kwargs).
 
-                        - Restores Default Signal Handlers in Child Processes:
-                            It ensures that child processes revert to the default signal handling behavior,
-                            rather than inheriting signal handlers from the parent process.
-                            This adjustment is crucial for applications utilizing frameworks like "unicorn" or "FastAPI",
-                            facilitating the use of the efficient "fork" method while maintaining correct signal handling.
-                            For more context, refer to the Discussion on
-                            FastAPI GitHub page: https://github.com/tiangolo/fastapi/discussions/7442
+    It's disabled (False) by default for safety reasons but can be enabled by passing a dec_allow_eval
+    keyword argument to the decorated function.
 
-                        - Avoids Inheritance of the File Descriptor (fd) for Wakeup Signals:
-                            Typically, if the parent process utilizes a wakeup_fd, child processes inherit this descriptor.
-                            Consequently, when a signal is sent to a child, it is also received by the parent process
-                            via this shared socket, potentially leading to unintended termination or shutdown of the application.
-                            By resetting signal handlers and not using the inherited fd, this parameter prevents such conflicts,
-                            ensuring isolated and correct signal handling in child processes.
+                    instance    Example: 'instance.x' - see example above or doku
+                    args        Example: 'args[0]' - the timeout is the first argument in args
+                    kwargs      Example: 'kwargs["max_time"] * 2'
+                    type: bool
+                    default: false
+                    see section "Dynamic Timeout Value Adjustment with eval" in the manual
 
-                        Note: This parameter exclusively affects processes initiated with the "fork" method
-                        and is not applicable to other multiprocessing start methods.
+- dec_hard_timeout
+    This boolean parameter is relevant when signals cannot be used,
+    necessitating the creation of a new process for the timeout mechanism.
+    Setting it to True means the timeout strictly applies to the execution time of the function,
+    potentially not allowing enough time for process creation.
+    With False, the process creation time is not included in the timeout, giving the actual function
+    the full duration to execute.
+    You can override this setting by passing a dec_hard_timeout keyword argument to the decorated function.
+    type: bool
+    default: false
+    can be overridden by passing the kwarg dec_hard_timeout to the decorated function*
+
+- dec_mp_reset_signals
+    This parameter is relevant when using the "fork" start method for multiprocessing.
+    Setting it to True accomplishes two primary objectives:
+
+    - Restores Default Signal Handlers in Child Processes:
+        It ensures that child processes revert to the default signal handling behavior,
+        rather than inheriting signal handlers from the parent process.
+        This adjustment is crucial for applications utilizing frameworks like "unicorn" or "FastAPI",
+        facilitating the use of the efficient "fork" method while maintaining correct signal handling.
+        For more context, refer to the Discussion on
+        FastAPI GitHub page: https://github.com/tiangolo/fastapi/discussions/7442
+
+    - Avoids Inheritance of the File Descriptor (fd) for Wakeup Signals:
+        Typically, if the parent process utilizes a wakeup_fd, child processes inherit this descriptor.
+        Consequently, when a signal is sent to a child, it is also received by the parent process
+        via this shared socket, potentially leading to unintended termination or shutdown of the application.
+        By resetting signal handlers and not using the inherited fd, this parameter prevents such conflicts,
+        ensuring isolated and correct signal handling in child processes.
+
+    Note: This parameter exclusively affects processes initiated with the "fork" method
+    and is not applicable to other multiprocessing start methods.
 
     For enhanced isolation of subprocesses, consider utilizing the "forkserver" or "spawn" start methods in multiprocessing.
     These methods provide a greater degree of independence between the parent process and its children,
@@ -668,15 +666,14 @@ Parameters
     new process environment for each child process, as opposed to directly duplicating the parent process's environment,
     which occurs with the "fork" method.
 
-    * that means the decorated_function must not use that kwarg itself, since this kwarg will be popped from the kwargs
-    """
+* that means the decorated_function must not use that kwarg itself, since this kwarg will be popped from the kwargs
 
 Override Parameters
 -------------------
 
 decorator parameters starting with \dec_* and use_signals can be overridden by kwargs with the same name :
 
-.. code-block:: py
+.. code-block:: python
 
 
     import time
@@ -702,7 +699,7 @@ Signals will not work if your function is not executed in the main thread.
 ``use_signals`` is therefore automatically disabled (if set) when the function is not running in the main thread.
 
 
-.. code-block:: py
+.. code-block:: python
 
     import time
     from wrapt_timeout_decorator import *
@@ -790,7 +787,7 @@ use as function not as decorator
 
 You can use the timout also as function, without using as decorator:
 
-.. code-block:: py
+.. code-block:: python
 
     import time
     from wrapt_timeout_decorator import *
@@ -833,7 +830,7 @@ By default, ``allow_eval`` is turned off to mitigate risks.
 However, it can be enabled to address specific use cases without altering the timeout decorator's core functionality.
 
 
-.. code-block::
+.. code-block:: python
 
     # this example does NOT work on windows, please check the section
     # "use with Windows" in the README.rst
@@ -894,17 +891,23 @@ we did not test what would happen if we set that to different values.
 
     - Windows Limitation: Only `spawn` is available on Windows.
     - Linux/Unix Options: Options include `fork`, `forkserver`, and `spawn`.
-        - fork:       Efficiently clones the parent process, including memory space,
-                      but may lead to issues with shared resources or in multi-threaded applications.
-        - forkserver: Starts a server at program launch, creating new processes upon request
-                      for better isolation but at a slower pace due to the server communication requirement.
-        - spawn:      Initiates a fresh Python interpreter process, ensuring total independence
-                      at the cost of slower start-up due to the need for full initialization.
+        - fork:
+            Efficiently clones the parent process, including memory space,
+            but may lead to issues with shared resources or in multi-threaded applications.
+        - forkserver:
+            Starts a server at program launch, creating new processes upon request
+            for better isolation but at a slower pace due to the server communication requirement.
+        - spawn:
+            Initiates a fresh Python interpreter process, ensuring total independence
+            at the cost of slower start-up due to the need for full initialization.
 
     - Choosing the Right Start Method
-        - fork          offers speed but can encounter issues with resource sharing or threading.
-        - forkserver    enhances stability and isolation, ideal for applications requiring safety or managing unstable resources.
-        - spawn         provides the highest level of isolation, recommended for a clean start and avoiding shared state complications.
+        - fork
+            offers speed but can encounter issues with resource sharing or threading.
+        - forkserver
+            enhances stability and isolation, ideal for applications requiring safety or managing unstable resources.
+        - spawn
+            provides the highest level of isolation, recommended for a clean start and avoiding shared state complications.
 
     - Setting the Start Method
         Configure the start method with `set_subprocess_starting_method(method)`
@@ -970,7 +973,7 @@ resulting in an immediate timeout upon spawning.
 
 .. note::
 
-   The term "exactly" should be interpreted with a degree of flexibility.
+   The term "precisely" should be interpreted with a degree of flexibility.
    There remains a negligible delay in returning from the spawned process, making it imperative to approach very short timeouts with caution.
 
 MYPY Testing
@@ -997,13 +1000,12 @@ Usage from Commandline
 Installation and Upgrade
 ------------------------
 
-- Before You start, its highly recommended to update pip and setup tools:
+- Before You start, its highly recommended to update pip:
 
 
 .. code-block::
 
     python -m pip --upgrade pip
-    python -m pip --upgrade setuptools
 
 - to install the latest release from PyPi via pip (recommended):
 

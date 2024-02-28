@@ -66,7 +66,7 @@ An illustration highlights a scenario functional on Linux but problematic on Win
 where the variable `"name"` and the function `"sleep"` are not recognized in the spawned process:
 
 
-.. code-block::
+.. code-block:: python
 
     main.py:
 
@@ -93,7 +93,7 @@ where the variable `"name"` and the function `"sleep"` are not recognized in the
 here the same example, which will work on Windows:
 
 
-.. code-block::
+.. code-block:: python
 
 
     # my_program_main.py:
@@ -107,7 +107,7 @@ here the same example, which will work on Windows:
         main()
 
 
-.. code-block::
+.. code-block:: python
 
 
         # conf_my_program.py:
@@ -119,7 +119,7 @@ here the same example, which will work on Windows:
         conf_my_program = ConfMyProgram()
 
 
-.. code-block::
+.. code-block:: python
 
     # lib_test.py:
 
