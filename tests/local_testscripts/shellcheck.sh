@@ -5,13 +5,13 @@ save_dir="$PWD"
 
 # install bash helper scripts
 function install_or_update_lib_bash() {
-  if [[ ! -f /usr/local/lib_bash/install_or_update.sh ]]; then
+  if [[ ! -f /usr/local/lib_bash/lib_bash.sh ]]; then
     sudo git clone https://github.com/bitranox/lib_bash.git /usr/local/lib_bash 2>/dev/null
     sudo chmod -R 0755 /usr/local/lib_bash 2>/dev/null
     sudo chmod -R +x /usr/local/lib_bash/*.sh 2>/dev/null
-    sudo /usr/local/lib_bash/install_or_update.sh 2>/dev/null
+    sudo /usr/local/lib_bash/lib_bash.sh 2>/dev/null
   else
-    /usr/local/lib_bash/install_or_update.sh
+    /usr/local/lib_bash/lib_bash.sh
   fi
 }
 
