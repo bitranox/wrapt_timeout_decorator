@@ -32,7 +32,6 @@ function check_shellcheck_installed {
 function shell_check {
     banner "checking shellscripts"
     # exclude Codes :
-    # SC1091 not following external sources -> so we dont check /usr/local/lib_bash/lib_helpers.sh
     # SC2155 Declare and assign separately to avoid masking return values
     if shellcheck --shell=bash --color=always \
                   --exclude=SC1091,SC2155 \
