@@ -5,7 +5,7 @@ v1.5.1
 ---------
 2024-02-28:
     - overhaul documentation
-    - github actions/checkout@v4
+    - github actions/checkout@v5
     - github actions/setup-python@v5
 
 v1.5.0
