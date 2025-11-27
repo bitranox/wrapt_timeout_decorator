@@ -89,3 +89,41 @@ addopts = "-vvl --doctest-modules"
 doctest_optionflags =  "NORMALIZE_WHITESPACE ELLIPSIS ALLOW_UNICODE ALLOW_BYTES IGNORE_EXCEPTION_DETAIL"
 log_cli = true
 log_cli_level = "CRITICAL"
+
+[tool.pip-audit]
+# Known vulnerabilities to ignore (unfixable or accepted risk)
+# GHSA-4xh5-x5gv-qwph: py library ReDoS (no fix available, low risk)
+# PYSEC-2022-42969: same as above (alias)
+ignore-vulns = ["GHSA-4xh5-x5gv-qwph", "PYSEC-2022-42969"]
+[tool.clean]
+# Patterns to remove when running `make clean` or `python -m scripts clean`
+patterns = [
+  ".hypothesis",
+  ".import_linter_cache",
+  ".pytest_cache",
+  ".ruff_cache",
+  ".pyright",
+  ".mypy_cache",
+  ".tox",
+  ".nox",
+  ".eggs",
+  "*.egg-info",
+  "build",
+  "dist",
+  "htmlcov",
+  ".coverage",
+  "coverage.xml",
+  "codecov.sh",
+  ".cache",
+  "result",
+]
+
+[tool.git]
+# Default git remote for push/release commands
+default-remote = "origin"
+
+[tool.scripts.test]
+# Configuration for scripts/test.py test runner
+pytest-verbosity = "-vv"
+coverage-report-file = "coverage.xml"
+src-path = "src"
