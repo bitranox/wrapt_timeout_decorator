@@ -5,7 +5,7 @@ wrapt_timeout_decorator
 Version v1.5.1 as of 2024-02-28 see `Changelog`_
 
 |build_badge| |codeql| |license| |jupyter| |pypi|
-|pypi-downloads| |black| |codecov| |cc_maintain| |cc_issues| |cc_coverage| |snyk|
+|pypi-downloads| |black| |codecov| |cc_maintain| |cc_issues| |cc_coverage|
 
 
 
@@ -44,8 +44,6 @@ Version v1.5.1 as of 2024-02-28 see `Changelog`_
    :target: https://codeclimate.com/github/bitranox/wrapt_timeout_decorator/test_coverage
    :alt: Code Coverage
 
-.. |snyk| image:: https://snyk.io/test/github/bitranox/wrapt_timeout_decorator/badge.svg
-   :target: https://snyk.io/test/github/bitranox/wrapt_timeout_decorator
 
 .. |black| image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/psf/black
