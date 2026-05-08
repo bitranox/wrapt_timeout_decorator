@@ -11,3 +11,4 @@ pytest
 pytest-cov
 pytest-runner
 readme_renderer
+requests>=2.32.0 # not directly required, pinned by Snyk to avoid a vulnerability
